@@ -11,23 +11,35 @@ export const DemoRoute: RouteRecordRaw = {
   component: Layout,
   children: [
     {
-      path: '/t',
-      name: 'DispatchRouter',
-      component: () => import('@/views/system/dispatch/DispatchRouter.vue'),
+      path: '/cashier/alipay',
+      name: 'AlipayCashier',
+      component: () => import('@/views/demo/cashier/AlipayCashier.vue'),
       meta: {
-        title: '中转页',
-        ignoreAuth: true,
-        hiddenTabbar: true,
+        title: '支付宝收银台',
       },
     },
     {
-      path: '/x/x/x',
-      name: 'xx',
-      component: () => import('@/views/modules/demo/xx.vue'),
+      path: '/cashier/wxJsapiPay',
+      name: 'WechatJsapiPay',
+      component: () => import('@/views/demo/cashier/WechatJsapiPay.vue'),
       meta: {
-        title: 'xx',
-        hiddenTabbar: true,
-        ignoreAuth: true,
+        title: '支付宝收银台',
+      },
+    },
+    {
+      path: '/exception/timeout',
+      name: 'TimeoutPay',
+      component: () => import('@/views/demo/exception/TimeoutPay.vue'),
+      meta: {
+        title: '支付超时',
+      },
+    },
+    {
+      path: '/exception/errorPay',
+      name: 'TimeoutPay',
+      component: () => import('@/views/demo/exception/ErrorPay.vue'),
+      meta: {
+        title: '支付超时',
       },
     },
   ],

@@ -1,16 +1,16 @@
 import { App } from 'vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import { LoginRoute, RootRoute, ErrorPageRoute } from '@/router/base'
-import { createRouterGuards } from './router-guards'
+import { RootRoute, ErrorPageRoute } from '@/router/base'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
 
 // 菜单
 import routeModuleList from './modules'
 import { BusinessRoute } from '@/router/business'
+import { DemoRoute } from '@/router/demo'
 
 // 普通路由
 export const constantRouter: RouteRecordRaw[] = [
-  LoginRoute,
+  DemoRoute,
   RootRoute,
   ErrorPageRoute,
   BusinessRoute,
@@ -30,8 +30,8 @@ const router = createRouter({
 
 export function setupRouter(app: App) {
   app.use(router)
-  // 创建路由守卫
-  createRouterGuards(router)
+  // TODO 不使用路由守卫
+  // createRouterGuards(router)
 }
 
 export default router

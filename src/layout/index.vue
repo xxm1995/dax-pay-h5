@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { useRouteStore } from '@/store/modules/route'
 
@@ -51,7 +51,9 @@
   )
 
   const getShowHeader = computed(() => currentRoute.meta.showHeader)
-  const getShowTabbar = computed(() => !currentRoute.meta.hiddenTabbar)
+  // const getShowTabbar = computed(() => !currentRoute.meta.hiddenTabbar)
+  // TODO 默认不显示tabbar
+  const getShowTabbar = ref<boolean>(false)
 </script>
 
 <style scoped lang="less">
