@@ -1,21 +1,23 @@
 <template>
   <div class="flex flex-col justify-center page-container">
     <div class="text-center">
-      <img src="~@/assets/icons/exception/500.svg" alt="" />
+      <img src="~@/assets/icons/exception/403.svg" alt="" />
     </div>
     <div class="text-center">
-      <h1 class="text-base text-gray-500">抱歉，服务器出错了</h1>
-      <van-button type="info" @click="goHome">回到首页</van-button>
+      <h1 class="text-base text-gray-500">{{ msg }}</h1>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { useRouter } from 'vue-router'
-  const router = useRouter()
-  function goHome() {
-    router.push('/')
-  }
+  import { unref } from 'vue'
+
+  const { currentRoute } = useRouter()
+  const { query } = unref(currentRoute)
+
+  // 获取请求路径下的错误信息
+  let msg = (query.msg as string) || '支付出现错误，请稍后重试'
 </script>
 
 <style lang="less" scoped>
@@ -28,7 +30,8 @@
     .text-center {
       h1 {
         color: #666;
-        padding: 20px 0;
+        padding: 5vh 0;
+        font-size: x-large;
       }
     }
 

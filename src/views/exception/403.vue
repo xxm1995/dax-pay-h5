@@ -5,7 +5,7 @@
     </div>
     <div class="text-center">
       <h1 class="text-base text-gray-500">抱歉，你无权访问该页面</h1>
-      <n-button type="info" @click="goHome">回到首页</n-button>
+      <van-button type="info" @click="goHome">回到首页</van-button>
     </div>
   </div>
 </template>

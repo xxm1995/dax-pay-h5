@@ -20,5 +20,21 @@ export const BusinessRoute: RouteRecordRaw = {
         hiddenTabbar: true,
       },
     },
+    {
+      path: '/result/success',
+      name: 'PaySuccessResult',
+      component: () => import('@/views/result/PaySuccessResult.vue'),
+      meta: {
+        title: '支付成功',
+      },
+    },
+    {
+      path: '/result/error',
+      name: 'PayErrorResult',
+      component: () => import('@/views/result/PayErrorResult.vue'),
+      meta: {
+        title: '支付失败',
+      },
+    },
   ],
 }

@@ -1,6 +1,5 @@
 import { isNavigationFailure, Router } from 'vue-router'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
-import { useUserStoreWidthOut } from '@/store/modules/user'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { storage } from '@/utils/Storage'
 import { PageEnum } from '@/enums/pageEnum'
@@ -11,10 +10,12 @@ const whitePathList = [LOGIN_PATH] // no redirect whitelist
 
 export function createRouterGuards(router: Router) {
   router.beforeEach(async (to, from, next) => {
+    // 所有的的页面都可以访问
+    next()
+    return
+
     // to: 即将要进入的目标
     // from: 当前导航正要离开的路由
-    const userStore = useUserStoreWidthOut()
-
     if (from.path === LOGIN_PATH && to.name === PageEnum.ERROR_PAGE_NAME) {
       next(PageEnum.BASE_HOME)
       return

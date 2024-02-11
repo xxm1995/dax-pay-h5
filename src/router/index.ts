@@ -7,6 +7,7 @@ import { useRouteStoreWidthOut } from '@/store/modules/route'
 import routeModuleList from './modules'
 import { BusinessRoute } from '@/router/business'
 import { DemoRoute } from '@/router/demo'
+import { createRouterGuards } from "@/router/router-guards";
 
 // 普通路由
 export const constantRouter: RouteRecordRaw[] = [
@@ -30,8 +31,7 @@ const router = createRouter({
 
 export function setupRouter(app: App) {
   app.use(router)
-  // TODO 不使用路由守卫
-  // createRouterGuards(router)
+  createRouterGuards(router)
 }
 
 export default router

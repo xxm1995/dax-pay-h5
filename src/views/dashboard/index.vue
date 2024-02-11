@@ -24,7 +24,7 @@
 <script setup lang="ts" name="DashboardPage">
   import { computed } from 'vue'
   import { useDesignSettingStore } from '@/store/modules/designSetting'
-  import SvgIcon from '@/components/SvgIcon.vue'
+  import SvgIcon from '@/components/SvgIcon/SvgIcon.vue'
   import { useGlobSetting } from '@/hooks/setting'
 
   const designStore = useDesignSettingStore()

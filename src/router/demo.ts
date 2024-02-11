@@ -11,35 +11,19 @@ export const DemoRoute: RouteRecordRaw = {
   component: Layout,
   children: [
     {
-      path: '/cashier/alipay',
-      name: 'AlipayCashier',
-      component: () => import('@/views/demo/cashier/AlipayCashier.vue'),
+      path: '/aggregate/alipay',
+      name: 'AliPayAggregate',
+      component: () => import('@/views/demo/aggregate/AliPayAggregate.vue'),
       meta: {
-        title: '支付宝收银台',
+        title: '支付宝聚合支付',
       },
     },
     {
-      path: '/cashier/wxJsapiPay',
-      name: 'WechatJsapiPay',
-      component: () => import('@/views/demo/cashier/WechatJsapiPay.vue'),
+      path: '/aggregate/wechatPay',
+      name: 'WechatPayAggregate',
+      component: () => import('@/views/demo/aggregate/WechatPayAggregate.vue'),
       meta: {
-        title: '支付宝收银台',
-      },
-    },
-    {
-      path: '/exception/timeout',
-      name: 'TimeoutPay',
-      component: () => import('@/views/demo/exception/TimeoutPay.vue'),
-      meta: {
-        title: '支付超时',
-      },
-    },
-    {
-      path: '/exception/errorPay',
-      name: 'TimeoutPay',
-      component: () => import('@/views/demo/exception/ErrorPay.vue'),
-      meta: {
-        title: '支付超时',
+        title: '微信聚合支付',
       },
     },
   ],

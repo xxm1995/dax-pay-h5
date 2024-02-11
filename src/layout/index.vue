@@ -42,7 +42,7 @@
   const currentRoute = useRoute()
 
   const getTitle = computed(() => currentRoute.meta.title as string)
-
+  console.log(getTitle)
   // 菜单
   const getMenus = computed(() =>
     routeStore.menus.filter((item) => {
@@ -50,7 +50,7 @@
     }),
   )
 
-  const getShowHeader = computed(() => currentRoute.meta.showHeader)
+  const getShowHeader = computed(() => currentRoute.meta.showHeader) || true
   // const getShowTabbar = computed(() => !currentRoute.meta.hiddenTabbar)
   // TODO 默认不显示tabbar
   const getShowTabbar = ref<boolean>(false)
