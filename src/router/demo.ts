@@ -26,5 +26,13 @@ export const DemoRoute: RouteRecordRaw = {
         title: '微信聚合支付',
       },
     },
+    {
+      path: '/cashier/uniCashier',
+      name: 'UniCashier',
+      component: () => import('@/views/demo/cashier/UniCashier.vue'),
+      meta: {
+        title: '手机收银台',
+      },
+    },
   ],
 }

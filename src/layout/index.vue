@@ -42,7 +42,6 @@
   const currentRoute = useRoute()
 
   const getTitle = computed(() => currentRoute.meta.title as string)
-  console.log(getTitle)
   // 菜单
   const getMenus = computed(() =>
     routeStore.menus.filter((item) => {
