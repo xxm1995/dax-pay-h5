@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="pageShow">
     <div class="flex justify-center h-screen pt-8">
       <van-overlay lock-scroll :show="loading">
         <Loading text="调起支付中..." />
@@ -51,23 +51,30 @@
 </template>
 <script setup lang="ts">
   import Loading from '@/components/Loading/Loading.vue'
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, unref } from 'vue'
   import SvgIcon from '@/components/SvgIcon/SvgIcon.vue'
-  import { getPayEnv, simplePayCashier } from '@/views/demo/cashier/Cashier.api'
+  import { getPayEnv, getWxAuthUrl, simplePayCashier } from '@/views/demo/cashier/Cashier.api'
   import { ActionSheetAction } from 'vant'
   import router from '@/router'
   import { payChannelEnum } from '@/enums/payment/payChannelEnum'
-  import { payWayEnum } from "@/enums/payment/payWayEnum";
+  import { payWayEnum } from '@/enums/payment/payWayEnum'
+  import { useRouter } from 'vue-router'
+  import { WxJsapiSignResult } from '@/views/demo/aggregate/Aggregate.api'
 
-  let loading = ref<boolean>(false)
-  let channelShow = ref<boolean>(false)
-  let filterChannelFlag = ref<boolean>(true)
-  let amount = ref<number>(0.01)
-  let formRef = ref<any>()
+  const pageShow = ref<boolean>(false)
+  const loading = ref<boolean>(false)
+  const channelShow = ref<boolean>(false)
+  const filterChannelFlag = ref<boolean>(true)
+  const amount = ref<number>(0.01)
+  const formRef = ref<any>()
   // 当前环境
-  let currentEnv = ref<string>('all')
+  const currentEnv = ref<string>('all')
+  const openId = ref<string>('')
 
   const channelList = ref<ActionSheetAction[]>([])
+
+  const { currentRoute } = useRouter()
+  const { query } = unref(currentRoute)
 
   onMounted(() => {
     init()
@@ -80,7 +87,21 @@
     await getPayEnv().then(({ data }) => {
       currentEnv.value = data
     })
+    // 是否在微信环境中. 在的话获取微信授权
+    if (currentEnv.value === payChannelEnum.WECHAT) {
+      const source = query.source as string
+      // 重定向则获取OpenId
+      if (source === 'redirect') {
+        openId.value = query.openId as string
+      } else {
+        // 跳转到微信授权地址
+        const { data: url } = await getWxAuthUrl()
+        location.replace(url)
+        return
+      }
+    }
     initChannelList()
+    pageShow.value = true
   }
 
   /**
@@ -140,8 +161,8 @@
   /**
    * 发起支付
    */
-  function pay(value) {
-    if (value === '微信') {
+  function pay(action: ActionSheetAction) {
+    if (action.name === '微信') {
       wechatPay()
     } else {
       aliPay()
@@ -160,13 +181,90 @@
       wechatH5Pay()
     }
   }
-  function wechatJsapiPay() {}
-  function wechatH5Pay() {}
+
+  /**
+   * 微信jsapi方式支付
+   */
+  function wechatJsapiPay() {
+    loading.value = true
+    const from = {
+      businessNo: new Date().getTime(),
+      title: '测试H5支付',
+      amount: amount.value,
+      channel: payChannelEnum.WECHAT,
+      payWay: payWayEnum.JSAPI,
+      openId: openId.value,
+    }
+    simplePayCashier(from)
+      .then(({ data }) => {
+        loading.value = false
+        // 拉起jsapi支付
+        const json = JSON.parse(data.payBody)
+        doJsapiPay(json)
+      })
+      .catch((err) => {
+        // 跳转到错误页
+        router.push({
+          name: 'PayErrorResult',
+          query: { msg: err.message },
+        })
+      })
+  }
+
+  /**
+   * 拉起Jsapi支付窗口
+   */
+  function doJsapiPay(data: WxJsapiSignResult) {
+    const form = {
+      appId: data.appId, //公众号ID，由商户传入
+      timeStamp: data.timeStamp, //时间戳，自1970年以来的秒数
+      nonceStr: data.nonceStr, //随机串
+      package: data.package, // 预支付ID
+      signType: data.signType, //微信签名方式：
+      paySign: data.paySign, //微信签名
+    }
+    // 使用微信JsSdk拉起支付
+    WeixinJSBridge.invoke('getBrandWCPayRequest', form, function (res) {
+      if (res.err_msg === 'get_brand_wcpay_request:ok') {
+        setTimeout(() => {
+          WeixinJSBridge.call('closeWindow')
+        }, 0)
+      }
+    })
+  }
+
+  /**
+   * 微信h5支付
+   */
+  function wechatH5Pay() {
+    loading.value = true
+    const from = {
+      businessNo: new Date().getTime(),
+      title: '测试H5支付',
+      amount: amount.value,
+      channel: payChannelEnum.WECHAT,
+      payWay: payWayEnum.WAP,
+    }
+    simplePayCashier(from)
+      .then(({ data }) => {
+        loading.value = false
+        // 跳转到H5支付页面
+        location.replace(data.payBody)
+      })
+      .catch((err) => {
+        // 跳转到错误页
+        router.push({
+          name: 'PayErrorResult',
+          query: { msg: err.message },
+        })
+      })
+  }
 
   /**
    * 支付宝支付, 使用h5支付
    */
   function aliPay() {
+    loading.value = true
     const from = {
       businessNo: new Date().getTime(),
       title: '测试H5支付',

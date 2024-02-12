@@ -12,6 +12,16 @@ export function getPayEnv(): Promise<Result<string>> {
 }
 
 /**
+ * 获取微信授权请求页URL
+ */
+export function getWxAuthUrl(): Promise<Result<string>> {
+  return http.request({
+    url: '/demo/cashier/getWxAuthUrl',
+    method: 'get',
+  })
+}
+
+/**
  * 单独支付
  */
 export function simplePayCashier(obj): Promise<Result<PayOrderResult>> {
@@ -21,6 +31,7 @@ export function simplePayCashier(obj): Promise<Result<PayOrderResult>> {
     data: obj,
   })
 }
+
 /**
  * 发起支付后响应对象
  */

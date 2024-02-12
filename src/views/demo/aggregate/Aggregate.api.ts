@@ -57,7 +57,7 @@ export interface WxJsapiSignResult {
   appId?: string
   timeStamp?: string
   nonceStr?: string
-  prePayId?: string
   signType?: string
   paySign?: string
+  package?: string
 }
