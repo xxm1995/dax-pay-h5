@@ -35,10 +35,10 @@
   /**
    * 根据code获取支付信息
    */
-  function init() {
+  async function init() {
     loading.value = true
     // 获取支付信息
-    getInfo(aggregateCode.value)
+    await getInfo(aggregateCode.value)
       .then(({ data }) => {
         loading.value = false
         info.value = data
@@ -50,6 +50,8 @@
           query: { msg: err.message },
         })
       })
+    // 调起支付
+    pay()
   }
 
   /**

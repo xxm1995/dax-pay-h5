@@ -34,9 +34,9 @@
   /**
    * 根据code获取支付信息
    */
-  function init() {
+  async function init() {
     loading.value = true
-    getInfo(code.value)
+    await getInfo(code.value)
       .then(({ data }) => {
         info.value = data
         loading.value = false
@@ -48,6 +48,8 @@
           query: { msg: err.message },
         })
       })
+    // 调起支付
+    pay()
   }
 
   /**
