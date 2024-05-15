@@ -3,10 +3,11 @@ import { createStorage } from '@/utils/Storage'
 import { store } from '@/store'
 import { ACCESS_TOKEN, CURRENT_USER } from '@/store/mutation-types'
 import { ResultEnum } from '@/enums/httpEnum'
-const Storage = createStorage({ storage: localStorage })
-import { getUserInfo, login, doLogout } from '@/api/system/user'
+import { doLogout, getUserInfo, login } from '@/api/system/user'
 import { PageEnum } from '@/enums/pageEnum'
 import router from '@/router'
+
+const Storage = createStorage({ storage: localStorage })
 
 interface UserInfo {
   userId: string | number
@@ -28,10 +29,8 @@ interface IUserState {
 }
 
 interface LoginParams {
-  account: string
+  username: string
   password: string
-  loginType: string
-  client: string
 }
 
 export const useUserStore = defineStore({
@@ -54,7 +53,7 @@ export const useUserStore = defineStore({
   },
   actions: {
     setToken(token: string | undefined) {
-      this.token = token ? token : ''
+      this.token = token || ''
       Storage.set(ACCESS_TOKEN, token)
     },
     setUserInfo(info: UserInfo | null) {
@@ -66,13 +65,14 @@ export const useUserStore = defineStore({
     async Login(params: LoginParams) {
       try {
         const response = await login(params)
-        const { data, code } = response
+        const { result, code } = response
         if (code === ResultEnum.SUCCESS) {
           // save token
-          this.setToken(data)
+          this.setToken(result.token)
         }
         return Promise.resolve(response)
-      } catch (error) {
+      }
+      catch (error) {
         return Promise.reject(error)
       }
     },
@@ -94,7 +94,8 @@ export const useUserStore = defineStore({
       if (this.getToken) {
         try {
           await doLogout()
-        } catch {
+        }
+        catch {
           console.error('注销Token失败')
         }
       }

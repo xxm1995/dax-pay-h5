@@ -3,10 +3,9 @@ const DEFAULT_CACHE_TIME = 60 * 60 * 24 * 7
 
 /**
  * 创建本地缓存对象
- * @param {string=} prefixKey -
- * @param {Object} [storage=localStorage] - sessionStorage | localStorage
+ * @param {string} prefixKey -
  */
-export const createStorage = ({ prefixKey = '', storage = localStorage } = {}) => {
+export function createStorage({ prefixKey = '', storage = localStorage } = {}) {
   /**
    * 本地缓存类
    * @class Storage
@@ -49,7 +48,8 @@ export const createStorage = ({ prefixKey = '', storage = localStorage } = {}) =
             return value
           }
           this.remove(key)
-        } catch (e) {
+        }
+        catch (e) {
           return def
         }
       }
@@ -113,8 +113,8 @@ export const createStorage = ({ prefixKey = '', storage = localStorage } = {}) =
     clearCookie(): void {
       const keys = document.cookie.match(/[^ =;]+(?==)/g)
       if (keys) {
-        for (let i = keys.length; i--; ) {
-          document.cookie = keys[i] + '=0;expire=' + new Date(0).toUTCString()
+        for (let i = keys.length; i--;) {
+          document.cookie = `${keys[i]}=0;expire=${new Date(0).toUTCString()}`
         }
       }
     }

@@ -1,55 +1,10 @@
-import { isNavigationFailure, Router } from 'vue-router'
+import type { Router } from 'vue-router'
+import { isNavigationFailure } from 'vue-router'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { storage } from '@/utils/Storage'
-import { PageEnum } from '@/enums/pageEnum'
-
-const LOGIN_PATH = PageEnum.BASE_LOGIN
-
-const whitePathList = [LOGIN_PATH] // no redirect whitelist
 
 export function createRouterGuards(router: Router) {
   router.beforeEach(async (to, from, next) => {
     // 所有的的页面都可以访问
-    next()
-    return
-
-    // to: 即将要进入的目标
-    // from: 当前导航正要离开的路由
-    if (from.path === LOGIN_PATH && to.name === PageEnum.ERROR_PAGE_NAME) {
-      next(PageEnum.BASE_HOME)
-      return
-    }
-
-    // 可以访问输入白名单中的页面
-    if (whitePathList.includes(to.path as PageEnum)) {
-      next()
-      return
-    }
-
-    const token = storage.get(ACCESS_TOKEN)
-
-    if (!token) {
-      // 您可以在未经许可的情况下访问。您需要将路由meta中的 忽略身份验证设置为 true
-      if (to.meta.ignoreAuth) {
-        next()
-        return
-      }
-      //重定向登录页面
-      next(LOGIN_PATH)
-      return
-    }
-
-    // 当上次更新时间为空时获取用户信息
-    // if (userStore.getLastUpdateTime === 0) {
-    //   try {
-    //     await userStore.GetUserInfo();
-    //   } catch (err) {
-    //     next();
-    //     return;
-    //   }
-    // }
-
     next()
   })
 
@@ -66,19 +21,20 @@ export function createRouterGuards(router: Router) {
     // 在这里设置需要缓存的组件名称
     const keepAliveComponents = routeStore.keepAliveComponents
     // 获取当前组件名
-    const currentComName: any = to.matched.find((item) => item.name == to.name)?.name
+    const currentComName: any = to.matched.find(item => item.name == to.name)?.name
 
     // 如果 currentComName 且 keepAliveComponents 不包含 currentComName 且 即将要进入的路由 meta 属性里 keepAlive 为 true，则缓存该组件
     if (currentComName && !keepAliveComponents.includes(currentComName) && to.meta?.keepAlive) {
       // 需要缓存的组件
       keepAliveComponents.push(currentComName)
       // keepAlive 为 false 则不缓存
-    } else if (!to.meta?.keepAlive) {
+    }
+    else if (!to.meta?.keepAlive) {
       // 不需要缓存的组件
 
       // 这里的作用一开始组件设置为缓存，之后又设置不缓存但是它还是存在 keepAliveComponents 数组中
       // keepAliveComponents 使用 findIndex 与 当前路由对比，如果存在则返回具体下标位置，不存在返回 -1
-      const index = routeStore.keepAliveComponents.findIndex((name) => name == currentComName)
+      const index = routeStore.keepAliveComponents.findIndex(name => name == currentComName)
       if (index != -1) {
         // 通过返回具体下标位置删除 keepAliveComponents 数组中缓存的 元素
         keepAliveComponents.splice(index, 1)

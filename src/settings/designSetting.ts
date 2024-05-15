@@ -36,15 +36,15 @@ export const appThemeList: string[] = [
 ]
 
 const setting: DesignSettingState = {
-  //深色主题
-  darkMode: 'light',
-  //系统主题色
+  // 深色主题
+  darkMode: 'dark',
+  // 系统主题色
   appTheme: '#5d9dfe',
-  //系统内置主题色列表
+  // 系统内置主题色列表
   appThemeList,
-  //是否开启路由动画
+  // 是否开启路由动画
   isPageAnimate: true,
-  //路由动画类型
+  // 路由动画类型
   pageAnimateType: 'zoom-fade',
 }
 

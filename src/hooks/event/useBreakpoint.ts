@@ -1,6 +1,7 @@
-import { ref, computed, ComputedRef, unref } from 'vue'
+import type { ComputedRef } from 'vue'
+import { computed, ref, unref } from 'vue'
 import { useEventListener } from '@/hooks/event/useEventListener'
-import { screenMap, sizeEnum, screenEnum } from '@/enums/breakpointEnum'
+import { screenEnum, screenMap, sizeEnum } from '@/enums/breakpointEnum'
 
 let globalScreenRef: ComputedRef<sizeEnum | undefined>
 let globalWidthRef: ComputedRef<number>
@@ -38,15 +39,20 @@ export function createBreakpointListen(fn?: (opt: CreateCallbackParams) => void)
     const xl = screenMap.get(sizeEnum.XL)!
     if (width < xs) {
       screenRef.value = sizeEnum.XS
-    } else if (width < sm) {
+    }
+    else if (width < sm) {
       screenRef.value = sizeEnum.SM
-    } else if (width < md) {
+    }
+    else if (width < md) {
       screenRef.value = sizeEnum.MD
-    } else if (width < lg) {
+    }
+    else if (width < lg) {
       screenRef.value = sizeEnum.LG
-    } else if (width < xl) {
+    }
+    else if (width < xl) {
       screenRef.value = sizeEnum.XL
-    } else {
+    }
+    else {
       screenRef.value = sizeEnum.XXL
     }
     realWidthRef.value = width

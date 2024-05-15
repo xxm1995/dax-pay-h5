@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 /**
  * @description 获取本地时间
@@ -20,12 +20,12 @@ export function useTime() {
     month.value = date.getMonth() + 1
     week.value = '日一二三四五六'.charAt(date.getDay())
     day.value = date.getDate()
-    hour.value =
-      (date.getHours() + '')?.padStart(2, '0') ||
-      new Intl.NumberFormat(undefined, { minimumIntegerDigits: 2 }).format(date.getHours())
-    minute.value =
-      (date.getMinutes() + '')?.padStart(2, '0') ||
-      new Intl.NumberFormat(undefined, { minimumIntegerDigits: 2 }).format(date.getMinutes())
+    hour.value
+      = (`${date.getHours()}`)?.padStart(2, '0')
+      || new Intl.NumberFormat(undefined, { minimumIntegerDigits: 2 }).format(date.getHours())
+    minute.value
+      = (`${date.getMinutes()}`)?.padStart(2, '0')
+      || new Intl.NumberFormat(undefined, { minimumIntegerDigits: 2 }).format(date.getMinutes())
     second.value = date.getSeconds()
   }
 

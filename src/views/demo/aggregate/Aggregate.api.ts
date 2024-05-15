@@ -1,5 +1,5 @@
 import { http } from '@/utils/http/axios'
-import { Result } from '#/axios'
+import type { Result } from '#/axios'
 
 /**
  * 获取支付信息
@@ -39,8 +39,8 @@ export function getWxJsapiPay(aggregateCode, openId): Promise<Result<WxJsapiSign
  */
 export interface AggregatePayInfo {
   title?: string
-  businessNo?: string
-  amount?: number
+  bizOrderNo?: string
+  amount: number
 }
 
 /**

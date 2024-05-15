@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center page-container">
+  <div class="page-container flex flex-col justify-center">
     <van-overlay lock-scroll :show="loading">
       <Loading text="调起支付中..." />
     </van-overlay>
@@ -9,83 +9,87 @@
       <h1>业务号: {{ info.businessNo }}</h1>
     </div>
     <div class="text-center">
-      <van-button type="primary" @click="pay">去支付</van-button>
+      <van-button type="primary" @click="pay">
+        去支付
+      </van-button>
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
-  import { onMounted, ref, unref } from 'vue'
-  import { AggregatePayInfo, aliH5Pay, getInfo } from './Aggregate.api'
-  import { useRouter } from 'vue-router'
-  import router from '@/router'
-  import Loading from '@/components/Loading/Loading.vue'
+import { onMounted, ref, unref } from 'vue'
+import { useRouter } from 'vue-router'
+import type { AggregatePayInfo } from './Aggregate.api'
+import { aliH5Pay, getInfo } from './Aggregate.api'
+import router from '@/router'
+import Loading from '@/components/Loading.vue'
 
-  onMounted(() => {
-    init()
-  })
+onMounted(() => {
+  init()
+})
 
-  const { currentRoute } = useRouter()
-  const { query } = unref(currentRoute)
+const { currentRoute } = useRouter()
+const { query } = unref(currentRoute)
 
-  const loading = ref<boolean>(false)
-  const code = ref<string>(query.code as string)
-  const info = ref<AggregatePayInfo>({})
+const loading = ref<boolean>(false)
+const code = ref<string>(query.code as string)
+const info = ref<AggregatePayInfo>({ amount: 0 })
 
-  /**
-   * 根据code获取支付信息
-   */
-  async function init() {
-    loading.value = true
-    await getInfo(code.value)
-      .then(({ data }) => {
-        info.value = data
-        loading.value = false
+/**
+ * 根据code获取支付信息
+ */
+async function init() {
+  loading.value = true
+  await getInfo(code.value)
+    .then(({ data }) => {
+      info.value = data
+      loading.value = false
+    })
+    .catch((err) => {
+      // 跳转到错误页
+      router.push({
+        name: 'PayErrorResult',
+        query: { msg: err.message },
       })
-      .catch((err) => {
-        // 跳转到错误页
-        router.push({
-          name: 'PayErrorResult',
-          query: { msg: err.message },
-        })
-      })
+    })
     // 调起支付
-    pay()
-  }
+  pay()
+}
 
-  /**
-   * 发起支付
-   */
-  function pay() {
-    loading.value = true
-    aliH5Pay(code.value)
-      .then(({ data }) => {
-        loading.value = false
-        // 跳转到H5支付页面
-        window.location.href = data.payBody
+/**
+ * 发起支付
+ */
+function pay() {
+  loading.value = true
+  aliH5Pay(code.value)
+    .then(({ data }) => {
+      loading.value = false
+      // 跳转到H5支付页面
+      window.location.href = data.payBody
+    })
+    .catch((err) => {
+      // 跳转到错误页
+      router.push({
+        name: 'PayErrorResult',
+        query: { msg: err.message },
       })
-      .catch((err) => {
-        // 跳转到错误页
-        router.push({
-          name: 'PayErrorResult',
-          query: { msg: err.message },
-        })
-      })
-  }
+    })
+}
 </script>
 
 <style lang="less" scoped>
   .page-container {
-    width: 100%;
-    border-radius: 4px;
-    padding: 50px 0;
-    height: 100vh;
+  width: 100%;
+  border-radius: 4px;
+  padding: 50px 0;
+  height: 100vh;
 
-    .text-center {
-      h1 {
-        color: #666;
-        padding: 2vh 0;
-        font-size: x-large;
-      }
+  .text-center {
+    h1 {
+      color: #666;
+      padding: 2vh 0;
+      font-size: x-large;
     }
   }
+}
 </style>

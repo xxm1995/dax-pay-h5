@@ -1,5 +1,5 @@
 import { http } from '@/utils/http/axios'
-import { Result } from '#/axios'
+import type { Result } from '#/axios'
 
 /**
  * 通过key获取信息路由信息

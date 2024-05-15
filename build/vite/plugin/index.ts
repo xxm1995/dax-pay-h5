@@ -1,11 +1,9 @@
 import type { PluginOption } from 'vite'
 import Components from 'unplugin-vue-components/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
-
 import vue from '@vitejs/plugin-vue'
-import vueSetupExtend from 'vite-plugin-vue-setup-extend'
-import WindiCSS from 'vite-plugin-windicss'
-
+import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
 import { configHtmlPlugin } from './html'
 import { configCompressPlugin } from './compress'
 import { configVisualizerConfig } from './visualizer'
@@ -28,18 +26,32 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const vitePlugins: (PluginOption | PluginOption[])[] = [
     // have to
     vue(),
-    // support name https://github.com/vbenjs/vite-plugin-vue-setup-extend
-    vueSetupExtend(),
     // 按需引入VantUi且自动创建组件声明
     Components({
       dts: true,
       resolvers: [VantResolver()],
       types: [],
     }),
-  ]
+    // UnoCSS
+    UnoCSS(),
 
-  // vite-plugin-windicss
-  vitePlugins.push(WindiCSS())
+    AutoImport({
+      // targets to transform
+      include: [
+        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+        /\.vue$/,
+        /\.vue\?vue/, // .vue
+      ],
+      imports: [
+        // presets
+        'vue',
+        'vue-router',
+        'pinia',
+        '@vueuse/core',
+      ],
+      dts: 'types/auto-imports.d.ts',
+    }),
+  ]
 
   // 加载 html 插件 vite-plugin-html
   vitePlugins.push(configHtmlPlugin(viteEnv, isBuild))

@@ -1,25 +1,20 @@
+<p align="center">
+	<img src="_doc/images/dax-pay.svg" width="45%">
+</p>
+
 # DaxPay H5端
 
 ## 🍈项目介绍
 
-> DaxPay是一套基于Bootx-Platform脚手架构建的一套开源支付网关系统，已经对接支付宝、微信支付相关的接口，以及扩展了钱包支付、储值卡支付、现金支付等新的支付方式。
-> 可以独立部署，提供接口供业务系统进行调用，不对原有系统产生影响
+> axPay是一套开源支付网关系统，已经对接支付宝、微信支付、云闪付相关的接口。可以独立部署，提供接口供业务系统进行调用，不对原有系统产生影响
 
-## 🍒 文档和源码地址
-### 文档地址
-在 [Bootx开源文档站](https://bootx.gitee.io/) 下的支付网关(DaxPay)模块下可以进行查阅相关文档，具体链接地址如下：
-[快速指南](https://bootx.gitee.io/daxpay/guides/overview/项目介绍.html)、
-[支付对接](https://bootx.gitee.io/daxpay/gateway/overview/接口清单.html)、
-[平台配置](https://bootx.gitee.io/daxpay/admin/config/平台配置.html)
-
-### 项目地址
+## 🍒 项目地址
 
 | 项目      | GITEE                                       | GITHUB                                          |
 |---------|---------------------------------------------|-------------------------------------------------|
-| 后端地址    | [GITEE](https://gitee.com/bootx/dax-pay)    | [GITHUB](https://github.com/xxm1995/dax-pay)    |
+| 后端地址    | [GITEE](https://gitee.com/dromara/dax-pay)  | [GITHUB](https://github.com/dromara/dax-pay)    |
 | Web前端地址 | [GITEE](https://gitee.com/bootx/dax-pay-ui) | [GITHUB](https://github.com/xxm1995/dax-pay-ui) |
 | H5前端地址  | [GITEE](https://gitee.com/bootx/dax-pay-h5) | [GITHUB](https://github.com/xxm1995/dax-pay-h5) |
-
 
 ## 🏬 系统演示
 ### 管理平台:
@@ -48,11 +43,19 @@
 手机收银台地址: https://daxpay.demo.bootx.cn/h5/#/cashier/uniCashier
 
 ## 项目启动
+
+- 必须使用 [pnpm>=8.6.10](https://www.pnpm.cn/)，否则依赖可能安装不上，推荐使用`8.6.10`。
+- [Node.js](http://nodejs.org/) 版本要求`18.x`以上，推荐使用 `^20.9.0`。
+
 ```shell
-# 安装项目依赖, 请使用Node16及以上版本
+# 安装项目依赖
 pnpm install
 # 启动项目
 pnpm run dev
 # 构建打包
 pnpm build
 ```
+
+## 🍷License
+
+Apache License Version 2.0

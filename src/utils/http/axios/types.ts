@@ -1,5 +1,5 @@
-import { AxiosRequestConfig } from 'axios'
-import { AxiosTransform } from './axiosTransform'
+import type { AxiosRequestConfig } from 'axios'
+import type { AxiosTransform } from './axiosTransform'
 
 export interface CreateAxiosOptions extends AxiosRequestConfig {
   transform?: AxiosTransform
@@ -51,8 +51,15 @@ export interface RequestOptions {
   isTransformResponse?: boolean
   // 是否返回原生响应头
   isReturnNativeResponse?: boolean
-  //忽略重复请求
+  // 忽略重复请求
   ignoreCancelToken?: boolean
   // 是否携带token
   withToken?: boolean
+}
+
+export interface Result<T = any> {
+  code: number
+  type?: 'success' | 'error' | 'warning'
+  message: string
+  result?: T
 }

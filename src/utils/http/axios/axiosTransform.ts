@@ -2,8 +2,7 @@
  * 数据处理类，可以根据项目自行配置
  */
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
-import type { RequestOptions } from './types'
-import { Result } from '#/axios'
+import type { RequestOptions, Result } from './types'
 
 export interface CreateAxiosOptions extends AxiosRequestConfig {
   authenticationScheme?: string
@@ -33,7 +32,7 @@ export abstract class AxiosTransform {
    */
   requestInterceptors?: (
     config: AxiosRequestConfig,
-    options: CreateAxiosOptions,
+    options: CreateAxiosOptions
   ) => AxiosRequestConfig
 
   /**

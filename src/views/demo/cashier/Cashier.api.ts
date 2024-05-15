@@ -1,5 +1,5 @@
 import { http } from '@/utils/http/axios'
-import { Result } from '#/axios'
+import type { Result } from '#/axios'
 
 /**
  * 获取当前可用支付的环境

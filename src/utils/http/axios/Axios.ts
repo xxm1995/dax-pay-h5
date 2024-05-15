@@ -1,14 +1,14 @@
-import type { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import axios from 'axios'
 import qs from 'qs'
-import { AxiosCanceler } from './axiosCancel'
-import { isFunction } from '@/utils/is'
 import { cloneDeep } from 'lodash-es'
+import { AxiosCanceler } from './axiosCancel'
+import type { CreateAxiosOptions, RequestOptions, UploadFileParams } from './types'
+import { isFunction } from '@/utils/is'
 
-import type { RequestOptions, CreateAxiosOptions, UploadFileParams } from './types'
 import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum'
-import { Result } from '#/axios'
+import type { Result } from '#/axios'
 
 export * from './axiosTransform'
 
@@ -53,20 +53,19 @@ export class VAxios {
    * @description:   请求方法
    */
   request<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    let conf: AxiosRequestConfig = cloneDeep(config)
+    let conf: any = cloneDeep(config)
     const transform = this.getTransform()
 
     const { requestOptions } = this.options
 
-    const opt: RequestOptions = Object.assign({}, requestOptions, options)
+    const opt: RequestOptions = { ...requestOptions, ...options }
 
     const { beforeRequestHook, requestCatch, transformRequestData } = transform || {}
     if (beforeRequestHook && isFunction(beforeRequestHook)) {
       conf = beforeRequestHook(conf, opt)
     }
 
-    //这里重新 赋值成最新的配置
-    // @ts-ignore
+    // 这里重新 赋值成最新的配置
     conf.requestOptions = opt
     // 支持 FormData
     conf = this.supportFormData(conf)
@@ -74,14 +73,15 @@ export class VAxios {
     return new Promise((resolve, reject) => {
       this.axiosInstance
         .request<any, AxiosResponse<Result>>(conf)
-        .then((res: AxiosResponse<Result>) => {
+        .then((res: any) => {
           // 请求是否被取消
           const isCancel = axios.isCancel(res)
           if (transformRequestData && isFunction(transformRequestData) && !isCancel) {
             try {
               const ret = transformRequestData(res, opt)
               resolve(ret)
-            } catch (err) {
+            }
+            catch (err) {
               reject(err || new Error('request error!'))
             }
             return
@@ -119,7 +119,8 @@ export class VAxios {
 
     if (params.filename) {
       formData.append(customFilename, params.file, params.filename)
-    } else {
+    }
+    else {
       formData.append(customFilename, params.file)
     }
 
@@ -142,7 +143,7 @@ export class VAxios {
       data: formData,
       headers: {
         'Content-type': ContentTypeEnum.FORM_DATA,
-        ignoreCancelToken: true,
+        'ignoreCancelToken': true,
       },
       ...config,
     })
@@ -154,9 +155,9 @@ export class VAxios {
     const contentType = headers?.['Content-Type'] || headers?.['content-type']
 
     if (
-      contentType !== ContentTypeEnum.FORM_URLENCODED ||
-      !Reflect.has(config, 'data') ||
-      config.method?.toUpperCase() === RequestEnum.GET
+      contentType !== ContentTypeEnum.FORM_URLENCODED
+      || !Reflect.has(config, 'data')
+      || config.method?.toUpperCase() === RequestEnum.GET
     ) {
       return config
     }
@@ -185,10 +186,10 @@ export class VAxios {
     const axiosCanceler = new AxiosCanceler()
 
     // 请求拦截器配置处理
-    this.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
+    this.axiosInstance.interceptors.request.use((config: any) => {
       const { headers: { ignoreCancelToken } = { ignoreCancelToken: false } } = config
-      const ignoreCancel =
-        ignoreCancelToken !== undefined
+      const ignoreCancel
+        = ignoreCancelToken !== undefined
           ? ignoreCancelToken
           : this.options.requestOptions?.ignoreCancelToken
 
@@ -200,9 +201,9 @@ export class VAxios {
     }, undefined)
 
     // 请求拦截器错误捕获
-    requestInterceptorsCatch &&
-      isFunction(requestInterceptorsCatch) &&
-      this.axiosInstance.interceptors.request.use(undefined, requestInterceptorsCatch)
+    requestInterceptorsCatch
+    && isFunction(requestInterceptorsCatch)
+    && this.axiosInstance.interceptors.request.use(undefined, requestInterceptorsCatch)
 
     // 响应结果拦截器处理
     this.axiosInstance.interceptors.response.use((res: AxiosResponse<any>) => {
@@ -214,8 +215,8 @@ export class VAxios {
     }, undefined)
 
     // 响应结果拦截器错误捕获
-    responseInterceptorsCatch &&
-      isFunction(responseInterceptorsCatch) &&
-      this.axiosInstance.interceptors.response.use(undefined, responseInterceptorsCatch)
+    responseInterceptorsCatch
+    && isFunction(responseInterceptorsCatch)
+    && this.axiosInstance.interceptors.response.use(undefined, responseInterceptorsCatch)
   }
 }

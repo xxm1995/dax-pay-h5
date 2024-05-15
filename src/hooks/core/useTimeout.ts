@@ -10,7 +10,8 @@ export function useTimeoutFn(handle: Fn<any>, wait: number, native = false) {
   const { readyRef, stop, start } = useTimeoutRef(wait)
   if (native) {
     handle()
-  } else {
+  }
+  else {
     watch(
       readyRef,
       (maturity) => {

@@ -4,7 +4,7 @@ const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
 export function joinTimestamp<T extends boolean>(
   join: boolean,
-  restful: T,
+  restful: T
 ): T extends true ? string : object
 
 export function joinTimestamp(join: boolean, restful = false): string | object {
@@ -35,7 +35,8 @@ export function formatRequestDate(params: Recordable) {
       if (value) {
         try {
           params[key] = isString(value) ? value.trim() : value
-        } catch (error) {
+        }
+        catch (error) {
           throw new Error(error as any)
         }
       }

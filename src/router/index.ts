@@ -1,13 +1,14 @@
-import { App } from 'vue'
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import { RootRoute, ErrorPageRoute } from '@/router/base'
+import type { App } from 'vue'
+import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouterGuards } from './router-guards'
+import routeModuleList from './modules'
+import { ErrorPageRoute, RootRoute } from '@/router/base'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
 
 // 菜单
-import routeModuleList from './modules'
 import { BusinessRoute } from '@/router/business'
 import { DemoRoute } from '@/router/demo'
-import { createRouterGuards } from "@/router/router-guards";
 
 // 普通路由
 export const constantRouter: RouteRecordRaw[] = [
