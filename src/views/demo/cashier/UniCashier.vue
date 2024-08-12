@@ -196,7 +196,7 @@ function wechatJsapiPay() {
     title: '测试H5支付',
     amount: amount.value,
     channel: payChannelEnum.WECHAT,
-    payMethod: payMethodEnum.JSAPI,
+    method: payMethodEnum.JSAPI,
     openId: openId.value,
   }
   simplePayCashier(from)
