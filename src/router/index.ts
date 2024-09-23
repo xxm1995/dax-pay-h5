@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createRouterGuards } from './router-guards'
 import routeModuleList from './modules'
-import { ErrorPageRoute, RootRoute } from '@/router/base'
+import { ErrorPageRoute } from '@/router/base'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
 
 // 菜单
@@ -13,7 +13,6 @@ import { DemoRoute } from '@/router/demo'
 // 普通路由
 export const constantRouter: RouteRecordRaw[] = [
   DemoRoute,
-  RootRoute,
   ErrorPageRoute,
   BusinessRoute,
 ]

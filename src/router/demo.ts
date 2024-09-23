@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
 const Layout = () => import('@/layout/index.vue')
 
@@ -6,8 +6,8 @@ const Layout = () => import('@/layout/index.vue')
  * 演示模块路由
  */
 export const DemoRoute: RouteRecordRaw = {
-  path: '/',
-  name: '',
+  path: '/demo',
+  name: 'demo',
   component: Layout,
   children: [
     {

@@ -1,5 +1,5 @@
 import { http } from '@/utils/http/axios'
-import { Result } from '#/axios'
+import type { Result } from '#/axios'
 
 export interface BasicResponseModel<T = any> {
   code: number

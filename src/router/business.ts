@@ -1,4 +1,5 @@
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import { PageEnum } from '@/enums/pageEnum'
 
 const Layout = () => import('@/layout/index.vue')
 
@@ -8,6 +9,7 @@ const Layout = () => import('@/layout/index.vue')
 export const BusinessRoute: RouteRecordRaw = {
   path: '/',
   name: '',
+  redirect: PageEnum.BASE_HOME,
   component: Layout,
   children: [
     {

@@ -48,12 +48,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       alias: [
         // @/xxxx => src/xxxx
         {
-          find: /\@\//,
+          find: /@\//,
           replacement: `${pathResolve('src')}/`,
         },
         // #/xxxx => types/xxxx
         {
-          find: /\#\//,
+          find: /#\//,
           replacement: `${pathResolve('types')}/`,
         },
       ],

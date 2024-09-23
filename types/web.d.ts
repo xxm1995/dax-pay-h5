@@ -1,13 +1,13 @@
-import { PageResult } from "@/types/axios";
+import type { PageResult } from '@/types/axios'
 
 /**
  * 分页参数
  */
 export interface PageParam {
   // 每页数量
-  size: number;
+  size: number
   // 当前页数
-  current: number;
+  current: number
 }
 
 /**
@@ -15,24 +15,24 @@ export interface PageParam {
  */
 export interface TablePageModel<T = any> {
   // 分页参数
-  pages: PageParam;
+  pages: PageParam
   // 查询参数
-  queryParam: object;
+  queryParam: object
   // 结果
-  pagination: PageResult<T>;
+  pagination: PageResult<T>
 }
 
 /**
  * 基础实体对象
  */
 export interface BaseEntity {
-  id?: number | string | null;
+  id?: number | string | null
 }
 
 /**
  * 键值对对象
  */
 export interface KeyValue {
-  key: string;
-  value: string;
+  key: string
+  value: string
 }

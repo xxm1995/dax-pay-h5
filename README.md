@@ -10,14 +10,16 @@
 
 ## 🍒 项目地址
 
-| 项目      | GITEE                                       | GITHUB                                          |
-|---------|---------------------------------------------|-------------------------------------------------|
+| 项目        | GITEE                                       | GITHUB                                          |
+| ----------- | ------------------------------------------- | ----------------------------------------------- |
 | 后端地址    | [GITEE](https://gitee.com/dromara/dax-pay)  | [GITHUB](https://github.com/dromara/dax-pay)    |
 | Web前端地址 | [GITEE](https://gitee.com/bootx/dax-pay-ui) | [GITHUB](https://github.com/xxm1995/dax-pay-ui) |
 | H5前端地址  | [GITEE](https://gitee.com/bootx/dax-pay-h5) | [GITHUB](https://github.com/xxm1995/dax-pay-h5) |
 
 ## 🏬 系统演示
+
 ### 管理平台:
+
 > 注：演示账号部分功能修改删除权限未开放。
 
 地址：https://daxpay.demo.bootx.cn
@@ -27,6 +29,7 @@
 密码：123456
 
 ### 网关接口
+
 > 注：接口平台只开放支付网关相关的接口，不开放系统其他接口。
 
 地址: https://daxpay.server.bootx.cn/doc.html
@@ -36,6 +39,7 @@
 密码: 123456
 
 ### 收银台演示
+
 > 请勿大额支付，可以通过后台管理端进行退款
 
 电脑收银台地址: https://daxpay.demo.bootx.cn/#/cashier
