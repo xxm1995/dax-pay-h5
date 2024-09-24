@@ -4,7 +4,7 @@ import axios from 'axios'
 import qs from 'qs'
 import { cloneDeep } from 'lodash-es'
 import { AxiosCanceler } from './axiosCancel'
-import type { CreateAxiosOptions, RequestOptions, UploadFileParams } from './types'
+import type { CreateAxiosOptions, RequestOptions } from './types'
 import { isFunction } from '@/utils/is'
 
 import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum'
@@ -106,45 +106,6 @@ export class VAxios {
   private getTransform() {
     const { transform } = this.options
     return transform
-  }
-
-  /**
-   * @description:  文件上传
-   */
-  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
-    const formData = new window.FormData()
-    const customFilename = params.name || 'file'
-
-    if (params.filename) {
-      formData.append(customFilename, params.file, params.filename)
-    }
-    else {
-      formData.append(customFilename, params.file)
-    }
-
-    if (params.data) {
-      Object.keys(params.data).forEach((key) => {
-        const value = params.data![key]
-        if (Array.isArray(value)) {
-          value.forEach((item) => {
-            formData.append(`${key}[]`, item)
-          })
-          return
-        }
-
-        formData.append(key, params.data![key])
-      })
-    }
-
-    return this.axiosInstance.request<T>({
-      method: 'POST',
-      data: formData,
-      headers: {
-        'Content-type': ContentTypeEnum.FORM_DATA,
-        'ignoreCancelToken': true,
-      },
-      ...config,
-    })
   }
 
   // support form-data

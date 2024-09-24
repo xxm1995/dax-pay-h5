@@ -7,19 +7,6 @@ export interface CreateAxiosOptions extends AxiosRequestConfig {
   authenticationScheme?: string
 }
 
-// 上传文件
-export interface UploadFileParams {
-  // 其他参数
-  data?: Recordable
-  // 文件参数接口字段名
-  name?: string
-  // 文件
-  file: File | Blob
-  // 文件名称
-  filename?: string
-  [key: string]: any
-}
-
 export interface RequestOptions {
   // 请求参数拼接到url
   joinParamsToUrl?: boolean

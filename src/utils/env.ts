@@ -28,9 +28,6 @@ export function getAppEnvConfig() {
     VITE_GLOB_API_URL,
     VITE_GLOB_APP_SHORT_NAME,
     VITE_GLOB_API_URL_PREFIX,
-    VITE_GLOB_UPLOAD_URL,
-    VITE_GLOB_PROD_MOCK,
-    VITE_GLOB_IMG_URL,
   } = ENV
 
   if (!/^[a-z_]*$/i.test(VITE_GLOB_APP_SHORT_NAME)) {
@@ -45,9 +42,6 @@ export function getAppEnvConfig() {
     VITE_GLOB_API_URL,
     VITE_GLOB_APP_SHORT_NAME,
     VITE_GLOB_API_URL_PREFIX,
-    VITE_GLOB_UPLOAD_URL,
-    VITE_GLOB_PROD_MOCK,
-    VITE_GLOB_IMG_URL,
   }
 }
 

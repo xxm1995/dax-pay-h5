@@ -15,8 +15,6 @@ import { isString } from '@/utils/is/'
 import { deepMerge, isUrl } from '@/utils'
 import { setObjToUrlParams } from '@/utils/urlUtils'
 
-import { useUserStoreWidthOut } from '@/store/modules/user'
-
 import router from '@/router'
 import { storage } from '@/utils/Storage'
 import type { Result } from '#/axios'
@@ -31,6 +29,8 @@ const transform: AxiosTransform = {
   /**
    * @description: 处理请求数据
    */
+  // eslint-disable-next-line ts/ban-ts-comment
+  // @ts-expect-error
   transformRequestData: (res: AxiosResponse<Result>, options: RequestOptions) => {
     const {
       isShowMessage = true,
@@ -176,19 +176,6 @@ const transform: AxiosTransform = {
         config.url = config.url + params
         config.params = undefined
       }
-    }
-    return config
-  },
-
-  /**
-   * @description: 请求拦截器处理
-   */
-  requestInterceptors: (config, options) => {
-    // 请求之前处理config
-    const userStore = useUserStoreWidthOut()
-    const token = userStore.getToken
-    if (token) {
-      ;(config as Recordable).headers.Accesstoken = token
     }
     return config
   },

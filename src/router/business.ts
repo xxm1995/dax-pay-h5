@@ -13,13 +13,11 @@ export const BusinessRoute: RouteRecordRaw = {
   component: Layout,
   children: [
     {
-      path: '/t',
+      path: '/t/:key',
       name: 'DispatchRouter',
       component: () => import('@/views/system/dispatch/DispatchRouter.vue'),
       meta: {
         title: '中转页',
-        ignoreAuth: true,
-        hiddenTabbar: true,
       },
     },
     {

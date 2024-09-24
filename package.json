@@ -83,16 +83,7 @@
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^1.8.27"
   },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged",
-    "commit-msg": "npx --no-install commitlint --edit $1"
-  },
   "lint-staged": {
     "*": "eslint --fix"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
   }
 }

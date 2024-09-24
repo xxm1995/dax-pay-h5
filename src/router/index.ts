@@ -2,16 +2,17 @@ import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createRouterGuards } from './router-guards'
-import routeModuleList from './modules'
-import { ErrorPageRoute } from '@/router/base'
+import { ErrorPageRoute, routeModuleList } from '@/router/base'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
 
 // 菜单
 import { BusinessRoute } from '@/router/business'
 import { DemoRoute } from '@/router/demo'
+import { DaxPayRoute } from '@/router/daxpay'
 
 // 普通路由
 export const constantRouter: RouteRecordRaw[] = [
+  DaxPayRoute,
   DemoRoute,
   ErrorPageRoute,
   BusinessRoute,
