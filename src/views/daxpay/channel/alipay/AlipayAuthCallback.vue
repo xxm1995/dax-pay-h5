@@ -1,5 +1,6 @@
 <template>
   <div>
+    获取中
   </div>
 </template>
 
@@ -7,6 +8,7 @@
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+
 const {appId, channel, queryCode, aliAppId} = route.params
 
 console.log(appId, channel)
