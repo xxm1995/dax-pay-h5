@@ -21,15 +21,15 @@ script.setAttribute(
   'https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.min.js',
 )
 document.head.appendChild(script)
+// 脚本加载完毕后进行初始化
+script.onload = () => {
+  init()
+}
 
 const route = useRoute()
 const { appId, channel, queryCode, aliAppId } = route.params
 
 const show = ref(true)
-
-setTimeout(() => {
-  init()
-}, 300)
 
 /**
  * 页面初始化
@@ -57,7 +57,6 @@ async function init() {
     })
   })
 }
-console.log(appId, channel)
 </script>
 
 <style scoped lang="less">
