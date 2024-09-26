@@ -25,5 +25,4 @@ async function bootstrap() {
   // 路由准备就绪后挂载APP实例
   app.mount('#app', true)
 }
-
 void bootstrap()

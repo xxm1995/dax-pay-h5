@@ -1,14 +1,15 @@
+import * as path from 'node:path'
 import type { PluginOption } from 'vite'
 import Components from 'unplugin-vue-components/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import { viteVConsole } from 'vite-plugin-vconsole'
 import { configHtmlPlugin } from './html'
 import { configCompressPlugin } from './compress'
 import { configVisualizerConfig } from './visualizer'
 import { configSvgIconsPlugin } from './svgSprite'
-
 /**
  * 配置 vite 插件
  * @param viteEnv vite 环境变量配置文件键值队 object
@@ -26,6 +27,13 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const vitePlugins: (PluginOption | PluginOption[])[] = [
     // have to
     vue(),
+    viteVConsole({
+      entry: path.resolve('src/main.ts'), // 或者可以使用这个配置: [path.resolve('src/main.ts')]
+      enabled: viteEnv.VITE_V_CONSOLE, // 可自行结合 mode 和 command 进行判断
+      config: {
+        theme: 'dark',
+      },
+    }),
     // 按需引入VantUi且自动创建组件声明
     Components({
       dts: true,

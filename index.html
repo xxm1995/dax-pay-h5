@@ -10,14 +10,15 @@
     <div id="app">
       <script>
         ;(() => {
-          const { darkMode = 'dark', appTheme = '#5d9dfe' } =
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+          const darkMode = mediaQuery.matches ? 'dark' : 'light'
+          const { appTheme = '#5d9dfe' } =
             JSON.parse(window.localStorage.getItem('DESIGN-SETTING')) || {}
 
           let htmlRoot = document.getElementById('htmlRoot')
           if (htmlRoot) {
             htmlRoot.classList.add(darkMode)
           }
-
           // 设置主题色变量
           document.documentElement.style.setProperty('--app-theme-color', appTheme)
         })()

@@ -1,12 +1,19 @@
 <template>
-  <div />
+  <van-overlay :show="true" v-show="show">
+    <div class="wrapper" @click.stop>
+      <van-loading size="24px">
+        获取中...
+      </van-loading>
+    </div>
+  </van-overlay>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { AuthCodeParam } from '@/views/daxpay/channel/ChannelAuth.api'
 import { authAndSet } from '@/views/daxpay/channel/ChannelAuth.api'
+import { showDialog } from "vant";
 
 const route = useRoute()
 const { appId, channel, queryCode } = route.params
@@ -17,6 +24,7 @@ const param = ref<AuthCodeParam>({
   authCode: code as string,
   channel: channel as string,
 })
+const show = ref(true)
 
 onMounted(() => {
   init()
@@ -26,12 +34,29 @@ onMounted(() => {
  * 页面初始化
  */
 async function init() {
-  authAndSet(param.value).then((res) => {
-    console.log(res)
+  authAndSet(param.value).then(() => {
+    show.value = false
+    showDialog({
+      message: '已成功获取用户信息!',
+      confirmButtonText: '关闭',
+    }).then(() => {
+      WeixinJSBridge.call('closeWindow')
+    })
   })
 }
 </script>
 
 <style scoped lang="less">
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
+.block {
+  width: 120px;
+  height: 120px;
+  background-color: #fff;
+}
 </style>
