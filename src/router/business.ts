@@ -22,18 +22,18 @@ export const BusinessRoute: RouteRecordRaw = {
     },
     {
       path: '/result/success',
-      name: 'PaySuccessResult',
-      component: () => import('@/views/result/PaySuccessResult.vue'),
+      name: 'SuccessResult',
+      component: () => import('@/views/result/SuccessResult.vue'),
       meta: {
         title: '支付成功',
       },
     },
     {
       path: '/result/error',
-      name: 'PayErrorResult',
-      component: () => import('@/views/result/PayErrorResult.vue'),
+      name: 'ErrorResult',
+      component: () => import('@/views/result/ErrorResult.vue'),
       meta: {
-        title: '支付失败',
+        title: '错误页',
       },
     },
   ],

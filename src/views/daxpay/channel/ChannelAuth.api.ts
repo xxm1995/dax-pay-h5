@@ -13,6 +13,7 @@ export function authAndSet(param: AuthCodeParam) {
   })
 }
 
+
 /**
  * 通道认证参数
  */

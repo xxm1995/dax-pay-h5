@@ -1,5 +1,5 @@
 <template>
-  <van-overlay :show="true" v-show="show">
+  <van-overlay v-show="show" :show="true">
     <div class="wrapper" @click.stop>
       <van-loading size="24px">
         获取中...
@@ -10,10 +10,10 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { showDialog } from 'vant'
 import type { AuthCodeParam } from '@/views/daxpay/channel/ChannelAuth.api'
 import { authAndSet } from '@/views/daxpay/channel/ChannelAuth.api'
-import { showDialog } from "vant";
 
 const route = useRoute()
 const { appId, channel, queryCode } = route.params
