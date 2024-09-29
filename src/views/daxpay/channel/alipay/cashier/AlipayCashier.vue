@@ -69,6 +69,7 @@ import {
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
+import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
 const { mchNo, appId } = route.params
@@ -79,6 +80,8 @@ const cashierInfo = ref<ChannelCashierConfigResult>({})
 const amount = ref<string>('0')
 const description = ref<string>('')
 const mchName = ref<string>('')
+
+const { input, del } = useKeyboard(amount)
 
 onMounted(() => {
   initData()
@@ -94,48 +97,6 @@ function initData() {
   getMchName(mchNo as string).then(({ data }) => {
     mchName.value = data
   })
-}
-
-/**
- * 输入
- */
-function input(value: string) {
-  const amountStr = amount.value
-  if (amountStr === '0') {
-    if (value === '.') {
-      amount.value = '0.'
-      return
-    }
-    amount.value = String(value)
-  }
-  else {
-    // 只允许有一个小数点
-    if (value === '.' && amountStr.includes('.')) {
-      return
-    }
-    // 小数最多两位
-    if (amountStr.includes('.') && amountStr.length - amountStr.indexOf('.') > 2) {
-      return
-    }
-    // 金额最高100万
-    if (amountStr.split('.')[0].length > 7 && value !== '.') {
-      return
-    }
-
-    amount.value = amountStr.concat(value)
-  }
-}
-
-/**
- * 删除
- */
-function del() {
-  if (amount.value.length > 1) {
-    amount.value = amount.value.substring(0, amount.value.length - 1)
-  }
-  else {
-    amount.value = '0'
-  }
 }
 
 /**

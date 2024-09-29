@@ -1,12 +1,56 @@
 <template>
   <div>
     <div class="container">
-      <h2>收银台</h2>
+      <div style="font-size: 28px;margin-top: 10px;">
+        {{ cashierInfo.cashierName || '微信收银台' }}
+      </div>
       <div class="amount-display">
-        <p>付款给骏易</p>
-        <p class="amount">¥ 0</p>
+        <p style="font-size: 20px">
+          付款给{{ mchName }}
+        </p>
+        <p style="font-size: 32px;">
+          ¥ {{ amount }}
+        </p>
       </div>
     </div>
+    <van-dialog
+      v-model:show="show"
+      title="支付备注"
+      confirm-button-text="保存"
+      cancel-button-text="清除"
+      confirm-button-color="#4CAF50"
+      cancel-button-color="red"
+      show-cancel-button
+      @cancel="description = ''"
+    >
+      <van-field
+        v-model="description"
+        rows="2"
+        autosize
+        label=""
+        type="textarea"
+        :maxlength="50"
+        placeholder="请输入支付备注内容"
+        show-word-limit
+      />
+    </van-dialog>
+    <van-number-keyboard
+      :show="true"
+      theme="custom"
+      extra-key="."
+      close-button-text="付款"
+      @close="pay"
+      @input="input"
+      @delete="del"
+    >
+      <template #title-left>
+        <div style="width: 100vw;display: flex; justify-content: center">
+          <div class="remark" @click="show = true">
+            添加备注
+          </div>
+        </div>
+      </template>
+    </van-number-keyboard>
   </div>
 </template>
 
@@ -16,22 +60,25 @@ import { useRoute } from 'vue-router'
 import type {
   CashierAuthCodeParam,
   CashierPayParam,
+  ChannelCashierConfigResult,
   WxJsapiSignResult,
 } from '@/views/daxpay/channel/ChannelCashier.api'
-import {
-  cashierPay,
-  generateAuthUrl,
-} from '@/views/daxpay/channel/ChannelCashier.api'
+import { cashierPay, generateAuthUrl, getCashierInfo, getMchName } from '@/views/daxpay/channel/ChannelCashier.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
+import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
 const { mchNo, appId } = route.params
 const { code } = route.query
 
+const show = ref<boolean>(false)
 const loading = ref<boolean>(false)
-const amount = ref<number>(0.0)
+const cashierInfo = ref<ChannelCashierConfigResult>({})
+const amount = ref<string>('0')
+const description = ref<string>('')
+const mchName = ref<string>('')
 
 // 认证参数
 const authParam = ref<CashierAuthCodeParam>({
@@ -39,6 +86,8 @@ const authParam = ref<CashierAuthCodeParam>({
   appId: appId as string,
   cashierType: CashierTypeEnum.WECHAT_PAY,
 })
+
+const { input, del } = useKeyboard(amount)
 
 onMounted(() => {
   init()
@@ -57,21 +106,34 @@ function init() {
     })
   }
   else {
-    // 发起收银台支付
-    wechatPay()
+    // 初始化数据
+    initData()
   }
+}
+
+/**
+ * 初始化数据
+ */
+function initData() {
+  getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
+    cashierInfo.value = data
+  })
+  getMchName(mchNo as string).then(({ data }) => {
+    mchName.value = data
+  })
 }
 
 /**
  * 微信jsapi方式支付
  */
-function wechatPay() {
+function pay() {
   loading.value = true
   const from = {
-    amount: amount.value,
+    amount: Number(amount.value),
     appId,
     authCode: code,
     cashierType: CashierTypeEnum.WECHAT_PAY,
+    description: description.value,
     mchNo,
   } as CashierPayParam
   cashierPay(from)
@@ -79,7 +141,7 @@ function wechatPay() {
       loading.value = false
       // 拉起jsapi支付
       const json = JSON.parse(data.payBody)
-      doJsapiPay(json)
+      jsapiPay(json)
     })
     .catch((err) => {
       // 跳转到错误页
@@ -93,7 +155,7 @@ function wechatPay() {
 /**
  * 拉起Jsapi支付窗口
  */
-function doJsapiPay(data: WxJsapiSignResult) {
+function jsapiPay(data: WxJsapiSignResult) {
   const form = {
     appId: data.appId, // 公众号ID，由商户传入
     timeStamp: data.timeStamp, // 时间戳，自1970年以来的秒数
@@ -113,5 +175,30 @@ function doJsapiPay(data: WxJsapiSignResult) {
 </script>
 
 <style scoped lang="less">
+@color: #4caf50;
 
+:deep(.van-key--blue) {
+  background: @color;
+}
+.container {
+  background-color: @color;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  .amount-display {
+    background-color: white;
+    color: @color;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .amount-display p {
+    margin: 5px 0;
+  }
+}
+.remark {
+  color: @color;
+}
 </style>
