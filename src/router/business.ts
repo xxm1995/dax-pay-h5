@@ -25,7 +25,7 @@ export const BusinessRoute: RouteRecordRaw = {
       name: 'SuccessResult',
       component: () => import('@/views/result/SuccessResult.vue'),
       meta: {
-        title: '支付成功',
+        title: '操作成功',
       },
     },
     {

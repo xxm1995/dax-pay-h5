@@ -1,11 +1,30 @@
 <template>
+  <div>
+    <div class="container">
+      <h2>收银台</h2>
+      <div class="amount-display">
+        <p>付款给骏易</p>
+        <p class="amount">¥ 0</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import type { WxJsapiSignResult } from '@/views/demo/aggregate/Aggregate.api'
-import type { CashierAuthCodeParam } from '@/views/daxpay/channel/ChannelCashier.api'
+import type {
+  CashierAuthCodeParam,
+  CashierPayParam,
+  WxJsapiSignResult,
+} from '@/views/daxpay/channel/ChannelCashier.api'
+import {
+  cashierPay,
+  generateAuthUrl,
+} from '@/views/daxpay/channel/ChannelCashier.api'
+
+import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
+import router from '@/router'
 
 const route = useRoute()
 const { mchNo, appId } = route.params
@@ -18,8 +37,7 @@ const amount = ref<number>(0.0)
 const authParam = ref<CashierAuthCodeParam>({
   mchNo: mchNo as string,
   appId: appId as string,
-  authCode: code as string,
-  cashierType: 'wechat_pay',
+  cashierType: CashierTypeEnum.WECHAT_PAY,
 })
 
 onMounted(() => {
@@ -32,17 +50,15 @@ onMounted(() => {
 function init() {
   // 如果不是重定向跳转过来， 跳转到到重定向地址
   if (!code) {
-    // 跳转到微信授权地址
-    const url = ''
-    location.replace(url)
+    // 重定向跳转到微信授权地址
+    generateAuthUrl(authParam.value).then((res) => {
+      const url = res.data
+      location.replace(url)
+    })
   }
   else {
-    // 获取并设置OpenId
-
     // 发起收银台支付
-
-    // 获取jsapi调用方式
-    doJsapiPay()
+    wechatPay()
   }
 }
 
@@ -52,14 +68,13 @@ function init() {
 function wechatPay() {
   loading.value = true
   const from = {
-    bizOrderNo: `M${new Date().getTime()}`,
-    title: '测试H5支付',
     amount: amount.value,
-    channel: ChannelEnum.WECHAT,
-    method: MethodEnum.JSAPI,
-    openId: openId.value,
-  }
-  simplePayCashier(from)
+    appId,
+    authCode: code,
+    cashierType: CashierTypeEnum.WECHAT_PAY,
+    mchNo,
+  } as CashierPayParam
+  cashierPay(from)
     .then(({ data }) => {
       loading.value = false
       // 拉起jsapi支付
@@ -91,9 +106,7 @@ function doJsapiPay(data: WxJsapiSignResult) {
   WeixinJSBridge.invoke('getBrandWCPayRequest', form, () => {
     if (res.err_msg === 'get_brand_wcpay_request:ok') {
       // 跳转到成功页面
-      setTimeout(() => {
-        WeixinJSBridge.call('closeWindow')
-      }, 0)
+      router.push({ name: 'SuccessResult', query: { msg: '支付成功' }, replace: true })
     }
   })
 }

@@ -13,8 +13,8 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 import router from '@/router'
-import { ref } from "vue";
 
 const route = useRoute()
 
