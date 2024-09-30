@@ -13,7 +13,6 @@ export function authAndSet(param: AuthCodeParam) {
   })
 }
 
-
 /**
  * 通道认证参数
  */
@@ -26,4 +25,18 @@ export interface AuthCodeParam {
   queryCode?: string
   // 应用号
   appId?: string
+}
+
+/**
+ * AuthResult
+ */
+export interface AuthResult {
+  // OpenId
+  openId?: string
+  // 用户ID
+  userId?: string
+  // AccessToken
+  accessToken?: string
+  // 状态
+  status?: string
 }

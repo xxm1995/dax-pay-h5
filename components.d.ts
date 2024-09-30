@@ -10,10 +10,12 @@ declare module 'vue' {
     Loading: typeof import('./src/components/Loading.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
+    VanButton: typeof import('vant/es')['Button']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanDialog: typeof import('vant/es')['Dialog']
     VanField: typeof import('vant/es')['Field']
     VanLoading: typeof import('vant/es')['Loading']
     VanNumberKeyboard: typeof import('vant/es')['NumberKeyboard']
+    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
   }
 }

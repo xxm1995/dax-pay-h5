@@ -91,34 +91,12 @@ const transform: AxiosTransform = {
       return result
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
-    let errorMsg = msg
+    const errorMsg = msg
 
-    switch (code) {
-      // 请求失败
-      case ResultEnum.ERROR:
-        showFailToast(errorMsg)
-        break
-      // token 过期
-      case ResultEnum.TOKEN_EXPIRED:
-        const LoginName = PageEnum.BASE_LOGIN_NAME
-        const LoginPath = PageEnum.BASE_LOGIN
-        if (router.currentRoute.value?.name === LoginName) {
-          return
-        }
-        // 到登录页
-        errorMsg = '登录超时，请重新登录!'
-        showDialog({
-          title: '提示',
-          message: '登录身份已失效，请重新登录!',
-        })
-          .then(() => {
-            storage.clear()
-            window.location.href = LoginPath
-          })
-          .catch(() => {
-            // on cancel
-          })
-        break
+    // 请求失败
+    console.log(code)
+    if (code) {
+      showFailToast(errorMsg)
     }
     throw new Error(errorMsg)
   },

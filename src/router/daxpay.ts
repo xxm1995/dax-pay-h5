@@ -27,7 +27,7 @@ export const DaxPayRoute: RouteRecordRaw = {
       },
     },
     {
-      path: '/channel/cashier/:appId/:channel',
+      path: '/channel/cashier/:mchNo/:appId',
       name: 'ChannelCashier',
       component: () => import('@/views/daxpay/channel/ChannelCashier.vue'),
       meta: {

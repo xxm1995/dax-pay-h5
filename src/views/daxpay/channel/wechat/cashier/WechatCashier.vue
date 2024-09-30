@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="show">
     <div class="container">
       <div style="font-size: 28px;margin-top: 10px;">
         {{ cashierInfo.cashierName || '微信收银台' }}
@@ -14,7 +14,7 @@
       </div>
     </div>
     <van-dialog
-      v-model:show="show"
+      v-model:show="showRemark"
       title="支付备注"
       confirm-button-text="保存"
       cancel-button-text="清除"
@@ -45,8 +45,13 @@
     >
       <template #title-left>
         <div style="width: 100vw;display: flex; justify-content: center">
-          <div class="remark" @click="show = true">
-            添加备注
+          <div class="remark" @click="showRemark = true">
+            <div v-if="!description">
+              添加备注
+            </div>
+            <div v-else style="max-width: 75vw;">
+              <van-text-ellipsis :content="`备注: ${description}`" /><div />
+            </div>
           </div>
         </div>
       </template>
@@ -57,13 +62,20 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { showNotify } from 'vant'
 import type {
-  CashierAuthCodeParam,
+  CashierAuthParam,
   CashierPayParam,
   ChannelCashierConfigResult,
   WxJsapiSignResult,
 } from '@/views/daxpay/channel/ChannelCashier.api'
-import { cashierPay, generateAuthUrl, getCashierInfo, getMchName } from '@/views/daxpay/channel/ChannelCashier.api'
+import {
+  auth
+  , cashierPay,
+  generateAuthUrl,
+  getCashierInfo,
+  getMchName,
+} from '@/views/daxpay/channel/ChannelCashier.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
@@ -74,14 +86,16 @@ const { mchNo, appId } = route.params
 const { code } = route.query
 
 const show = ref<boolean>(false)
+const showRemark = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const cashierInfo = ref<ChannelCashierConfigResult>({})
 const amount = ref<string>('0')
 const description = ref<string>('')
 const mchName = ref<string>('')
+const openId = ref<string>('')
 
 // 认证参数
-const authParam = ref<CashierAuthCodeParam>({
+const authParam = ref<CashierAuthParam>({
   mchNo: mchNo as string,
   appId: appId as string,
   cashierType: CashierTypeEnum.WECHAT_PAY,
@@ -103,9 +117,12 @@ function init() {
     generateAuthUrl(authParam.value).then((res) => {
       const url = res.data
       location.replace(url)
+    }).catch((res) => {
+      router.push({ name: 'ErrorResult', query: { msg: res.message } })
     })
   }
   else {
+    authParam.value.authCode = code as string
     // 初始化数据
     initData()
   }
@@ -115,11 +132,21 @@ function init() {
  * 初始化数据
  */
 function initData() {
+  show.value = true
   getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
     cashierInfo.value = data
+  }).catch((res) => {
+    router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
   getMchName(mchNo as string).then(({ data }) => {
     mchName.value = data
+  }).catch((res) => {
+    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+  })
+  auth(authParam.value).then(({ data }) => {
+    openId.value = data.openId as string
+  }).catch((res) => {
+    router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
 }
 
@@ -127,11 +154,17 @@ function initData() {
  * 微信jsapi方式支付
  */
 function pay() {
+  const amountValue = Number(amount.value)
+  if (amountValue === 0) {
+    showNotify({ type: 'warning', message: '金额不可为0' })
+    return
+  }
+
   loading.value = true
   const from = {
-    amount: Number(amount.value),
+    amount: amountValue,
     appId,
-    authCode: code,
+    openId: openId.value,
     cashierType: CashierTypeEnum.WECHAT_PAY,
     description: description.value,
     mchNo,
@@ -142,13 +175,6 @@ function pay() {
       // 拉起jsapi支付
       const json = JSON.parse(data.payBody)
       jsapiPay(json)
-    })
-    .catch((err) => {
-      // 跳转到错误页
-      router.push({
-        name: 'ErrorResult',
-        query: { msg: err.message },
-      })
     })
 }
 
@@ -165,7 +191,7 @@ function jsapiPay(data: WxJsapiSignResult) {
     paySign: data.paySign, // 微信签名
   }
   // 使用微信JsSdk拉起支付
-  WeixinJSBridge.invoke('getBrandWCPayRequest', form, () => {
+  WeixinJSBridge.invoke('getBrandWCPayRequest', form, (res) => {
     if (res.err_msg === 'get_brand_wcpay_request:ok') {
       // 跳转到成功页面
       router.push({ name: 'SuccessResult', query: { msg: '支付成功' }, replace: true })

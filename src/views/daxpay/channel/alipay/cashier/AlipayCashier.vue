@@ -14,7 +14,7 @@
       </div>
     </div>
     <van-dialog
-      v-model:show="show"
+      v-model:show="showRemark"
       title="支付备注"
       confirm-button-text="保存"
       cancel-button-text="清除"
@@ -45,8 +45,13 @@
     >
       <template #title-left>
         <div style="width: 100vw;display: flex; justify-content: center">
-          <div class="remark" @click="show = true">
-            添加备注
+          <div class="remark" @click="showRemark = true">
+            <div v-if="!description">
+              添加备注
+            </div>
+            <div v-else style="max-width: 75vw;">
+              <van-text-ellipsis :content="`备注: ${description}`" /><div />
+            </div>
           </div>
         </div>
       </template>
@@ -57,6 +62,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { showNotify } from 'vant'
 import type {
   CashierPayParam,
   ChannelCashierConfigResult,
@@ -74,7 +80,7 @@ import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 const route = useRoute()
 const { mchNo, appId } = route.params
 
-const show = ref<boolean>(false)
+const showRemark = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const cashierInfo = ref<ChannelCashierConfigResult>({})
 const amount = ref<string>('0')
@@ -93,9 +99,13 @@ onMounted(() => {
 function initData() {
   getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
     cashierInfo.value = data
+  }).catch((res) => {
+    router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
   getMchName(mchNo as string).then(({ data }) => {
     mchName.value = data
+  }).catch((res) => {
+    router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
 }
 
@@ -103,14 +113,14 @@ function initData() {
  * 支付
  */
 function pay() {
-  // 金额不可为0
-  if (amount.value === '0') {
+  const amountValue = Number(amount.value)
+  if (amountValue === 0) {
+    showNotify({ type: 'warning', message: '金额不可为0' })
     return
   }
-
   loading.value = true
   const from = {
-    amount: Number(amount.value),
+    amount: amountValue,
     appId,
     cashierType: CashierTypeEnum.ALIPAY,
     description: description.value,
@@ -121,13 +131,6 @@ function pay() {
       loading.value = false
       // 跳转到H5/付款码支付页面
       location.replace(data.payBody)
-    })
-    .catch((err) => {
-      // 跳转到错误页
-      router.push({
-        name: 'ErrorResult',
-        query: { msg: err.message },
-      })
     })
 }
 </script>

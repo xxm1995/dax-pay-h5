@@ -1,3 +1,4 @@
+import type { AuthResult } from './ChannelAuth.api'
 import { http } from '@/utils/http/axios'
 import type { Result } from '#/axios'
 
@@ -26,9 +27,20 @@ export function getCashierInfo(cashierType: string, appId: string) {
 /**
  * 获取收银台所需授权链接, 用于获取OpenId一类的信息
  */
-export function generateAuthUrl(param: CashierAuthCodeParam) {
+export function generateAuthUrl(param: CashierAuthParam) {
   return http.request<Result<string>>({
-    url: '/unipay/ext/channel/cashier/authCode',
+    url: '/unipay/ext/channel/cashier/generateAuthUrl',
+    method: 'POST',
+    data: param,
+  })
+}
+
+/**
+ * 获取授权信息
+ */
+export function auth(param: CashierPayParam) {
+  return http.request<Result<AuthResult>>({
+    url: '/unipay/ext/channel/cashier/auth',
     method: 'POST',
     data: param,
   })
@@ -48,13 +60,15 @@ export function cashierPay(param: CashierPayParam) {
 /**
  * 通道认证参数
  */
-export interface CashierAuthCodeParam {
+export interface CashierAuthParam {
   // 商户号
   mchNo?: string
   // 应用号
   appId?: string
   // 收银台类型
   cashierType?: string
+  // 授权码
+  authCode?: string
 }
 
 /**
@@ -70,8 +84,8 @@ export interface CashierPayParam {
   cashierType?: string
   // 支付金额
   amount?: number
-  // 标识码
-  authCode?: string
+  // 唯一标识
+  openId?: string
   // 支付描述
   description?: string
 }
