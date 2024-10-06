@@ -23,7 +23,7 @@ routeStore.setRouters(constantRouter.concat(routeModuleList))
 
 const router = createRouter({
   // 重定向时hash模式有场景无法跳转，需要使用history模式
-  history: createWebHistory(''),
+  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
   routes: constantRouter.concat(...routeModuleList),
   strict: true,
   scrollBehavior: () => ({ left: 0, top: 0 }),

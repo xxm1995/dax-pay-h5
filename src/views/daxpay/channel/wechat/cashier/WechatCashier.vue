@@ -6,7 +6,7 @@
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
-          付款给{{ mchName }}
+          付款金额
         </p>
         <p style="font-size: 32px;">
           ¥ {{ amount }}
@@ -74,7 +74,6 @@ import {
   , cashierPay,
   generateAuthUrl,
   getCashierInfo,
-  getMchName,
 } from '@/views/daxpay/channel/ChannelCashier.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
@@ -82,7 +81,7 @@ import router from '@/router'
 import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
-const { mchNo, appId } = route.params
+const { appId } = route.params
 const { code } = route.query
 
 const show = ref<boolean>(false)
@@ -91,12 +90,10 @@ const loading = ref<boolean>(false)
 const cashierInfo = ref<ChannelCashierConfigResult>({})
 const amount = ref<string>('0')
 const description = ref<string>('')
-const mchName = ref<string>('')
 const openId = ref<string>('')
 
 // 认证参数
 const authParam = ref<CashierAuthParam>({
-  mchNo: mchNo as string,
   appId: appId as string,
   cashierType: CashierTypeEnum.WECHAT_PAY,
 })
@@ -138,11 +135,6 @@ function initData() {
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
-  getMchName(mchNo as string).then(({ data }) => {
-    mchName.value = data
-  }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
-  })
   auth(authParam.value).then(({ data }) => {
     openId.value = data.openId as string
   }).catch((res) => {
@@ -167,7 +159,6 @@ function pay() {
     openId: openId.value,
     cashierType: CashierTypeEnum.WECHAT_PAY,
     description: description.value,
-    mchNo,
   } as CashierPayParam
   cashierPay(from)
     .then(({ data }) => {

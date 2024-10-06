@@ -2,16 +2,6 @@ import type { AuthResult } from './ChannelAuth.api'
 import { http } from '@/utils/http/axios'
 import type { Result } from '#/axios'
 
-/**
- * 获取商户名称
- */
-export function getMchName(mchNo: string) {
-  return http.request<Result<string>>({
-    url: '/unipay/ext/channel/cashier/getMchName',
-    method: 'GET',
-    params: { mchNo },
-  })
-}
 
 /**
  * 获取收银台信息
@@ -61,8 +51,6 @@ export function cashierPay(param: CashierPayParam) {
  * 通道认证参数
  */
 export interface CashierAuthParam {
-  // 商户号
-  mchNo?: string
   // 应用号
   appId?: string
   // 收银台类型
@@ -75,9 +63,6 @@ export interface CashierAuthParam {
  * 通道收银支付参数
  */
 export interface CashierPayParam {
-
-  // 商户号
-  mchNo?: string
   // 应用号
   appId?: string
   // 收银台类型
@@ -127,8 +112,6 @@ export interface WxJsapiSignResult {
  * 收银台配置信息
  */
 export interface ChannelCashierConfigResult {
-  // 商户号
-  mchNo?: string
   // 应用号
   appId?: string
   // 收银台类型

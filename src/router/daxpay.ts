@@ -27,7 +27,7 @@ export const DaxPayRoute: RouteRecordRaw = {
       },
     },
     {
-      path: '/channel/cashier/:mchNo/:appId',
+      path: '/channel/cashier/:appId',
       name: 'ChannelCashier',
       component: () => import('@/views/daxpay/channel/ChannelCashier.vue'),
       meta: {
@@ -35,7 +35,7 @@ export const DaxPayRoute: RouteRecordRaw = {
       },
     },
     {
-      path: '/alipay/cashier/:mchNo/:appId',
+      path: '/alipay/cashier/:appId',
       name: 'AlipayCashier',
       component: () => import('@/views/daxpay/channel/alipay/cashier/AlipayCashier.vue'),
       meta: {
@@ -43,7 +43,7 @@ export const DaxPayRoute: RouteRecordRaw = {
       },
     },
     {
-      path: '/wechat/cashier/:mchNo/:appId',
+      path: '/wechat/cashier/:appId',
       name: 'WechatCashier',
       component: () => import('@/views/daxpay/channel/wechat/cashier/WechatCashier.vue'),
       meta: {

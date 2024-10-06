@@ -6,7 +6,7 @@
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
-          付款给{{ mchName }}
+          付款金额
         </p>
         <p style="font-size: 32px;">
           ¥ {{ amount }}
@@ -70,7 +70,6 @@ import type {
 import {
   cashierPay,
   getCashierInfo,
-  getMchName,
 } from '@/views/daxpay/channel/ChannelCashier.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
@@ -78,14 +77,13 @@ import router from '@/router'
 import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
-const { mchNo, appId } = route.params
+const { appId } = route.params
 
 const showRemark = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const cashierInfo = ref<ChannelCashierConfigResult>({})
 const amount = ref<string>('0')
 const description = ref<string>('')
-const mchName = ref<string>('')
 
 const { input, del } = useKeyboard(amount)
 
@@ -99,11 +97,6 @@ onMounted(() => {
 function initData() {
   getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
     cashierInfo.value = data
-  }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
-  })
-  getMchName(mchNo as string).then(({ data }) => {
-    mchName.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
@@ -124,7 +117,6 @@ function pay() {
     appId,
     cashierType: CashierTypeEnum.ALIPAY,
     description: description.value,
-    mchNo,
   } as CashierPayParam
   cashierPay(from)
     .then(({ data }) => {
