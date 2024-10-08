@@ -1,4 +1,4 @@
-import type { AuthResult } from './ChannelAuth.api'
+import type { AuthResult } from '../auth/ChannelAuth.api'
 import { http } from '@/utils/http/axios'
 import type { Result } from '#/axios'
 

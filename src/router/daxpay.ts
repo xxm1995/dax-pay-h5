@@ -13,7 +13,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     {
       path: '/alipay/auth/:appId/:channel/:queryCode/:aliAppId',
       name: 'AlipayAuth',
-      component: () => import('@/views/daxpay/channel/alipay/auth/AlipayAuth.vue'),
+      component: () => import('@/views/daxpay/auth/alipay/AlipayAuth.vue'),
       meta: {
         title: '支付宝信息获取',
       },
@@ -21,7 +21,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     {
       path: '/wechat/auth/:appId/:channel/:queryCode',
       name: 'WechatAuth',
-      component: () => import('@/views/daxpay/channel/wechat/auth/WechatAuth.vue'),
+      component: () => import('@/views/daxpay/auth/wechat/WechatAuth.vue'),
       meta: {
         title: '微信信息获取',
       },
@@ -29,7 +29,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     {
       path: '/channel/cashier/:appId',
       name: 'ChannelCashier',
-      component: () => import('@/views/daxpay/channel/ChannelCashier.vue'),
+      component: () => import('@/views/daxpay/cashier/ChannelCashier.vue'),
       meta: {
         title: '收银台',
       },
@@ -37,7 +37,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     {
       path: '/alipay/cashier/:appId',
       name: 'AlipayCashier',
-      component: () => import('@/views/daxpay/channel/alipay/cashier/AlipayCashier.vue'),
+      component: () => import('@/views/daxpay/cashier/alipay/AlipayCashier.vue'),
       meta: {
         title: '支付宝收银台',
       },
@@ -45,7 +45,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     {
       path: '/wechat/cashier/:appId',
       name: 'WechatCashier',
-      component: () => import('@/views/daxpay/channel/wechat/cashier/WechatCashier.vue'),
+      component: () => import('@/views/daxpay/cashier/wechat/WechatCashier.vue'),
       meta: {
         title: '微信收银台',
       },

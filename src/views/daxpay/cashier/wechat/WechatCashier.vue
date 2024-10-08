@@ -68,13 +68,13 @@ import type {
   CashierPayParam,
   ChannelCashierConfigResult,
   WxJsapiSignResult,
-} from '@/views/daxpay/channel/ChannelCashier.api'
+} from '@/views/daxpay/cashier/ChannelCashier.api'
 import {
   auth
   , cashierPay,
   generateAuthUrl,
   getCashierInfo,
-} from '@/views/daxpay/channel/ChannelCashier.api'
+} from '@/views/daxpay/cashier/ChannelCashier.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'

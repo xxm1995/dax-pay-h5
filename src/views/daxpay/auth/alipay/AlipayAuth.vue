@@ -12,8 +12,8 @@
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { showDialog } from 'vant'
-import type { AuthCodeParam } from '@/views/daxpay/channel/ChannelAuth.api'
-import { authAndSet } from '@/views/daxpay/channel/ChannelAuth.api'
+import type { AuthCodeParam } from '@/views/daxpay/auth/ChannelAuth.api'
+import { authAndSet } from '@/views/daxpay/auth/ChannelAuth.api'
 
 const script = document.createElement('script')
 script.setAttribute(

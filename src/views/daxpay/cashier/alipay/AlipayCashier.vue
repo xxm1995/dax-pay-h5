@@ -66,11 +66,11 @@ import { showNotify } from 'vant'
 import type {
   CashierPayParam,
   ChannelCashierConfigResult,
-} from '@/views/daxpay/channel/ChannelCashier.api'
+} from '@/views/daxpay/cashier/ChannelCashier.api'
 import {
   cashierPay,
   getCashierInfo,
-} from '@/views/daxpay/channel/ChannelCashier.api'
+} from '@/views/daxpay/cashier/ChannelCashier.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
