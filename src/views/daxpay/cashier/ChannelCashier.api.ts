@@ -8,7 +8,7 @@ import type { Result } from '#/axios'
  */
 export function getCashierInfo(cashierType: string, appId: string) {
   return http.request<Result<ChannelCashierConfigResult>>({
-    url: '/unipay/ext/channel/cashier/getCashierType',
+    url: '/unipay/ext/channel/cashier/getCashier',
     method: 'GET',
     params: { cashierType, appId },
   })
