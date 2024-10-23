@@ -57,5 +57,13 @@ export default antfu({
     'node/prefer-global/process': 'off',
     // 对所有控制语句强制执行一致的大括号样式，（只有一行的时候eslint默认是不需要大括号的，这样会降低代码清晰度）
     'curly': ['error', 'all'],
+    // 'indent': 'off',
+    // 'vue/script-indent': [
+    //   'error',
+    //   2,
+    //   {
+    //     baseIndent: 1,
+    //   },
+    // ],
   },
 })

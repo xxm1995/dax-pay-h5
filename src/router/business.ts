@@ -1,4 +1,5 @@
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import { PageEnum } from '@/enums/pageEnum'
 
 const Layout = () => import('@/layout/index.vue')
 
@@ -8,32 +9,31 @@ const Layout = () => import('@/layout/index.vue')
 export const BusinessRoute: RouteRecordRaw = {
   path: '/',
   name: '',
+  redirect: PageEnum.BASE_HOME,
   component: Layout,
   children: [
     {
-      path: '/t',
+      path: '/t/:key',
       name: 'DispatchRouter',
       component: () => import('@/views/system/dispatch/DispatchRouter.vue'),
       meta: {
         title: '中转页',
-        ignoreAuth: true,
-        hiddenTabbar: true,
       },
     },
     {
       path: '/result/success',
-      name: 'PaySuccessResult',
-      component: () => import('@/views/result/PaySuccessResult.vue'),
+      name: 'SuccessResult',
+      component: () => import('@/views/result/SuccessResult.vue'),
       meta: {
-        title: '支付成功',
+        title: '操作成功',
       },
     },
     {
       path: '/result/error',
-      name: 'PayErrorResult',
-      component: () => import('@/views/result/PayErrorResult.vue'),
+      name: 'ErrorResult',
+      component: () => import('@/views/result/ErrorResult.vue'),
       meta: {
-        title: '支付失败',
+        title: '错误页',
       },
     },
   ],

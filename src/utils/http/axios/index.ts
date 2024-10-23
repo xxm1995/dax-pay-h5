@@ -1,10 +1,13 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
+import type { AxiosResponse } from 'axios'
+import axios from 'axios'
+import { showDialog, showFailToast } from 'vant'
 import { VAxios } from './Axios'
-import { AxiosTransform } from './axiosTransform'
-import axios, { AxiosResponse } from 'axios'
+import type { AxiosTransform } from './axiosTransform'
 import { checkStatus } from './checkStatus'
-import { joinTimestamp, formatRequestDate } from './helper'
-import { RequestEnum, ResultEnum, ContentTypeEnum } from '@/enums/httpEnum'
+import { formatRequestDate, joinTimestamp } from './helper'
+import type { CreateAxiosOptions, RequestOptions } from './types'
+import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums/httpEnum'
 import { PageEnum } from '@/enums/pageEnum'
 import { useGlobSetting } from '@/hooks/setting'
 
@@ -12,17 +15,12 @@ import { isString } from '@/utils/is/'
 import { deepMerge, isUrl } from '@/utils'
 import { setObjToUrlParams } from '@/utils/urlUtils'
 
-import { RequestOptions, CreateAxiosOptions } from './types'
-
-import { useUserStoreWidthOut } from '@/store/modules/user'
-
-const globSetting = useGlobSetting()
-const urlPrefix = globSetting.urlPrefix || ''
-
 import router from '@/router'
 import { storage } from '@/utils/Storage'
-import { showFailToast, showDialog } from 'vant'
-import { Result } from '#/axios'
+import type { Result } from '#/axios'
+
+const globSetting = useGlobSetting()
+const urlPrefix = globSetting.urlPrefix
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -31,6 +29,8 @@ const transform: AxiosTransform = {
   /**
    * @description: 处理请求数据
    */
+  // eslint-disable-next-line ts/ban-ts-comment
+  // @ts-expect-error
   transformRequestData: (res: AxiosResponse<Result>, options: RequestOptions) => {
     const {
       isShowMessage = true,
@@ -70,10 +70,12 @@ const transform: AxiosTransform = {
         }).then(() => {
           // on close
         })
-      } else if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
+      }
+      else if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
         // 是否显示自定义信息提示
         showFailToast(msg || errorMessageText || '操作失败！')
-      } else if (!hasSuccess && options.errorMessageMode === 'modal') {
+      }
+      else if (!hasSuccess && options.errorMessageMode === 'modal') {
         // errorMessageMode=‘custom-modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
         showDialog({
           title: '提示',
@@ -89,32 +91,12 @@ const transform: AxiosTransform = {
       return result
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
-    let errorMsg = msg
+    const errorMsg = msg
 
-    switch (code) {
-      // 请求失败
-      case ResultEnum.ERROR:
-        showFailToast(errorMsg)
-        break
-      // token 过期
-      case ResultEnum.TOKEN_EXPIRED:
-        const LoginName = PageEnum.BASE_LOGIN_NAME
-        const LoginPath = PageEnum.BASE_LOGIN
-        if (router.currentRoute.value?.name === LoginName) return
-        // 到登录页
-        errorMsg = '登录超时，请重新登录!'
-        showDialog({
-          title: '提示',
-          message: '登录身份已失效，请重新登录!',
-        })
-          .then(() => {
-            storage.clear()
-            window.location.href = LoginPath
-          })
-          .catch(() => {
-            // on cancel
-          })
-        break
+    // 请求失败
+    console.log(code)
+    if (code) {
+      showFailToast(errorMsg)
     }
     throw new Error(errorMsg)
   },
@@ -122,7 +104,6 @@ const transform: AxiosTransform = {
   // 请求之前处理config
   beforeRequestHook: (config, options) => {
     const { apiUrl, joinPrefix, joinParamsToUrl, formatDate, joinTime = true, urlPrefix } = options
-
     const isUrlStr = isUrl(config.url as string)
 
     if (!isUrlStr && joinPrefix) {
@@ -138,22 +119,25 @@ const transform: AxiosTransform = {
       if (!isString(params)) {
         // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
         config.params = Object.assign(params || {}, joinTimestamp(joinTime, false))
-      } else {
+      }
+      else {
         // 兼容restful风格
-        config.url = config.url + params + `${joinTimestamp(joinTime, true)}`
+        config.url = `${config.url + params}${joinTimestamp(joinTime, true)}`
         config.params = undefined
       }
-    } else {
+    }
+    else {
       if (!isString(params)) {
         formatDate && formatRequestDate(params)
         if (
-          Reflect.has(config, 'data') &&
-          config.data &&
-          (Object.keys(config.data).length > 0 || config.data instanceof FormData)
+          Reflect.has(config, 'data')
+          && config.data
+          && (Object.keys(config.data).length > 0 || config.data instanceof FormData)
         ) {
           config.data = data
           config.params = params
-        } else {
+        }
+        else {
           config.data = data
           // params 是添加到 url 的请求字符串中的，用于 get 请求
           config.params = params
@@ -161,27 +145,15 @@ const transform: AxiosTransform = {
         if (joinParamsToUrl) {
           config.url = setObjToUrlParams(
             config.url as string,
-            Object.assign({}, config.params, config.data),
+            { ...config.params, ...config.data },
           )
         }
-      } else {
+      }
+      else {
         // 兼容restful风格
         config.url = config.url + params
         config.params = undefined
       }
-    }
-    return config
-  },
-
-  /**
-   * @description: 请求拦截器处理
-   */
-  requestInterceptors: (config, options) => {
-    // 请求之前处理config
-    const userStore = useUserStoreWidthOut()
-    const token = userStore.getToken
-    if (token) {
-      ;(config as Recordable).headers.Accesstoken = token
     }
     return config
   },
@@ -192,11 +164,11 @@ const transform: AxiosTransform = {
   responseInterceptorsCatch: (error: any) => {
     const { response, code, message } = error || {}
     // TODO 此处要根据后端接口返回格式修改
-    const msg: string =
-      response && response.data && response.data.message ? response.data.message : ''
+    const msg: string
+      = response && response.data && response.data.message ? response.data.message : ''
     const err: string = error.toString()
     try {
-      if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
+      if (code === 'ECONNABORTED' && message.includes('timeout')) {
         showFailToast('接口请求超时，请刷新页面重试!')
         return
       }
@@ -209,7 +181,8 @@ const transform: AxiosTransform = {
           .catch(() => {})
         return Promise.reject(error)
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
       throw new Error(error as any)
     }
@@ -217,10 +190,11 @@ const transform: AxiosTransform = {
     const isCancel = axios.isCancel(error)
     if (!isCancel) {
       checkStatus(error.response && error.response.status, msg)
-    } else {
+    }
+    else {
       console.warn(error, '请求被取消！')
     }
-    //return Promise.reject(error);
+    // return Promise.reject(error);
     return Promise.reject(response?.data)
   },
 }
@@ -257,7 +231,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口地址
           apiUrl: globSetting.apiUrl,
           // 接口拼接地址
-          urlPrefix: urlPrefix,
+          urlPrefix,
           //  是否加入时间戳
           joinTime: true,
           // 忽略重复请求

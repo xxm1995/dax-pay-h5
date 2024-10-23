@@ -1,5 +1,5 @@
 <template>
-  <vanConfigProvider :theme="getDarkMode" :theme-vars="getThemeVars()">
+  <vanConfigProvider :theme="darkMode" :theme-vars="getThemeVars()">
     <routerView v-slot="{ Component }">
       <div class="absolute bottom-0 top-0 w-full overflow-hidden">
         <transition :name="getTransitionName" mode="out-in" appear>
@@ -18,8 +18,10 @@ import { useRouteStore } from '@/store/modules/route'
 import { useDesignSetting } from '@/hooks/setting/useDesignSetting'
 
 const routeStore = useRouteStore()
-const { getDarkMode, getAppTheme, getIsPageAnimate, getPageAnimateType } = useDesignSetting()
-
+const { getAppTheme, getIsPageAnimate, getPageAnimateType } = useDesignSetting()
+// 读取是否为夜间模式
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+const darkMode = mediaQuery.matches ? 'dark' : 'light'
 // 需要缓存的路由组件
 const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
 

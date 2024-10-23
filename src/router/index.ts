@@ -1,19 +1,17 @@
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import { createRouterGuards } from './router-guards'
-import routeModuleList from './modules'
-import { ErrorPageRoute, RootRoute } from '@/router/base'
+import { ErrorPageRoute, routeModuleList } from '@/router/base'
 import { useRouteStoreWidthOut } from '@/store/modules/route'
 
 // 菜单
 import { BusinessRoute } from '@/router/business'
-import { DemoRoute } from '@/router/demo'
+import { DaxPayRoute } from '@/router/daxpay'
 
 // 普通路由
 export const constantRouter: RouteRecordRaw[] = [
-  DemoRoute,
-  RootRoute,
+  DaxPayRoute,
   ErrorPageRoute,
   BusinessRoute,
 ]
@@ -24,7 +22,8 @@ routeStore.setMenus(routeModuleList)
 routeStore.setRouters(constantRouter.concat(routeModuleList))
 
 const router = createRouter({
-  history: createWebHashHistory(''),
+  // 重定向时hash模式有场景无法跳转，需要使用history模式
+  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
   routes: constantRouter.concat(...routeModuleList),
   strict: true,
   scrollBehavior: () => ({ left: 0, top: 0 }),

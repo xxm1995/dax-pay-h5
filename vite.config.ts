@@ -48,12 +48,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       alias: [
         // @/xxxx => src/xxxx
         {
-          find: /\@\//,
+          find: /@\//,
           replacement: `${pathResolve('src')}/`,
         },
         // #/xxxx => types/xxxx
         {
-          find: /\#\//,
+          find: /#\//,
           replacement: `${pathResolve('types')}/`,
         },
       ],
@@ -132,7 +132,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     server: {
       host: true,
       // 服务启动时是否自动打开浏览器
-      open: true,
+      open: false,
       // 服务端口号
       port: Number(VITE_PORT),
       proxy: createProxy(VITE_PROXY),
