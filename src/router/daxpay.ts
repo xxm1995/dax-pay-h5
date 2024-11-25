@@ -27,27 +27,51 @@ export const DaxPayRoute: RouteRecordRaw = {
       },
     },
     {
-      path: '/channel/cashier/:appId',
-      name: 'ChannelCashier',
-      component: () => import('@/views/daxpay/cashier/ChannelCashier.vue'),
+      path: '/cashier/:code',
+      name: 'CashierCode',
+      component: () => import('@/views/daxpay/cashier/CashierCode.vue'),
       meta: {
         title: '收银台',
       },
     },
     {
-      path: '/alipay/cashier/:appId',
-      name: 'AlipayCashier',
-      component: () => import('@/views/daxpay/cashier/alipay/AlipayCashier.vue'),
+      path: '/cashier/alipay/:code',
+      name: 'AlipayCashierCode',
+      component: () => import('@/views/daxpay/cashier/alipay/AlipayCashierCode.vue'),
       meta: {
         title: '支付宝收银台',
       },
     },
     {
-      path: '/wechat/cashier/:appId',
-      name: 'WechatCashier',
-      component: () => import('@/views/daxpay/cashier/wechat/WechatCashier.vue'),
+      path: '/cashier/wechat/:code',
+      name: 'WechatCashierCode',
+      component: () => import('@/views/daxpay/cashier/wechat/WechatCashierCode.vue'),
       meta: {
         title: '微信收银台',
+      },
+    },
+    {
+      path: '/checkout/:code',
+      name: 'ChannelCashier',
+      component: () => import('@/views/daxpay/cashier/ChannelCheckout.vue'),
+      meta: {
+        title: '结算台',
+      },
+    },
+    {
+      path: '/alipay/checkout/:appId/:orderId',
+      name: 'AlipayCashier',
+      component: () => import('@/views/daxpay/cashier/alipay/AlipayCheckout.vue'),
+      meta: {
+        title: '支付宝结算台',
+      },
+    },
+    {
+      path: '/wechat/checkout/:appId/:orderId',
+      name: 'WechatCheckout',
+      component: () => import('@/views/daxpay/cashier/wechat/WechatCheckout.vue'),
+      meta: {
+        title: '微信结算台',
       },
     },
   ],

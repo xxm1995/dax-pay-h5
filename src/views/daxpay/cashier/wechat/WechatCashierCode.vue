@@ -2,7 +2,7 @@
   <div v-if="show">
     <div class="container">
       <div style="font-size: 28px;margin-top: 10px;">
-        {{ cashierInfo.cashierName || '微信收银台' }}
+        {{ cashierTypeConfig.cashierName || '微信收银台' }}
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
@@ -66,38 +66,37 @@ import { showNotify } from 'vant'
 import type {
   CashierAuthParam,
   CashierPayParam,
-  ChannelCashierConfigResult,
+  CashierTypeConfigResult,
   WxJsapiSignResult,
-} from '@/views/daxpay/cashier/ChannelCashier.api'
+} from '@/views/daxpay/cashier/CashierCode.api'
 import {
   auth
   , cashierPay,
   generateAuthUrl,
-  getCashierInfo,
-} from '@/views/daxpay/cashier/ChannelCashier.api'
+  getCashierTypeConfig,
+} from '@/views/daxpay/cashier/CashierCode.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
 import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
-const { appId } = route.params
-const { code } = route.query
+const { code } = route.params
+const { code : authCode } = route.query
 
 const show = ref<boolean>(false)
 const showRemark = ref<boolean>(false)
 const loading = ref<boolean>(false)
-const cashierInfo = ref<ChannelCashierConfigResult>({})
+const cashierTypeConfig = ref<CashierTypeConfigResult>({})
 const amount = ref<string>('0')
 const description = ref<string>('')
 const openId = ref<string>('')
 
 // 认证参数
 const authParam = ref<CashierAuthParam>({
-  appId: appId as string,
-  cashierType: CashierTypeEnum.WECHAT_PAY,
+  code: code as string,
+  type: CashierTypeEnum.WECHAT_PAY,
 })
-
 const { input, del } = useKeyboard(amount)
 
 onMounted(() => {
@@ -105,13 +104,13 @@ onMounted(() => {
 })
 
 /**
- * 初始化
+ * 进入页面的初始化
  */
 function init() {
-  // 如果不是重定向跳转过来， 跳转到到重定向地址
-  if (!code) {
+  // 如果不是重定向跳转过来， 跳转到到重定向授权地址
+  if (!authCode) {
     // 重定向跳转到微信授权地址
-    generateAuthUrl(authParam.value).then((res) => {
+    generateAuthUrl({ cashierType: CashierTypeEnum.WECHAT_PAY, cashierCode: code as string}).then((res) => {
       const url = res.data
       location.replace(url)
     }).catch((res) => {
@@ -119,7 +118,7 @@ function init() {
     })
   }
   else {
-    authParam.value.authCode = code as string
+    authParam.value.authCode = authCode as string
     // 初始化数据
     initData()
   }
@@ -130,11 +129,14 @@ function init() {
  */
 function initData() {
   show.value = true
-  getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
-    cashierInfo.value = data
+  // 获取配置参数
+  getCashierTypeConfig(CashierTypeEnum.WECHAT_PAY, code as string).then(({ data }) => {
+    cashierTypeConfig.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
+
+  // 认证获取OpenId
   auth(authParam.value).then(({ data }) => {
     openId.value = data.openId as string
   }).catch((res) => {
@@ -154,8 +156,8 @@ function pay() {
 
   loading.value = true
   const from = {
+    cashierCode: code,
     amount: amountValue,
-    appId,
     openId: openId.value,
     cashierType: CashierTypeEnum.WECHAT_PAY,
     description: description.value,

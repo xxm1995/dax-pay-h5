@@ -2,7 +2,7 @@
   <div>
     <div class="container">
       <div style="font-size: 28px;margin-top: 10px;">
-        {{ cashierInfo.cashierName || '支付宝收银台' }}
+        {{ cashierTypeConfig.name || '支付宝收银台' }}
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
@@ -65,23 +65,23 @@ import { useRoute } from 'vue-router'
 import { showNotify } from 'vant'
 import type {
   CashierPayParam,
-  ChannelCashierConfigResult,
-} from '@/views/daxpay/cashier/ChannelCashier.api'
+  CashierTypeConfigResult,
+} from '@/views/daxpay/cashier/CashierCode.api'
 import {
   cashierPay,
-  getCashierInfo,
-} from '@/views/daxpay/cashier/ChannelCashier.api'
+  getCashierTypeConfig,
+} from '@/views/daxpay/cashier/CashierCode.api'
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
 import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
-const { appId } = route.params
+const { code } = route.params
 
 const showRemark = ref<boolean>(false)
 const loading = ref<boolean>(false)
-const cashierInfo = ref<ChannelCashierConfigResult>({})
+const cashierTypeConfig = ref<CashierTypeConfigResult>({})
 const amount = ref<string>('0')
 const description = ref<string>('')
 
@@ -95,8 +95,8 @@ onMounted(() => {
  * 初始化数据
  */
 function initData() {
-  getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
-    cashierInfo.value = data
+  getCashierTypeConfig(CashierTypeEnum.ALIPAY, code as string).then(({ data }) => {
+    cashierTypeConfig.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
@@ -114,7 +114,7 @@ function pay() {
   loading.value = true
   const from = {
     amount: amountValue,
-    appId,
+    cashierCode: code,
     cashierType: CashierTypeEnum.ALIPAY,
     description: description.value,
   } as CashierPayParam
