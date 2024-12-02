@@ -31,9 +31,10 @@ import {
 
 import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
+import {getAggregateConfig} from "@/views/daxpay/checkout/CheckoutPay.api";
 
 const route = useRoute()
-const { appId, orderId } = route.params
+const { orderNo } = route.params
 
 const loading = ref<boolean>(false)
 const cashierInfo = ref<CashierTypeConfigResult>({})
@@ -49,11 +50,11 @@ onMounted(() => {
  * 初始化数据
  */
 function initData() {
-  // getCashierInfo(CashierTypeEnum.ALIPAY, appId as string).then(({ data }) => {
-  //   cashierInfo.value = data
-  // }).catch((res) => {
-  //   router.push({ name: 'ErrorResult', query: { msg: res.message } })
-  // })
+  getAggregateConfig(orderNo, wechat).then(({ data }) => {
+    cashierInfo.value = data
+  }).catch((res) => {
+    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+  })
 }
 
 /**

@@ -51,25 +51,25 @@ export const DaxPayRoute: RouteRecordRaw = {
       },
     },
     {
-      path: '/checkout/:code',
+      path: '/checkout/:orderNo',
       name: 'ChannelCashier',
-      component: () => import('@/views/daxpay/cashier/ChannelCheckout.vue'),
+      component: () => import('@/views/daxpay/checkout/CheckoutPay.vue'),
       meta: {
         title: '结算台',
       },
     },
     {
-      path: '/alipay/checkout/:appId/:orderId',
+      path: '/alipay/checkout/:appId/:orderNo',
       name: 'AlipayCashier',
-      component: () => import('@/views/daxpay/cashier/alipay/AlipayCheckout.vue'),
+      component: () => import('@/views/daxpay/checkout/alipay/AliAggregate.vue'),
       meta: {
         title: '支付宝结算台',
       },
     },
     {
-      path: '/wechat/checkout/:appId/:orderId',
+      path: '/wechat/checkout/:appId/:orderNo',
       name: 'WechatCheckout',
-      component: () => import('@/views/daxpay/cashier/wechat/WechatCheckout.vue'),
+      component: () => import('@/views/daxpay/checkout/wechat/WechatAggregate.vue'),
       meta: {
         title: '微信结算台',
       },
