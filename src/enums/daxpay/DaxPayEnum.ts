@@ -26,3 +26,11 @@ export enum CashierTypeEnum {
   WECHAT_PAY = 'wechat_pay',
   ALIPAY = 'alipay',
 }
+
+/**
+ * 聚合支付方式
+ */
+export enum AggregateTypeEnum {
+  WECHAT = 'wechat',
+  ALIPAY = 'alipay',
+}

@@ -20,27 +20,27 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { showNotify } from 'vant'
-import type {
-  CashierPayParam,
-  CashierTypeConfigResult,
-} from '@/views/daxpay/cashier/CashierCode.api'
-import {
-  cashierPay,
-  getCashierTypeConfig,
-} from '@/views/daxpay/cashier/CashierCode.api'
 
-import { CashierTypeEnum } from '@/enums/daxpay/DaxPayEnum'
+import { AggregateTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
-import {getAggregateConfig} from "@/views/daxpay/checkout/CheckoutPay.api";
+import {
+  AggregateOrderAndConfigResult, checkoutPay, CheckoutPayParam,
+} from '@/views/daxpay/checkout/CheckoutPay.api'
+import {
+  getAggregateConfig,
+} from '@/views/daxpay/checkout/CheckoutPay.api'
 
 const route = useRoute()
 const { orderNo } = route.params
 
 const loading = ref<boolean>(false)
-const cashierInfo = ref<CashierTypeConfigResult>({})
+const cashierInfo = ref<AggregateOrderAndConfigResult>({
+  aggregateConfig: {},
+  config: {},
+  order: {},
+})
 const amount = ref<string>('0')
 const description = ref<string>('')
-
 
 onMounted(() => {
   initData()
@@ -50,7 +50,7 @@ onMounted(() => {
  * 初始化数据
  */
 function initData() {
-  getAggregateConfig(orderNo, wechat).then(({ data }) => {
+  getAggregateConfig(orderNo, AggregateTypeEnum.ALIPAY).then(({ data }) => {
     cashierInfo.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
@@ -68,16 +68,11 @@ function pay() {
   }
   loading.value = true
   const from = {
-    amount: amountValue,
-    Code: code,
-    cashierType: CashierTypeEnum.ALIPAY,
-    description: description.value,
-  } as CashierPayParam
-  cashierPay(from)
+  } as CheckoutPayParam
+  checkoutPay(from)
     .then(({ data }) => {
       loading.value = false
-      // 跳转到H5/付款码支付页面
-      location.replace(data.payBody)
+
     })
 }
 </script>

@@ -1,62 +1,62 @@
 import { http } from '@/utils/http/axios'
 import type { Result } from '#/axios'
-import {AuthResult} from "@/views/daxpay/auth/ChannelAuth.api";
+import type { AuthResult } from '@/views/daxpay/auth/ChannelAuth.api'
+import {PayResult} from "@/views/daxpay/cashier/CashierCode.api";
 
 /**
  * 获取收银台订单和配置信息
  */
-export function getOrderAndConfig(orderNo, checkoutType){
+export function getOrderAndConfig(orderNo, checkoutType) {
   return http.request({
     url: '/unipay/checkout/getOrderAndConfig',
     method: 'GET',
     params: {
       orderNo,
-      checkoutType
-    }
+      checkoutType,
+    },
   })
 }
 /**
  * 获取聚合支付配置
  */
-export function getAggregateConfig(orderNo, aggregateType){
+export function getAggregateConfig(orderNo, aggregateType) {
   return http.request<Result<AggregateOrderAndConfigResult>>({
     url: '/unipay/checkout/getAggregateConfig',
     method: 'GET',
     params: {
       orderNo,
-      aggregateType
-    }
+      aggregateType,
+    },
   })
-
 }
 /**
  * 获取收银台所需授权链接, 用于获取OpenId一类的信息
  */
-export function generateAuthUrl(param: CheckoutAuthUrlParam){
+export function generateAuthUrl(param: CheckoutAuthUrlParam) {
   return http.request<Result<string>>({
     url: '/unipay/checkout/generateAuthUrl',
     method: 'post',
-    data: param
+    data: param,
   })
 }
 /**
  * 获取授权结果
  */
-export function auth(param: CheckoutAuthCodeParam){
+export function auth(param: CheckoutAuthCodeParam) {
   return http.request<AuthResult>({
     url: '/unipay/checkout/auth',
     method: 'post',
-    data: param
+    data: param,
   })
 }
 /**
  * 发起支付
  */
-export function pay(param: CheckoutPayParam){
-  return http.request<Result<CheckoutPayResult>>({
+export function checkoutPay(param: CheckoutPayParam) {
+  return http.request<Result<PayResult>>({
     url: '/unipay/checkout/pay',
     method: 'post',
-    data: param
+    data: param,
   })
 }
 
@@ -67,11 +67,11 @@ export interface CheckoutAuthUrlParam {
   /**
    * 要支付的订单号
    */
-  orderNo?: string;
+  orderNo?: string
   /**
    * 聚合支付类型
    */
-  aggregateType?: string;
+  aggregateType?: string
 }
 /**
  * 获取收银台认证结果参数
@@ -80,11 +80,11 @@ export interface CheckoutAuthCodeParam {
   /**
    * 要支付的订单号
    */
-  orderNo?: string;
+  orderNo?: string
   /**
    * 聚合支付类型
    */
-  aggregateType?: string;
+  aggregateType?: string
   /**
    * 认证Code
    */
@@ -94,94 +94,94 @@ export interface CheckoutAuthCodeParam {
 /**
  * 收银台支付参数
  */
-export interface CheckoutPayParam{
+export interface CheckoutPayParam {
   /**
    * 订单号
    */
-  orderNo?: string;
+  orderNo?: string
   /**
    * 支付配置项ID
    */
-  itemId?: string;
+  itemId?: string
   /**
    * 唯一标识
    */
-  openId?: string;
+  openId?: string
   /**
    * 付款码
    */
-  barCode?: string;
+  barCode?: string
 }
 
 /**
  * 收银台聚合支付配置
  */
-export interface AggregateOrderAndConfigResult{
+export interface AggregateOrderAndConfigResult {
 
   /**
    * 订单信息
    */
-  order: CheckoutOrderResult;
+  order: CheckoutOrderResult
   /**
    * 收银台配置信息
    */
-  config: CheckoutConfigResult;
+  config: CheckoutConfigResult
   /**
    * 收银台聚合配置信息
    */
-  aggregateConfig: AggregateConfigResult;
+  aggregateConfig: AggregateConfigResult
 }
 
 /**
  * 订单信息
  */
-export interface CheckoutOrderResult{
+export interface CheckoutOrderResult {
   /** 商户订单号 */
-  bizOrderNo?: string;
+  bizOrderNo?: string
   /** 订单号 */
-  orderNo?: string;
+  orderNo?: string
   /** 标题 */
-  title?: string;
+  title?: string
   /** 描述 */
-  description?: string;
+  description?: string
   /** 金额(元) */
-  amount?: string;
+  amount?: string
 
 }
 /**
  * 收银台配置信息
  */
-export interface CheckoutConfigResult{
+export interface CheckoutConfigResult {
   /** 收银台名称 */
-  name?: string;
+  name?: string
   /** PC收银台是否同时显示聚合收银码 */
-  aggregateShow?: boolean;
+  aggregateShow?: boolean
   /** h5收银台自动升级聚合支付 */
-  h5AutoUpgrade?: boolean;
+  h5AutoUpgrade?: boolean
 }
 /**
  * 收银台聚合配置信息
  */
-export interface AggregateConfigResult{
+export interface AggregateConfigResult {
   /** 支付类型 */
-  type?: string;
+  type?: string
   /** 通道 */
-  channel?: string;
+  channel?: string
   /** 支付方式 */
-  payMethod?: string;
+  payMethod?: string
   /** 自动拉起支付 */
-  autoLaunch?: boolean;
+  autoLaunch?: boolean
 }
 /**
  * 收银台支付结果
  */
-export interface CheckoutPayResult{
+export interface CheckoutPayResult {
   /**
    * 链接
    */
-  url?: string;
+  url?: string
   /**
    * 支付状态
    */
-  payStatus?: string;
+  payStatus?: string
 }
