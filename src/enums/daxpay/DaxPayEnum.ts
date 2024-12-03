@@ -22,6 +22,14 @@ export enum PayMethodEnum {
 /**
  * 收银台类型
  */
+export enum CashierTypeEnum {
+  WECHAT_PAY = 'wechat_pay',
+  ALIPAY = 'alipay',
+}
+
+/**
+ * 收银台类型
+ */
 export enum CheckoutTypeEnum {
   H5 = 'h5',
   PC = 'pc',
@@ -29,8 +37,7 @@ export enum CheckoutTypeEnum {
   AGGREGATE = 'aggregate',
 }
 
-export enum AggregateEnum{
-  ALI = 'ali',
+export enum AggregateTypeEnum {
+  ALI = 'alipay',
   WECHAT = 'wechat_pay',
 }
-

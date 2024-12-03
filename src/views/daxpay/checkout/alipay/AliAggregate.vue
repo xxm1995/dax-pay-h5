@@ -6,13 +6,14 @@
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
-          付款金额
+          订单
         </p>
         <p style="font-size: 32px;">
           ¥ {{ aggregateInfo.order.amount || 0.00 }}
         </p>
       </div>
     </div>
+    <van-submit-bar :price="aggregateInfo.order.amount || 0.00" button-text="支付" @submit="pay" />
   </div>
 </template>
 
@@ -20,14 +21,16 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { AggregateEnum } from '@/enums/daxpay/DaxPayEnum'
+import { AggregateTypeEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
-import {
+import type {
   AggregateOrderAndConfigResult,
-  aggregatePay,
   CheckoutAggregatePayParam,
-  getAggregateConfig
-} from "@/views/daxpay/checkout/CheckoutPay.api";
+} from '@/views/daxpay/checkout/CheckoutPay.api'
+import {
+  aggregatePay,
+  getAggregateConfig,
+} from '@/views/daxpay/checkout/CheckoutPay.api'
 
 const route = useRoute()
 const { orderNo } = route.params
@@ -36,7 +39,7 @@ const loading = ref<boolean>(false)
 const aggregateInfo = ref<AggregateOrderAndConfigResult>({
   aggregateConfig: {},
   config: {},
-  order: {}
+  order: {},
 })
 
 onMounted(() => {
@@ -48,7 +51,7 @@ onMounted(() => {
  */
 async function initData() {
   // 查询订单和配置
-  await getAggregateConfig(orderNo, AggregateEnum.ALI).then(({ data }) => {
+  await getAggregateConfig(orderNo, AggregateTypeEnum.ALI).then(({ data }) => {
     aggregateInfo.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
@@ -57,7 +60,6 @@ async function initData() {
   if (aggregateInfo.value.aggregateConfig.autoLaunch) {
     pay()
   }
-
 }
 
 /**
@@ -67,7 +69,7 @@ function pay() {
   loading.value = true
   const from = {
     orderNo: aggregateInfo.value.order.orderNo,
-    aggregateType: AggregateEnum.ALI,
+    aggregateType: AggregateTypeEnum.ALI,
   } as CheckoutAggregatePayParam
   aggregatePay(from)
     .then(({ data }) => {

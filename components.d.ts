@@ -17,6 +17,7 @@ declare module 'vue' {
     VanLoading: typeof import('vant/es')['Loading']
     VanNumberKeyboard: typeof import('vant/es')['NumberKeyboard']
     VanOverlay: typeof import('vant/es')['Overlay']
+    VanSubmitBar: typeof import('vant/es')['SubmitBar']
     VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
   }
 }

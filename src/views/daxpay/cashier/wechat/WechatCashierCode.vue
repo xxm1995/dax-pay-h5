@@ -82,7 +82,7 @@ import { useKeyboard } from '@/hooks/daxpay/useKeyboard'
 
 const route = useRoute()
 const { code } = route.params
-const { code : authCode } = route.query
+const { code: authCode } = route.query
 
 const show = ref<boolean>(false)
 const showRemark = ref<boolean>(false)
@@ -94,8 +94,8 @@ const openId = ref<string>('')
 
 // 认证参数
 const authParam = ref<CashierAuthParam>({
-  code: code as string,
-  type: CashierTypeEnum.WECHAT_PAY,
+  cashierCode: code as string,
+  cashierType: CashierTypeEnum.WECHAT_PAY,
 })
 const { input, del } = useKeyboard(amount)
 
@@ -110,7 +110,7 @@ function init() {
   // 如果不是重定向跳转过来， 跳转到到重定向授权地址
   if (!authCode) {
     // 重定向跳转到微信授权地址
-    generateAuthUrl({ cashierType: CashierTypeEnum.WECHAT_PAY, cashierCode: code as string}).then((res) => {
+    generateAuthUrl({ cashierType: CashierTypeEnum.WECHAT_PAY, cashierCode: code as string }).then((res) => {
       const url = res.data
       location.replace(url)
     }).catch((res) => {
