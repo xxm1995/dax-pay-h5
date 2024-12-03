@@ -50,11 +50,22 @@ export function auth(param: CheckoutAuthCodeParam) {
   })
 }
 /**
- * 发起支付
+ * 发起普通支付
  */
 export function checkoutPay(param: CheckoutPayParam) {
-  return http.request<Result<PayResult>>({
+  return http.request<Result<CheckoutPayResult>>({
     url: '/unipay/checkout/pay',
+    method: 'post',
+    data: param,
+  })
+}
+
+/**
+ * 发起聚合支付
+ */
+export function aggregatePay(param: CheckoutAggregatePayParam) {
+  return http.request<Result<PayResult>>({
+    url: '/unipay/checkout/aggregatePay',
     method: 'post',
     data: param,
   })
@@ -111,6 +122,19 @@ export interface CheckoutPayParam {
    * 付款码
    */
   barCode?: string
+}
+
+
+/**
+ * 聚合支付参数
+ */
+export interface CheckoutAggregatePayParam {
+  /** 订单号 */
+  orderNo?: string
+  /** 聚合支付类型 */
+  aggregateType?: string
+  /** 唯一标识 */
+  openId?: string
 }
 
 /**
@@ -172,6 +196,8 @@ export interface AggregateConfigResult {
   /** 自动拉起支付 */
   autoLaunch?: boolean
 }
+
+
 /**
  * 收银台支付结果
  */

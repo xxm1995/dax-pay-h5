@@ -2,14 +2,14 @@
   <div>
     <div class="container">
       <div style="font-size: 28px;margin-top: 10px;">
-        {{ cashierInfo.cashierName || '支付宝收银台' }}
+        {{ aggregateInfo.config.name || '支付宝收银台' }}
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
           付款金额
         </p>
         <p style="font-size: 32px;">
-          ¥ {{ amount }}
+          ¥ {{ aggregateInfo.order.amount || 0.00 }}
         </p>
       </div>
     </div>
@@ -19,28 +19,25 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { showNotify } from 'vant'
 
-import { AggregateTypeEnum } from '@/enums/daxpay/DaxPayEnum'
+import { AggregateEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
 import {
-  AggregateOrderAndConfigResult, checkoutPay, CheckoutPayParam,
-} from '@/views/daxpay/checkout/CheckoutPay.api'
-import {
-  getAggregateConfig,
-} from '@/views/daxpay/checkout/CheckoutPay.api'
+  AggregateOrderAndConfigResult,
+  aggregatePay,
+  CheckoutAggregatePayParam,
+  getAggregateConfig
+} from "@/views/daxpay/checkout/CheckoutPay.api";
 
 const route = useRoute()
 const { orderNo } = route.params
 
 const loading = ref<boolean>(false)
-const cashierInfo = ref<AggregateOrderAndConfigResult>({
+const aggregateInfo = ref<AggregateOrderAndConfigResult>({
   aggregateConfig: {},
   config: {},
-  order: {},
+  order: {}
 })
-const amount = ref<string>('0')
-const description = ref<string>('')
 
 onMounted(() => {
   initData()
@@ -49,30 +46,34 @@ onMounted(() => {
 /**
  * 初始化数据
  */
-function initData() {
-  getAggregateConfig(orderNo, AggregateTypeEnum.ALIPAY).then(({ data }) => {
-    cashierInfo.value = data
+async function initData() {
+  // 查询订单和配置
+  await getAggregateConfig(orderNo, AggregateEnum.ALI).then(({ data }) => {
+    aggregateInfo.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
   })
+  // 判断是否自动拉起支付
+  if (aggregateInfo.value.aggregateConfig.autoLaunch) {
+    pay()
+  }
+
 }
 
 /**
  * 支付
  */
 function pay() {
-  const amountValue = Number(amount.value)
-  if (amountValue === 0) {
-    showNotify({ type: 'warning', message: '金额不可为0' })
-    return
-  }
   loading.value = true
   const from = {
-  } as CheckoutPayParam
-  checkoutPay(from)
+    orderNo: aggregateInfo.value.order.orderNo,
+    aggregateType: AggregateEnum.ALI,
+  } as CheckoutAggregatePayParam
+  aggregatePay(from)
     .then(({ data }) => {
       loading.value = false
-
+      // 跳转到H5/扫码支付页面
+      location.replace(data.payBody)
     })
 }
 </script>

@@ -10,7 +10,7 @@ export enum ChannelEnum {
 /**
  * 支付方式
  */
-export enum payMethodEnum {
+export enum PayMethodEnum {
   WAP = 'wap',
   APP = 'app',
   WEB = 'web',
@@ -22,15 +22,15 @@ export enum payMethodEnum {
 /**
  * 收银台类型
  */
-export enum CashierTypeEnum {
-  WECHAT_PAY = 'wechat_pay',
-  ALIPAY = 'alipay',
+export enum CheckoutTypeEnum {
+  H5 = 'h5',
+  PC = 'pc',
+  MINI_APP = 'mini_app',
+  AGGREGATE = 'aggregate',
 }
 
-/**
- * 聚合支付方式
- */
-export enum AggregateTypeEnum {
-  WECHAT = 'wechat',
-  ALIPAY = 'alipay',
+export enum AggregateEnum{
+  ALI = 'ali',
+  WECHAT = 'wechat_pay',
 }
+
