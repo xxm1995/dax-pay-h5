@@ -16,9 +16,9 @@
       <van-field label="标题" :model-value="aggregateInfo.order.title" readonly />
       <van-field label="订单号" :model-value="aggregateInfo.order.bizOrderNo" readonly />
       <van-field label="支付号" :model-value="aggregateInfo.order.orderNo" readonly />
-      <van-field label="描述" rows="2"  type="textarea" :model-value="aggregateInfo.order.description" readonly />
+      <van-field label="描述" rows="2" type="textarea" :model-value="aggregateInfo.order.description" readonly />
     </van-cell-group>
-    <van-submit-bar safe-area-inset-bottom :price="(aggregateInfo.order.amount || 0)*100" button-text="支付" @submit="pay" />
+    <van-submit-bar safe-area-inset-bottom :price="(aggregateInfo.order.amount || 0) * 100" button-text="支付" @submit="pay" />
   </div>
 </template>
 
@@ -28,11 +28,12 @@ import { useRoute } from 'vue-router'
 
 import { CheckoutAggregateEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
-import {
-  AggregateOrderAndConfigResult, aggregatePay, CheckoutAggregatePayParam,
-  CheckoutAuthCodeParam,
-} from '@/views/daxpay/checkout/CheckoutPay.api'
-import { auth, generateAuthUrl, getAggregateConfig } from '@/views/daxpay/checkout/CheckoutPay.api'
+import type {
+  AggregateOrderAndConfigResult, CheckoutAggregatePayParam,
+  CheckoutAuthCodeParam} from '@/views/daxpay/checkout/CheckoutPay.api';
+import { aggregatePay
+ auth, generateAuthUrl, getAggregateConfig } from '@/views/daxpay/checkout/CheckoutPay.api'
+
 
 import type { WxJsapiSignResult } from '@/views/daxpay/cashier/CashierCode.api'
 
@@ -72,7 +73,7 @@ function init() {
       const url = res.data
       location.replace(url)
     }).catch((res) => {
-      router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
+      router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true })
     })
   }
   else {
@@ -91,14 +92,14 @@ async function initData() {
   getAggregateConfig(orderNo, CheckoutAggregateEnum.WECHAT).then(({ data }) => {
     aggregateInfo.value = data
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true })
   })
 
   // 认证获取OpenId
   await auth(authParam.value).then(({ data }) => {
     openId.value = data.openId as string
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true })
   })
   // 判断是否自动拉起支付
   if (aggregateInfo.value.aggregateConfig.autoLaunch) {

@@ -7,7 +7,7 @@ import type { PayResult } from '@/views/daxpay/cashier/CashierCode.api'
  * 获取收银台订单和配置信息
  */
 export function getOrderAndConfig(orderNo, checkoutType) {
-  return http.request({
+  return http.request<Result<CheckoutOrderAndConfigResult>>({
     url: '/unipay/checkout/getOrderAndConfig',
     method: 'GET',
     params: {
