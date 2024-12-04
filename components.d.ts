@@ -11,8 +11,17 @@ declare module 'vue' {
     Logo: typeof import('./src/components/Logo.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
     VanButton: typeof import('vant/es')['Button']
+    VanCell: typeof import('vant/es')['Cell']
+    VanCellGroup: typeof import('vant/es')['CellGroup']
+    VanCol: typeof import('vant/es')['Col']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
+    VanField: typeof import('vant/es')['Field']
+    VanGrid: typeof import('vant/es')['Grid']
+    VanGridItem: typeof import('vant/es')['GridItem']
     VanLoading: typeof import('vant/es')['Loading']
+    VanOverlay: typeof import('vant/es')['Overlay']
+    VanRow: typeof import('vant/es')['Row']
+    VanSpace: typeof import('vant/es')['Space']
     VanSubmitBar: typeof import('vant/es')['SubmitBar']
   }
 }

@@ -174,8 +174,8 @@ export interface CheckoutConfigResult {
  * 收银台分类配置
  */
 export interface CheckoutGroupConfigResult {
-  /** 类型 */
-  type?: string
+  /** 主键 */
+  id?: string
   /** 名称 */
   name?: string
   /** 配置项列表 */
@@ -186,6 +186,8 @@ export interface CheckoutGroupConfigResult {
  * 收银台配置项
  */
 export interface CheckoutItemConfigResult {
+  /** 主键 */
+  id?: string
   /** 发起调用的类型 */
   callType?: string
   /** 名称 */

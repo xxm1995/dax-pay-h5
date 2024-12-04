@@ -1,6 +1,6 @@
 <template>
   <van-overlay v-show="show" :show="true">
-    <div class="wrapper" @click.stop>
+    <div class="loading-wrapper" @click.stop>
       <van-loading size="24px">
         获取中...
       </van-loading>
@@ -60,12 +60,6 @@ async function init() {
 </script>
 
 <style scoped lang="less">
-.wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
 
 .block {
   width: 120px;

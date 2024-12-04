@@ -98,7 +98,7 @@ function initData() {
   getCashierTypeConfig(CashierTypeEnum.ALIPAY, code as string).then(({ data }) => {
     cashierTypeConfig.value = data
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
   })
 }
 

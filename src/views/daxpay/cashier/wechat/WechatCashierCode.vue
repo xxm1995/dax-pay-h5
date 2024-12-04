@@ -2,7 +2,7 @@
   <div v-if="show">
     <div class="container">
       <div style="font-size: 28px;margin-top: 10px;">
-        {{ cashierTypeConfig.cashierName || '微信收银台' }}
+        {{ cashierTypeConfig.name || '微信收银台' }}
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
@@ -114,7 +114,7 @@ function init() {
       const url = res.data
       location.replace(url)
     }).catch((res) => {
-      router.push({ name: 'ErrorResult', query: { msg: res.message } })
+      router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
     })
   }
   else {
@@ -133,14 +133,14 @@ function initData() {
   getCashierTypeConfig(CashierTypeEnum.WECHAT_PAY, code as string).then(({ data }) => {
     cashierTypeConfig.value = data
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
   })
 
   // 认证获取OpenId
   auth(authParam.value).then(({ data }) => {
     openId.value = data.openId as string
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
   })
 }
 

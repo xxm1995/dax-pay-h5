@@ -1,19 +1,24 @@
 <template>
   <div v-if="show">
-    <div class="container">
-      <div style="font-size: 28px;margin-top: 10px;">
-        {{ aggregateInfo.config.name || '微信收银台' }}
+    <van-overlay :show="loading">
+      <div class="loading-wrapper" @click.stop>
+        <van-loading size="24px">
+          支付中...
+        </van-loading>
       </div>
-      <div class="amount-display">
-        <p style="font-size: 20px">
-          金额
-        </p>
-        <p style="font-size: 32px;">
-          ¥ {{ aggregateInfo.order.amount || 0.00 }}
-        </p>
-      </div>
-    </div>
-    <van-submit-bar :price="(aggregateInfo.order.amount || 0)*100" button-text="支付" @submit="pay" />
+    </van-overlay>
+    <van-cell-group inset>
+      <van-cell title="金额" title-style="font-size: 22px;color: red">
+        <template #default>
+          <span style="font-size: 22px;color: red">{{ aggregateInfo.order.amount }}元</span>
+        </template>
+      </van-cell>
+      <van-field label="标题" :model-value="aggregateInfo.order.title" readonly />
+      <van-field label="订单号" :model-value="aggregateInfo.order.bizOrderNo" readonly />
+      <van-field label="支付号" :model-value="aggregateInfo.order.orderNo" readonly />
+      <van-field label="描述" rows="2"  type="textarea" :model-value="aggregateInfo.order.description" readonly />
+    </van-cell-group>
+    <van-submit-bar safe-area-inset-bottom :price="(aggregateInfo.order.amount || 0)*100" button-text="支付" @submit="pay" />
   </div>
 </template>
 
@@ -26,9 +31,8 @@ import router from '@/router'
 import {
   AggregateOrderAndConfigResult, aggregatePay, CheckoutAggregatePayParam,
   CheckoutAuthCodeParam,
-  CheckoutPayParam,
 } from '@/views/daxpay/checkout/CheckoutPay.api'
-import { auth, checkoutPay, generateAuthUrl, getAggregateConfig } from '@/views/daxpay/checkout/CheckoutPay.api'
+import { auth, generateAuthUrl, getAggregateConfig } from '@/views/daxpay/checkout/CheckoutPay.api'
 
 import type { WxJsapiSignResult } from '@/views/daxpay/cashier/CashierCode.api'
 
@@ -68,7 +72,7 @@ function init() {
       const url = res.data
       location.replace(url)
     }).catch((res) => {
-      router.push({ name: 'ErrorResult', query: { msg: res.message } })
+      router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
     })
   }
   else {
@@ -87,14 +91,14 @@ async function initData() {
   getAggregateConfig(orderNo, CheckoutAggregateEnum.WECHAT).then(({ data }) => {
     aggregateInfo.value = data
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
   })
 
   // 认证获取OpenId
   await auth(authParam.value).then(({ data }) => {
     openId.value = data.openId as string
   }).catch((res) => {
-    router.push({ name: 'ErrorResult', query: { msg: res.message } })
+    router.push({ name: 'ErrorResult', query: { msg: res.message }, replace: true  })
   })
   // 判断是否自动拉起支付
   if (aggregateInfo.value.aggregateConfig.autoLaunch) {
@@ -144,30 +148,4 @@ function jsapiPay(data: WxJsapiSignResult) {
 </script>
 
 <style scoped lang="less">
-@color: #4caf50;
-
-:deep(.van-key--blue) {
-  background: @color;
-}
-.container {
-  background-color: @color;
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  text-align: center;
-  color: white;
-  .amount-display {
-    background-color: white;
-    color: @color;
-    border-radius: 20px;
-    padding: 20px;
-    margin: 20px 0;
-  }
-  .amount-display p {
-    margin: 5px 0;
-  }
-}
-.remark {
-  color: @color;
-}
 </style>
