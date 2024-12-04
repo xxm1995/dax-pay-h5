@@ -52,7 +52,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     },
     {
       path: '/checkout/:orderNo',
-      name: 'ChannelCashier',
+      name: 'CheckoutPay',
       component: () => import('@/views/daxpay/checkout/CheckoutPay.vue'),
       meta: {
         title: '手机收银台',
@@ -60,7 +60,7 @@ export const DaxPayRoute: RouteRecordRaw = {
     },
     {
       path: '/aggregate/:orderNo',
-      name: 'ChannelCashier',
+      name: 'CheckAggregate',
       component: () => import('@/views/daxpay/checkout/CheckAggregate.vue'),
       meta: {
         title: '手机收银台',
@@ -71,7 +71,7 @@ export const DaxPayRoute: RouteRecordRaw = {
       name: 'AliCheckout',
       component: () => import('@/views/daxpay/checkout/alipay/AliAggregate.vue'),
       meta: {
-        title: '微信收银台',
+        title: '支付宝收银台',
       },
     },
     {

@@ -37,7 +37,10 @@ export enum CheckoutTypeEnum {
   AGGREGATE = 'aggregate',
 }
 
-export enum AggregateTypeEnum {
+/**
+ * 收银台聚合支付类型
+ */
+export enum CheckoutAggregateEnum {
   ALI = 'alipay',
   WECHAT = 'wechat_pay',
 }

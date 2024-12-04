@@ -1,18 +1,19 @@
 <template>
-  <div>
+  <div v-if="show">
     <div class="container">
       <div style="font-size: 28px;margin-top: 10px;">
         {{ aggregateInfo.config.name || '微信收银台' }}
       </div>
       <div class="amount-display">
         <p style="font-size: 20px">
-          付款金额
+          金额
         </p>
         <p style="font-size: 32px;">
           ¥ {{ aggregateInfo.order.amount || 0.00 }}
         </p>
       </div>
     </div>
+    <van-submit-bar :price="(aggregateInfo.order.amount || 0)*100" button-text="支付" @submit="pay" />
   </div>
 </template>
 
@@ -20,10 +21,10 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { AggregateTypeEnum } from '@/enums/daxpay/DaxPayEnum'
+import { CheckoutAggregateEnum } from '@/enums/daxpay/DaxPayEnum'
 import router from '@/router'
-import type {
-  AggregateOrderAndConfigResult,
+import {
+  AggregateOrderAndConfigResult, aggregatePay, CheckoutAggregatePayParam,
   CheckoutAuthCodeParam,
   CheckoutPayParam,
 } from '@/views/daxpay/checkout/CheckoutPay.api'
@@ -42,7 +43,8 @@ const openId = ref<string>('')
 
 // 认证参数
 const authParam = ref<CheckoutAuthCodeParam>({
-  aggregateType: AggregateTypeEnum.WECHAT,
+  orderNo: orderNo as string,
+  aggregateType: CheckoutAggregateEnum.WECHAT,
 })
 
 const aggregateInfo = ref<AggregateOrderAndConfigResult>({
@@ -62,7 +64,7 @@ function init() {
   // 如果不是重定向跳转过来， 跳转到到重定向授权地址
   if (!authCode) {
     // 重定向跳转到微信授权地址
-    generateAuthUrl({ orderNo: orderNo as string, aggregateType: AggregateTypeEnum.WECHAT }).then((res) => {
+    generateAuthUrl({ orderNo: orderNo as string, aggregateType: CheckoutAggregateEnum.WECHAT }).then((res) => {
       const url = res.data
       location.replace(url)
     }).catch((res) => {
@@ -82,7 +84,7 @@ function init() {
 async function initData() {
   show.value = true
   // 获取聚合配置
-  getAggregateConfig(orderNo, AggregateTypeEnum.WECHAT).then(({ data }) => {
+  getAggregateConfig(orderNo, CheckoutAggregateEnum.WECHAT).then(({ data }) => {
     aggregateInfo.value = data
   }).catch((res) => {
     router.push({ name: 'ErrorResult', query: { msg: res.message } })
@@ -107,9 +109,10 @@ function pay() {
   loading.value = true
   const from = {
     orderNo: orderNo as string,
+    aggregateType: CheckoutAggregateEnum.WECHAT,
     openId: openId.value,
-  } as CheckoutPayParam
-  checkoutPay(from)
+  } as CheckoutAggregatePayParam
+  aggregatePay(from)
     .then(({ data }) => {
       loading.value = false
       // 拉起jsapi支付
@@ -141,5 +144,30 @@ function jsapiPay(data: WxJsapiSignResult) {
 </script>
 
 <style scoped lang="less">
+@color: #4caf50;
 
+:deep(.van-key--blue) {
+  background: @color;
+}
+.container {
+  background-color: @color;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  .amount-display {
+    background-color: white;
+    color: @color;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .amount-display p {
+    margin: 5px 0;
+  }
+}
+.remark {
+  color: @color;
+}
 </style>

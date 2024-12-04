@@ -12,12 +12,7 @@ declare module 'vue' {
     SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
     VanButton: typeof import('vant/es')['Button']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
-    VanDialog: typeof import('vant/es')['Dialog']
-    VanField: typeof import('vant/es')['Field']
     VanLoading: typeof import('vant/es')['Loading']
-    VanNumberKeyboard: typeof import('vant/es')['NumberKeyboard']
-    VanOverlay: typeof import('vant/es')['Overlay']
     VanSubmitBar: typeof import('vant/es')['SubmitBar']
-    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
   }
 }

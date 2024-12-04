@@ -1,6 +1,6 @@
 <template>
-  <div>
-
+  <div v-if="show">
+  123
   </div>
 </template>
 
@@ -16,7 +16,7 @@ const route = useRoute()
 
 const { orderNo } = route.params
 const ua = navigator.userAgent
-
+const show = ref(false)
 const orderAndConfig = ref<CheckoutOrderAndConfigResult>({
   order: {},
   config: {},
@@ -40,8 +40,9 @@ async function initData() {
   })
   // 判断是否自动升级为聚合控制台
   if (orderAndConfig.value.config.h5AutoUpgrade) {
-    goAggregate()
+    await goAggregate()
   }
+  show.value = true
 }
 
 /**
@@ -49,10 +50,10 @@ async function initData() {
  */
 function goAggregate() {
   if (ua.includes('MicroMessenger')) {
-    router.push({ path: `/checkout/wechat/${orderNo}`, replace: true })
+    router.push({ path: `/aggregate/wechat/${orderNo}`, replace: true })
   }
   else if (ua.includes('Alipay')) {
-    router.push({ path: `/checkout/alipay/${orderNo}`, replace: true })
+    router.push({ path: `/aggregate/alipay/${orderNo}`, replace: true })
   }
 }
 

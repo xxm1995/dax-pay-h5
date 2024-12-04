@@ -155,7 +155,7 @@ export interface CheckoutOrderResult {
   /** 描述 */
   description?: string
   /** 金额(元) */
-  amount?: string
+  amount?: number
 
 }
 /**
