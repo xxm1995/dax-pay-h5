@@ -31,7 +31,7 @@ import router from '@/router'
 import type {
   AggregateOrderAndConfigResult, CheckoutAggregatePayParam,
   CheckoutAuthCodeParam} from '@/views/daxpay/checkout/CheckoutPay.api';
-import { aggregatePay
+import { aggregatePay,
  auth, generateAuthUrl, getAggregateConfig } from '@/views/daxpay/checkout/CheckoutPay.api'
 
 
