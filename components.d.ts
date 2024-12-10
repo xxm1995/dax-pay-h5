@@ -13,15 +13,14 @@ declare module 'vue' {
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
-    VanCol: typeof import('vant/es')['Col']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
+    VanDialog: typeof import('vant/es')['Dialog']
     VanField: typeof import('vant/es')['Field']
-    VanGrid: typeof import('vant/es')['Grid']
-    VanGridItem: typeof import('vant/es')['GridItem']
     VanLoading: typeof import('vant/es')['Loading']
+    VanNumberKeyboard: typeof import('vant/es')['NumberKeyboard']
     VanOverlay: typeof import('vant/es')['Overlay']
-    VanRow: typeof import('vant/es')['Row']
     VanSpace: typeof import('vant/es')['Space']
     VanSubmitBar: typeof import('vant/es')['SubmitBar']
+    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
   }
 }
