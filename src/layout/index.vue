@@ -1,7 +1,7 @@
 <template>
   <div
     class="layout-shell h-screen flex flex-col"
-    :class="{ dark: designStore.darkMode === 'dark' }"
+    :class="{ dark: designStore.getDarkMode === 'dark' }"
   >
     <RouterView class="flex-1 overflow-x-hidden">
       <template #default="{ Component, route }">
@@ -11,8 +11,6 @@
         <component :is="Component" v-else :key="route.fullPath" />
       </template>
     </RouterView>
-
-    <FloatingNavBar :items="tabbarItems" :show-dark-mode-toggle="true" />
   </div>
 </template>
 
@@ -20,17 +18,11 @@
 import { computed } from 'vue'
 import { useDesignSettingStore } from '@/store/modules/designSetting'
 import { useRouteStore } from '@/store/modules/route'
-import FloatingNavBar from './components/FloatingNavBar.vue'
 
 const routeStore = useRouteStore()
 const designStore = useDesignSettingStore()
 
 const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
-
-const tabbarItems = [
-  { label: 'Home', path: '/home/index', icon: 'i-ph:house-line' },
-  { label: 'Theme', path: '/themeSetting', icon: 'i-ph:palette' },
-]
 </script>
 
 <style scoped lang="less">
@@ -39,6 +31,6 @@ const tabbarItems = [
 }
 
 .layout-shell.dark {
-  background: #000000;
+  background: #1c1c1e;
 }
 </style>

@@ -1,14 +1,5 @@
 <template>
   <div>
-    <van-divider>主题模式</van-divider>
-    <van-cell-group inset>
-      <van-cell center title="暗黑模式">
-        <template #right-icon>
-          <van-switch v-model="getDarkMode" size="22" />
-        </template>
-      </van-cell>
-    </van-cell-group>
-
     <van-divider>系统主题色</van-divider>
     <div flex="~" justify="center">
       <div grid="~ cols-8 gap-2">
@@ -67,25 +58,10 @@
 </template>
 
 <script setup lang="ts">
-import { useDark } from '@vueuse/core'
 import { animates as animateOptions } from '@/settings/animateSetting'
 import { useDesignSettingStore } from '@/store/modules/designSetting'
 
 const designStore = useDesignSettingStore()
-
-const isDark = useDark({
-  valueDark: 'dark',
-  valueLight: 'light',
-  disableTransition: false,
-})
-
-const getDarkMode = computed({
-  get: () => isDark.value,
-  set: (value: boolean) => {
-    isDark.value = value
-    designStore.setDarkMode(value ? 'dark' : 'light')
-  },
-})
 
 function togTheme(color: string) {
   designStore.appTheme = color

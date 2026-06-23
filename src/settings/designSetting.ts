@@ -1,8 +1,8 @@
 // app theme preset color
 
 export interface DesignSettingState {
-  // 系统主题
-  darkMode: 'light' | 'dark'
+  // 系统是否深色（跟随 prefers-color-scheme，只读派生，不持久化）
+  systemPrefersDark: boolean
   // 系统风格
   appTheme: string
   // 系统内置风格
@@ -36,8 +36,8 @@ export const appThemeList: string[] = [
 ]
 
 const setting: DesignSettingState = {
-  // 深色主题
-  darkMode: 'dark',
+  // 系统是否深色（初始 false，由 initSystemListener 读取系统并覆盖）
+  systemPrefersDark: false,
   // 系统主题色
   appTheme: '#5d9dfe',
   // 系统内置主题色列表

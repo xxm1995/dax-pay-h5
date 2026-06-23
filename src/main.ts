@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { setupStore } from '@/store'
+import { useDesignSettingWithOut } from '@/store/modules/designSetting'
 import App from './App.vue'
 import router, { setupRouter } from './router'
 import 'virtual:uno.css'
@@ -27,6 +28,8 @@ async function bootstrap() {
   const app = createApp(App)
   // 挂载状态管理
   setupStore(app)
+  // 初始化全局主题：跟随系统 prefers-color-scheme（不支持手动修改）
+  useDesignSettingWithOut().initSystemListener()
   // 挂载路由
   setupRouter(app)
   await router.isReady()

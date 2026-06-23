@@ -16,8 +16,13 @@ html.dark {
     color-scheme: dark !important;
   }
 
+  // 覆盖 vant 深色背景变量（vant 默认 --van-background 为 #000，对比度过强）
+  --van-background: #1c1c1e;
+  --van-background-2: #1c1c1e;
+  --van-background-3: #2c2c2e;
+
   body {
-    background-color: #000000;
+    background-color: #1c1c1e;
     color: rgba(255, 255, 255, 0.9) !important;
   }
 }
@@ -108,9 +113,9 @@ html.light {
 html.dark {
   .my-card {
     backdrop-filter: blur(12px);
-    background: rgba(18, 18, 18, 0.85);
+    background: rgba(44, 44, 46, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   }
 
   .van-cell-group--inset {
@@ -120,7 +125,7 @@ html.dark {
   }
 
   .van-cell-group--inset .van-cell {
-    background: rgba(18, 18, 18, 0.6);
+    background: #2c2c2e;
   }
 
   .van-cell-group .van-cell::after {

@@ -4,7 +4,8 @@ import { useDesignSettingStore } from '@/store/modules/designSetting'
 export function useDesignSetting() {
   const designStore = useDesignSettingStore()
 
-  const getDarkMode = computed(() => designStore.darkMode)
+  // 当前实际生效主题（跟随系统 prefers-color-scheme 派生）
+  const getDarkMode = computed(() => designStore.getDarkMode)
 
   const getAppTheme = computed(() => designStore.appTheme)
 
