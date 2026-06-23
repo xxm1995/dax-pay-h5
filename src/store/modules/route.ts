@@ -8,8 +8,7 @@ export interface IRouteState {
   keepAliveComponents: string[]
 }
 
-export const useRouteStore = defineStore({
-  id: 'app-route',
+export const useRouteStore = defineStore('app-route', {
   state: (): IRouteState => ({
     menus: [],
     routers: [],
@@ -35,6 +34,6 @@ export const useRouteStore = defineStore({
 })
 
 // Need to be used outside the setup
-export function useRouteStoreWidthOut() {
+export function useRouteStoreWithOut() {
   return useRouteStore(store)
 }

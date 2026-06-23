@@ -14,12 +14,17 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router, { setupRouter } from './router'
 import { setupStore } from '@/store'
-import { initWebsiteConfig } from '@/settings/initWebsiteConfig'
+
+// 开发环境启用 vconsole 移动端调试面板（由 VITE_V_CONSOLE 控制，默认开启）
+if (import.meta.env.DEV && import.meta.env.VITE_V_CONSOLE !== 'false') {
+  import('vconsole').then(({ default: VConsole }) => {
+    // eslint-disable-next-line no-new -- vconsole 以副作用方式实例化以挂载调试面板
+    new VConsole()
+  })
+}
 
 async function bootstrap() {
   const app = createApp(App)
-  // 初始化系统配置
-  initWebsiteConfig()
   // 挂载状态管理
   setupStore(app)
   // 挂载路由
@@ -28,4 +33,5 @@ async function bootstrap() {
   // 路由准备就绪后挂载APP实例
   app.mount('#app', true)
 }
+
 void bootstrap()

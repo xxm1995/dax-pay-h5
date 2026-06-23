@@ -25,28 +25,20 @@ export const ErrorPageRoute: RouteRecordRaw = {
   ],
 }
 
-/**
- * 主页面
- */
-export const routeModuleList: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'Dashboard',
-    redirect: '/index',
-    component: Layout,
-    meta: {
-      title: '主控台',
-      icon: 'wap-home',
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'DashboardPage',
-        meta: {
-          keepAlive: false,
-        },
-        component: () => import('@/views/dashboard/index.vue'),
-      },
-    ],
+export const RootRoute: RouteRecordRaw = {
+  path: '/',
+  name: 'Root',
+  redirect: PageEnum.BASE_HOME,
+  meta: {
+    title: 'Root',
   },
-]
+}
+
+export const LoginRoute: RouteRecordRaw = {
+  path: '/login',
+  name: 'Login',
+  component: () => import('@/views/login/Login.vue'),
+  meta: {
+    title: '登录',
+  },
+}

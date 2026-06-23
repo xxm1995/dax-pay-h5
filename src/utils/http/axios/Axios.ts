@@ -1,14 +1,14 @@
+/* eslint-disable ts/ban-ts-comment */
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import axios from 'axios'
 import qs from 'qs'
 import { cloneDeep } from 'lodash-es'
 import { AxiosCanceler } from './axiosCancel'
-import type { CreateAxiosOptions, RequestOptions } from './types'
+import type { CreateAxiosOptions, RequestOptions, Result, UploadFileParams } from './types'
 import { isFunction } from '@/utils/is'
 
 import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum'
-import type { Result } from '#/axios'
 
 export * from './axiosTransform'
 
@@ -53,8 +53,9 @@ export class VAxios {
    * @description:   请求方法
    */
   request<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    let conf: any = cloneDeep(config)
+    let conf: AxiosRequestConfig = cloneDeep(config)
     const transform = this.getTransform()
+
     const { requestOptions } = this.options
 
     const opt: RequestOptions = { ...requestOptions, ...options }
@@ -65,13 +66,15 @@ export class VAxios {
     }
 
     // 这里重新 赋值成最新的配置
+    // @ts-expect-error
     conf.requestOptions = opt
     // 支持 FormData
     conf = this.supportFormData(conf)
+
     return new Promise((resolve, reject) => {
       this.axiosInstance
         .request<any, AxiosResponse<Result>>(conf)
-        .then((res: any) => {
+        .then((res: AxiosResponse<Result>) => {
           // 请求是否被取消
           const isCancel = axios.isCancel(res)
           if (transformRequestData && isFunction(transformRequestData) && !isCancel) {
@@ -106,6 +109,45 @@ export class VAxios {
   private getTransform() {
     const { transform } = this.options
     return transform
+  }
+
+  /**
+   * @description:  文件上传
+   */
+  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
+    const formData = new window.FormData()
+    const customFilename = params.name || 'file'
+
+    if (params.filename) {
+      formData.append(customFilename, params.file, params.filename)
+    }
+    else {
+      formData.append(customFilename, params.file)
+    }
+
+    if (params.data) {
+      Object.keys(params.data).forEach((key) => {
+        const value = params.data![key]
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            formData.append(`${key}[]`, item)
+          })
+          return
+        }
+
+        formData.append(key, params.data![key])
+      })
+    }
+
+    return this.axiosInstance.request<T>({
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-type': ContentTypeEnum.FORM_DATA,
+        'ignoreCancelToken': true,
+      },
+      ...config,
+    })
   }
 
   // support form-data
@@ -145,7 +187,8 @@ export class VAxios {
     const axiosCanceler = new AxiosCanceler()
 
     // 请求拦截器配置处理
-    this.axiosInstance.interceptors.request.use((config: any) => {
+    // @ts-expect-error
+    this.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
       const { headers: { ignoreCancelToken } = { ignoreCancelToken: false } } = config
       const ignoreCancel
         = ignoreCancelToken !== undefined

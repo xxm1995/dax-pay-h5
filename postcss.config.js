@@ -34,7 +34,7 @@ const baseViewportOpts = {
   selectorBlackList: ['.ignore', 'keep-px'],
   // 下面配置表示属性值包含 '1px solid' 的内容不会转换
   valueBlackList: ['1px solid'],
-  exclude: [/src/], // 忽略某些文件夹下的文件或特定文件
+  // exclude: [/node_modules/], // 忽略某些文件夹下的文件或特定文件
   // include: [/src/], // 如果设置了include，那将只有匹配到的文件才会被转换
   mobileUnit: 'vw', // 指定需要转换成的视口单位，建议使用 vw
   rootContainingBlockSelectorList: ['van-popup--bottom'], // 指定包含块是根包含块的选择器，这种选择器的定位通常是 `fixed`，但是选择器内没有 `position: fixed`

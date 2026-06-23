@@ -2,28 +2,27 @@
 <html lang="zh-cmn-Hans" id="htmlRoot">
   <head>
     <meta charset="UTF-8" />
-    <link id="favicon" rel="icon" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <!--  微信jssdk需要在uniapp前面  -->
-    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
-    <script type="text/javascript" src="/uni.webview.1.5.6.js"></script>
-    <title>加载中</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
   </head>
   <body>
     <div id="app">
       <script>
         ;(() => {
-          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-          const darkMode = mediaQuery.matches ? 'light' : 'light'
-          const { appTheme = '#f8d03b' } =
+          const { darkMode = 'dark', appTheme = '#5d9dfe' } =
             JSON.parse(window.localStorage.getItem('DESIGN-SETTING')) || {}
 
           let htmlRoot = document.getElementById('htmlRoot')
           if (htmlRoot) {
             htmlRoot.classList.add(darkMode)
           }
+
           // 设置主题色变量
-          document.documentElement.style.setProperty('--app-theme-color', appTheme)
+          document.documentElement.style.setProperty(
+            '--app-theme-color',
+            appTheme,
+          )
         })()
       </script>
       <style>

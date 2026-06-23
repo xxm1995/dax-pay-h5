@@ -1,3 +1,4 @@
+/* eslint-disable ts/ban-types */
 /// <reference types="vite/client" />
 
 declare module '*.vue' {

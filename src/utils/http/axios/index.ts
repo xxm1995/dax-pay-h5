@@ -4,19 +4,24 @@ import axios from 'axios'
 import { showDialog, showFailToast } from 'vant'
 import { VAxios } from './Axios'
 import type { AxiosTransform } from './axiosTransform'
+import { checkStatus } from './checkStatus'
 import { formatRequestDate, joinTimestamp } from './helper'
-import type { CreateAxiosOptions, RequestOptions } from './types'
+import type { CreateAxiosOptions, RequestOptions, Result } from './types'
 import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums/httpEnum'
+import { PageEnum } from '@/enums/pageEnum'
 import { useGlobSetting } from '@/hooks/setting'
 
 import { isString } from '@/utils/is/'
 import { deepMerge, isUrl } from '@/utils'
 import { setObjToUrlParams } from '@/utils/urlUtils'
-import type { Result } from '#/axios'
-import { useTokenStore } from '@/store/modules/token'
+
+import { useUserStoreWithOut } from '@/store/modules/user'
+
+import router from '@/router'
+import { storage } from '@/utils/Storage'
 
 const globSetting = useGlobSetting()
-const urlPrefix = globSetting.urlPrefix
+const urlPrefix = globSetting.urlPrefix || ''
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -25,8 +30,6 @@ const transform: AxiosTransform = {
   /**
    * @description: 处理请求数据
    */
-  // eslint-disable-next-line ts/ban-ts-comment
-  // @ts-expect-error
   transformRequestData: (res: AxiosResponse<Result>, options: RequestOptions) => {
     const {
       isShowMessage = true,
@@ -49,75 +52,91 @@ const transform: AxiosTransform = {
       return res.data
     }
 
-    const { data: result } = res
-    if (!result) {
+    const { data } = res
+
+    if (!data) {
       // return '[HTTP] Request has no return value';
       throw new Error('请求出错，请稍候重试')
     }
     //  这里 code，result，message为 后台统一的字段，需要修改为项目自己的接口返回格式
-    const { code, msg } = result
+    const { code, result, message } = data
     // 请求成功
-    const hasSuccess = result && Reflect.has(result, 'code') && code === ResultEnum.SUCCESS
+    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS
     // 是否显示提示信息
     if (isShowMessage) {
       if (hasSuccess && (successMessageText || isShowSuccessMessage)) {
         showDialog({
-          message: successMessageText || msg || '操作成功！',
+          message: successMessageText || message || '操作成功！',
         }).then(() => {
           // on close
         })
       }
       else if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
         // 是否显示自定义信息提示
-        showFailToast(msg || errorMessageText || '操作失败！')
+        showFailToast(message || errorMessageText || '操作失败！')
       }
       else if (!hasSuccess && options.errorMessageMode === 'modal') {
         // errorMessageMode=‘custom-modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
         showDialog({
           title: '提示',
-          message: msg,
+          message,
         }).then(() => {
           // on close
         })
       }
     }
 
-    // 接口请求成功，直接返回相应结果
-    // eslint-disable-next-line eqeqeq
-    if (code == ResultEnum.SUCCESS) {
+    // 接口请求成功，直接返回结果
+    if (code === ResultEnum.SUCCESS) {
       return result
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
-    throw new Error(msg)
+    let errorMsg = message
+    const LoginName = PageEnum.BASE_LOGIN_NAME
+    const LoginPath = PageEnum.BASE_LOGIN
+    switch (code) {
+      // 请求失败
+      case ResultEnum.ERROR:
+        showFailToast(errorMsg)
+        break
+      // token 过期
+      case ResultEnum.TOKEN_EXPIRED:
+        if (router.currentRoute.value?.name === LoginName) {
+          return
+        }
+        // 到登录页
+        errorMsg = '登录超时，请重新登录!'
+        showDialog({
+          title: '提示',
+          message: '登录身份已失效，请重新登录!',
+        })
+          .then(() => {
+            storage.clear()
+            window.location.href = LoginPath
+          })
+          .catch(() => {
+            // on cancel
+          })
+        break
+    }
+    throw new Error(errorMsg)
   },
 
   // 请求之前处理config
   beforeRequestHook: (config, options) => {
     const { apiUrl, joinPrefix, joinParamsToUrl, formatDate, joinTime = true, urlPrefix } = options
+
     const isUrlStr = isUrl(config.url as string)
 
     if (!isUrlStr && joinPrefix) {
       config.url = `${urlPrefix}${config.url}`
     }
 
-    if (!isUrlStr && apiUrl && isString(apiUrl)) { /* empty */ }
+    if (!isUrlStr && apiUrl && isString(apiUrl)) {
+      config.url = `${apiUrl}${config.url}`
+    }
     const params = config.params || {}
     const data = config.data || false
-    // token
-    const { getToken, getClientCode } = useTokenStore()
-    if ((config as Recordable).headers) {
-      config.headers = {
-        ...config.headers,
-        'AccessToken': getToken(),
-        'x-client-code': getClientCode(),
-      }
-    }
-    else {
-      ;(config as Recordable).headers = {
-        'AccessToken': getToken(),
-        'x-client-code': getClientCode(),
-      }
-    }
     if (config.method?.toUpperCase() === RequestEnum.GET) {
       if (!isString(params)) {
         // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
@@ -131,7 +150,6 @@ const transform: AxiosTransform = {
     }
     else {
       if (!isString(params)) {
-        // eslint-disable-next-line ts/no-unused-expressions
         formatDate && formatRequestDate(params)
         if (
           Reflect.has(config, 'data')
@@ -142,9 +160,10 @@ const transform: AxiosTransform = {
           config.params = params
         }
         else {
-          config.data = data
           // params 是添加到 url 的请求字符串中的，用于 get 请求
-          config.params = params
+          // 非GET请求如果没有提供 data，则将 params 视为 data
+          config.data = params
+          config.params = undefined
         }
         if (joinParamsToUrl) {
           config.url = setObjToUrlParams(
@@ -158,6 +177,22 @@ const transform: AxiosTransform = {
         config.url = config.url + params
         config.params = undefined
       }
+    }
+    return config
+  },
+
+  /**
+   * @description: 请求拦截器处理
+   */
+  requestInterceptors: (config, options) => {
+    // 请求之前处理config
+    const userStore = useUserStoreWithOut()
+    const token = userStore.getToken
+    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
+      // jwt token
+      (config as Recordable).headers.Authorization = options.authenticationScheme
+        ? `${options.authenticationScheme} ${token}`
+        : token
     }
     return config
   },
@@ -181,19 +216,18 @@ const transform: AxiosTransform = {
           title: '网络异常',
           message: '请检查您的网络连接是否正常',
         })
-          .then(() => { })
-          .catch(() => { })
+          .then(() => {})
+          .catch(() => {})
         return Promise.reject(error)
       }
     }
     catch (error) {
-      console.log(error)
       throw new Error(error as any)
     }
     // 请求是否被取消
     const isCancel = axios.isCancel(error)
     if (!isCancel) {
-      showFailToast(msg)
+      checkStatus(error.response && error.response.status, msg)
     }
     else {
       console.warn(error, '请求被取消！')
@@ -225,7 +259,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 是否返回原生响应头 比如：需要获取响应头时使用该属性
           isReturnNativeResponse: false,
           // 需要对返回数据进行处理
-          isTransformResponse: false,
+          isTransformResponse: true,
           // post请求的时候添加参数到url
           joinParamsToUrl: false,
           // 格式化提交参数时间

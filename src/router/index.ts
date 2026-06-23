@@ -1,41 +1,32 @@
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHistory } from 'vue-router'
-import { ErrorPageRoute, routeModuleList } from '@/router/base'
-import { useRouteStoreWidthOut } from '@/store/modules/route'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouterGuards } from './router-guards'
+import routeModuleList from './modules'
+import { ErrorPageRoute, LoginRoute, RootRoute } from '@/router/base'
+import { useRouteStoreWithOut } from '@/store/modules/route'
 
 // 菜单
-import { DaxPayH5Route, DaxPayPcRoute } from '@/router/daxpay'
-import { getSystemTitle } from '@/settings/initWebsiteConfig'
 
 // 普通路由
-export const constantRouter: RouteRecordRaw[] = [
-  DaxPayH5Route,
-  DaxPayPcRoute,
-  ErrorPageRoute,
-]
+export const constantRouter: RouteRecordRaw[] = [LoginRoute, RootRoute, ErrorPageRoute]
 
-const routeStore = useRouteStoreWidthOut()
+const routeStore = useRouteStoreWithOut()
 
 routeStore.setMenus(routeModuleList)
 routeStore.setRouters(constantRouter.concat(routeModuleList))
 
 const router = createRouter({
-  // 重定向时hash模式有场景无法跳转，需要使用history模式
-  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
+  history: createWebHashHistory(''),
   routes: constantRouter.concat(...routeModuleList),
   strict: true,
   scrollBehavior: () => ({ left: 0, top: 0 }),
 })
 
-// 设置名称
-router.afterEach((to) => {
-  const projectName = computed(() => getSystemTitle())
-  document.title = `${to.meta.title || '无标题'} ${projectName.value}`
-})
-
 export function setupRouter(app: App) {
   app.use(router)
+  // 创建路由守卫
+  createRouterGuards(router)
 }
 
 export default router
