@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { store } from '@/store'
-import designSetting from '@/settings/designSetting'
 import type { DesignSettingState } from '@/settings/designSetting'
+import { defineStore } from 'pinia'
+import designSetting from '@/settings/designSetting'
+import { store } from '@/store'
 
 const { darkMode, appTheme, appThemeList, isPageAnimate, pageAnimateType } = designSetting
 

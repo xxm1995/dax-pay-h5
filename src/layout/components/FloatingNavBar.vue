@@ -60,9 +60,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useDark } from '@vueuse/core'
-import { NavigationFailureType, isNavigationFailure, useRoute, useRouter } from 'vue-router'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { isNavigationFailure, NavigationFailureType, useRoute, useRouter } from 'vue-router'
 import { useDesignSettingStore } from '@/store/modules/designSetting'
 
 interface NavItem {
@@ -318,11 +318,7 @@ onBeforeUnmount(() => {
 .ambient-glow {
   position: absolute;
   inset: -18px;
-  background: radial-gradient(
-    72% 100% at 50% 112%,
-    var(--accent-soft-color),
-    transparent 70%
-  );
+  background: radial-gradient(72% 100% at 50% 112%, var(--accent-soft-color), transparent 70%);
   pointer-events: none;
 }
 
@@ -332,16 +328,9 @@ onBeforeUnmount(() => {
   opacity: 0.06;
   pointer-events: none;
   mix-blend-mode: soft-light;
-  background-image: radial-gradient(
-      circle at 22% 28%,
-      rgba(255, 255, 255, 0.38) 0.35px,
-      transparent 1px
-    ),
-    radial-gradient(
-      circle at 78% 72%,
-      rgba(255, 255, 255, 0.26) 0.4px,
-      transparent 1px
-    );
+  background-image:
+    radial-gradient(circle at 22% 28%, rgba(255, 255, 255, 0.38) 0.35px, transparent 1px),
+    radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.26) 0.4px, transparent 1px);
   background-size:
     4px 4px,
     5px 5px;
@@ -434,21 +423,11 @@ onBeforeUnmount(() => {
   top: 15px;
   width: 1px;
   height: 30px;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(255, 255, 255, 0.14),
-    transparent
-  );
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.14), transparent);
 }
 
 .floating-toolbar:not(.dark) .nav-btn.with-divider::after {
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(36, 54, 88, 0.12),
-    transparent
-  );
+  background: linear-gradient(180deg, transparent, rgba(36, 54, 88, 0.12), transparent);
 }
 
 .theme-switch-wrap {

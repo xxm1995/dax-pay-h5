@@ -1,8 +1,8 @@
-import pkg from '../../package.json'
-import { getConfigFileName } from '../../build/getConfigFileName'
 import type { GlobEnvConfig } from '#/config'
-
 import { warn } from '@/utils/log'
+import { getConfigFileName } from '../../build/getConfigFileName'
+
+import pkg from '../../package.json'
 
 export function getCommonStoragePrefix() {
   const { VITE_GLOB_APP_SHORT_NAME } = getAppEnvConfig()
@@ -32,7 +32,7 @@ export function getAppEnvConfig() {
     VITE_GLOB_IMG_URL,
   } = ENV
 
-  if (!/^[a-zA-Z\_]*$/.test(VITE_GLOB_APP_SHORT_NAME)) {
+  if (!/^[a-z_]*$/i.test(VITE_GLOB_APP_SHORT_NAME)) {
     warn(
       `VITE_GLOB_APP_SHORT_NAME Variables can only be characters/underscores, please modify in the environment variables and re-running.`,
     )

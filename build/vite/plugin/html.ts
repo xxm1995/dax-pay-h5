@@ -13,7 +13,7 @@ export function configHtmlPlugin(env: ViteEnv, isBuild: boolean) {
   const path = VITE_PUBLIC_PATH.endsWith('/') ? VITE_PUBLIC_PATH : `${VITE_PUBLIC_PATH}/`
 
   const getAppConfigSrc = () => {
-    return `${path || '/'}${GLOB_CONFIG_FILE_NAME}?v=${pkg.version}-${new Date().getTime()}`
+    return `${path || '/'}${GLOB_CONFIG_FILE_NAME}?v=${pkg.version}-${Date.now()}`
   }
 
   // 当执行 yarn build 构建项目之后，会自动生成 _app.config.js 文件并插入 index.html

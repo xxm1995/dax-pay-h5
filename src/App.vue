@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { darken, lighten } from '@/utils'
-import { useRouteStore } from '@/store/modules/route'
 import { useDesignSetting } from '@/hooks/setting/useDesignSetting'
+import { useRouteStore } from '@/store/modules/route'
+import { darken, lighten } from '@/utils'
 
 const routeStore = useRouteStore()
 const { getDarkMode, getAppTheme, getIsPageAnimate, getPageAnimateType } = useDesignSetting()

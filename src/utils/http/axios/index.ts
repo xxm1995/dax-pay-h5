@@ -1,18 +1,18 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
 import type { AxiosResponse } from 'axios'
+import type { AxiosTransform } from './axiosTransform'
+import type { CreateAxiosOptions, RequestOptions, Result } from './types'
 import axios from 'axios'
 import { showDialog, showFailToast } from 'vant'
-import { VAxios } from './Axios'
-import type { AxiosTransform } from './axiosTransform'
-import { checkStatus } from './checkStatus'
-import { formatRequestDate, joinTimestamp } from './helper'
-import type { CreateAxiosOptions, RequestOptions, Result } from './types'
 import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums/httpEnum'
 import { useGlobSetting } from '@/hooks/setting'
-
-import { isString } from '@/utils/is/'
 import { deepMerge, isUrl } from '@/utils'
+import { isString } from '@/utils/is/'
 import { setObjToUrlParams } from '@/utils/urlUtils'
+
+import { VAxios } from './Axios'
+import { checkStatus } from './checkStatus'
+import { formatRequestDate, joinTimestamp } from './helper'
 
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix || ''

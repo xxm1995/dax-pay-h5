@@ -1,6 +1,6 @@
 import type { Router } from 'vue-router'
-import { isNavigationFailure } from 'vue-router'
 import NProgress from 'nprogress'
+import { isNavigationFailure } from 'vue-router'
 import { useRouteStoreWithOut } from '@/store/modules/route'
 import 'nprogress/nprogress.css'
 

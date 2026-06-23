@@ -18,9 +18,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import FloatingNavBar from './components/FloatingNavBar.vue'
-import { useRouteStore } from '@/store/modules/route'
 import { useDesignSettingStore } from '@/store/modules/designSetting'
+import { useRouteStore } from '@/store/modules/route'
+import FloatingNavBar from './components/FloatingNavBar.vue'
 
 const routeStore = useRouteStore()
 const designStore = useDesignSettingStore()

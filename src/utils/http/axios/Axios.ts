@@ -1,14 +1,14 @@
 /* eslint-disable ts/ban-ts-comment */
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
-import axios from 'axios'
-import qs from 'qs'
-import { cloneDeep } from 'lodash-es'
-import { AxiosCanceler } from './axiosCancel'
 import type { CreateAxiosOptions, RequestOptions, Result, UploadFileParams } from './types'
+import axios from 'axios'
+import { cloneDeep } from 'lodash-es'
+import qs from 'qs'
+import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum'
 import { isFunction } from '@/utils/is'
 
-import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum'
+import { AxiosCanceler } from './axiosCancel'
 
 export * from './axiosTransform'
 

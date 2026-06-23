@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
+import { defineStore } from 'pinia'
 import { store } from '@/store'
 
 export interface IRouteState {

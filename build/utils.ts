@@ -34,7 +34,7 @@ export function wrapperEnv(envConf: Recordable): ViteEnv {
       try {
         realName = JSON.parse(realName)
       }
-      catch (error) {}
+      catch {}
     }
     ret[envName] = realName
     process.env[envName] = realName
@@ -54,7 +54,7 @@ export function getEnvConfig(match = 'VITE_GLOB_', confFiles = ['.env', '.env.pr
       const env = dotenv.parse(fs.readFileSync(path.resolve(process.cwd(), item)))
       envConfig = { ...envConfig, ...env }
     }
-    catch (error) {}
+    catch {}
   })
 
   Object.keys(envConfig).forEach((key) => {

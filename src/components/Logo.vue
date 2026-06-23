@@ -42,9 +42,9 @@
 </template>
 
 <script setup lang="ts">
+import { appThemeList } from '@/settings/designSetting'
 import { useDesignSettingStore } from '@/store/modules/designSetting'
 import { hexToRgba } from '@/utils'
-import { appThemeList } from '@/settings/designSetting'
 
 const defaultAppTheme = appThemeList[0]
 const designStore = useDesignSettingStore()

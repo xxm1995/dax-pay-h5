@@ -27,7 +27,7 @@ export function createStorage({ prefixKey = '', storage = localStorage } = {}) {
     set(key: string, value: any, expire: number | null = DEFAULT_CACHE_TIME) {
       const stringData = JSON.stringify({
         value,
-        expire: expire !== null ? new Date().getTime() + expire * 1000 : null,
+        expire: expire !== null ? Date.now() + expire * 1000 : null,
       })
       this.storage.setItem(this.getKey(key), stringData)
     }
@@ -49,7 +49,7 @@ export function createStorage({ prefixKey = '', storage = localStorage } = {}) {
           }
           this.remove(key)
         }
-        catch (e) {
+        catch {
           return def
         }
       }

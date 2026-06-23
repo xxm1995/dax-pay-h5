@@ -53,7 +53,7 @@ export function lighten(color: string, amount: number) {
 /**
  * 判断是否 url
  */
-const RegExp = /^http(s)?:\/\//iu
+const RegExp = /^https?:\/\//iu
 export function isUrl(url: string) {
   return RegExp.test(url)
 }
@@ -91,9 +91,9 @@ export function hexToRgba(hex: string, opacity: number) {
   opacity = opacity >= 0 && opacity <= 1 ? Number(opacity) : 1
   return result
     ? `rgba(${
-        [Number.parseInt(result[1], 16), Number.parseInt(result[2], 16), Number.parseInt(result[3], 16), opacity].join(
-          ',',
-        )
-        })`
+      [Number.parseInt(result[1], 16), Number.parseInt(result[2], 16), Number.parseInt(result[3], 16), opacity].join(
+        ',',
+      )
+    })`
     : hex
 }

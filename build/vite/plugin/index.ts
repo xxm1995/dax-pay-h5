@@ -1,13 +1,13 @@
 import type { PluginOption } from 'vite'
-import Components from 'unplugin-vue-components/vite'
-import { VantResolver } from 'unplugin-vue-components/resolvers'
 import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import { configHtmlPlugin } from './html'
+import { VantResolver } from 'unplugin-vue-components/resolvers'
+import Components from 'unplugin-vue-components/vite'
 import { configCompressPlugin } from './compress'
-import { configVisualizerConfig } from './visualizer'
+import { configHtmlPlugin } from './html'
 import { configSvgIconsPlugin } from './svgSprite'
+import { configVisualizerConfig } from './visualizer'
 
 /**
  * 配置 vite 插件

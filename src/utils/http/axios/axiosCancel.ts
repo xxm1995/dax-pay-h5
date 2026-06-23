@@ -22,12 +22,12 @@ export class AxiosCanceler {
     const url = getPendingUrl(config)
     config.cancelToken
       = config.cancelToken
-      || new axios.CancelToken((cancel) => {
-        if (!pendingMap.has(url)) {
+        || new axios.CancelToken((cancel) => {
+          if (!pendingMap.has(url)) {
           // 如果 pending 中不存在当前请求，则添加进去
-          pendingMap.set(url, cancel)
-        }
-      })
+            pendingMap.set(url, cancel)
+          }
+        })
   }
 
   /**

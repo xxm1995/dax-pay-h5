@@ -1,7 +1,7 @@
+const { execSync } = require('node:child_process')
 // commitlint.config.js
 const fs = require('node:fs')
 const path = require('node:path')
-const { execSync } = require('node:child_process')
 
 const scopes = fs
   .readdirSync(path.resolve(__dirname, 'src'), { withFileTypes: true })
@@ -13,9 +13,9 @@ const scopeComplete = execSync('git status --porcelain || true')
   .toString()
   .trim()
   .split('\n')
-  .find(r => ~r.indexOf('M  src'))
-  ?.replace(/(\/)/g, '%%')
-  ?.match(/src%%((\w|-)*)/)?.[1]
+  .find(r => r.includes('M  src'))
+  ?.replace(/\//g, '%%')
+  ?.match(/src%%([\w-]*)/)?.[1]
   ?.replace(/s$/, '')
 
 /** @type {import('cz-git').UserConfig} */

@@ -1,9 +1,8 @@
-/* eslint-disable ts/ban-types */
 /// <reference types="vite/client" />
 
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'
 
-  const Component: DefineComponent<{}, {}, any>
+  const Component: DefineComponent<Record<string, never>, Record<string, never>, any>
   export default Component
 }

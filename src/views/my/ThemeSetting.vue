@@ -68,8 +68,8 @@
 
 <script setup lang="ts">
 import { useDark } from '@vueuse/core'
-import { useDesignSettingStore } from '@/store/modules/designSetting'
 import { animates as animateOptions } from '@/settings/animateSetting'
+import { useDesignSettingStore } from '@/store/modules/designSetting'
 
 const designStore = useDesignSettingStore()
 

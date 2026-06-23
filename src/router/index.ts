@@ -1,10 +1,10 @@
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { createRouterGuards } from './router-guards'
-import routeModuleList from './modules'
 import { ErrorPageRoute, RootRoute } from '@/router/base'
 import { useRouteStoreWithOut } from '@/store/modules/route'
+import routeModuleList from './modules'
+import { createRouterGuards } from './router-guards'
 
 // 菜单
 

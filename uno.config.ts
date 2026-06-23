@@ -1,3 +1,7 @@
+import presetIcons from '@unocss/preset-icons'
+import presetRemToPx from '@unocss/preset-rem-to-px'
+import transformerDirectives from '@unocss/transformer-directives'
+import transformerVariantGroup from '@unocss/transformer-variant-group'
 import {
   defineConfig,
   presetAttributify,
@@ -5,10 +9,6 @@ import {
   presetUno,
   presetWebFonts,
 } from 'unocss'
-import presetIcons from '@unocss/preset-icons'
-import presetRemToPx from '@unocss/preset-rem-to-px'
-import transformerVariantGroup from '@unocss/transformer-variant-group'
-import transformerDirectives from '@unocss/transformer-directives'
 
 export default defineConfig({
   // ...UnoCSS options
