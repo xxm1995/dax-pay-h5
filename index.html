@@ -10,12 +10,18 @@
     <div id="app">
       <script>
         ;(() => {
-          const { darkMode = 'dark', appTheme = '#5d9dfe' } =
-            JSON.parse(window.localStorage.getItem('DESIGN-SETTING')) || {}
+          // 主题色从本地存储读取（用户可配置项持久化）
+          const { appTheme = '#5d9dfe' } = JSON.parse(window.localStorage.getItem('DESIGN-SETTING')) || {}
 
-          let htmlRoot = document.getElementById('htmlRoot')
+          // 首屏主题：跟随系统 prefers-color-scheme，无法识别时默认浅色
+          let theme = 'light'
+          if (typeof window.matchMedia === 'function') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+
+          const htmlRoot = document.getElementById('htmlRoot')
           if (htmlRoot) {
-            htmlRoot.classList.add(darkMode)
+            htmlRoot.classList.add(theme)
           }
 
           // 设置主题色变量
@@ -27,7 +33,7 @@
           margin: 0;
         }
         html.dark .first-loading-wrap {
-          background-color: #101014;
+          background-color: #1c1c1e;
         }
         .first-loading-wrap {
           display: flex;
