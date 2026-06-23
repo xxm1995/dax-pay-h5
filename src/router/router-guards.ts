@@ -2,51 +2,14 @@ import type { Router } from 'vue-router'
 import { isNavigationFailure } from 'vue-router'
 import NProgress from 'nprogress'
 import { useRouteStoreWithOut } from '@/store/modules/route'
-import { useUserStoreWithOut } from '@/store/modules/user'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { storage } from '@/utils/Storage'
-import { PageEnum } from '@/enums/pageEnum'
 import 'nprogress/nprogress.css'
 
 NProgress.configure({ parent: '#app' })
 
-const LOGIN_PATH = PageEnum.BASE_LOGIN
-
-const whitePathList = [LOGIN_PATH] // no redirect whitelist
-
 export function createRouterGuards(router: Router) {
-  router.beforeEach(async (to, from) => {
-    // to: 即将要进入的目标
-    // from: 当前导航正要离开的路由
+  router.beforeEach(() => {
     NProgress.start()
-    const userStore = useUserStoreWithOut()
-
-    if (from.path === LOGIN_PATH && to.name === PageEnum.ERROR_PAGE_NAME) {
-      return PageEnum.BASE_HOME
-    }
-
-    // Whitelist can be directly entered
-    if (whitePathList.includes(to.path as PageEnum)) {
-      return true
-    }
-
-    const token = storage.get(ACCESS_TOKEN)
-
-    if (!token) {
-      // redirect login page
-      return LOGIN_PATH
-    }
-
-    // 当上次更新时间为空时获取用户信息
-    if (userStore.getLastUpdateTime === 0) {
-      try {
-        await userStore.GetUserInfo()
-      }
-      catch (err) {
-        return true
-      }
-    }
-
+    // 鉴权逻辑已移除：当前为开放式访问，待业务需要时在此补充登录/权限校验
     return true
   })
 

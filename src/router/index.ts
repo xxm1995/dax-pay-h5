@@ -3,13 +3,13 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createRouterGuards } from './router-guards'
 import routeModuleList from './modules'
-import { ErrorPageRoute, LoginRoute, RootRoute } from '@/router/base'
+import { ErrorPageRoute, RootRoute } from '@/router/base'
 import { useRouteStoreWithOut } from '@/store/modules/route'
 
 // 菜单
 
 // 普通路由
-export const constantRouter: RouteRecordRaw[] = [LoginRoute, RootRoute, ErrorPageRoute]
+export const constantRouter: RouteRecordRaw[] = [RootRoute, ErrorPageRoute]
 
 const routeStore = useRouteStoreWithOut()
 

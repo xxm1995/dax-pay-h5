@@ -33,12 +33,3 @@ export const RootRoute: RouteRecordRaw = {
     title: 'Root',
   },
 }
-
-export const LoginRoute: RouteRecordRaw = {
-  path: '/login',
-  name: 'Login',
-  component: () => import('@/views/login/Login.vue'),
-  meta: {
-    title: '登录',
-  },
-}

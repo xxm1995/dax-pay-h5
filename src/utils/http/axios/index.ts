@@ -8,17 +8,11 @@ import { checkStatus } from './checkStatus'
 import { formatRequestDate, joinTimestamp } from './helper'
 import type { CreateAxiosOptions, RequestOptions, Result } from './types'
 import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums/httpEnum'
-import { PageEnum } from '@/enums/pageEnum'
 import { useGlobSetting } from '@/hooks/setting'
 
 import { isString } from '@/utils/is/'
 import { deepMerge, isUrl } from '@/utils'
 import { setObjToUrlParams } from '@/utils/urlUtils'
-
-import { useUserStoreWithOut } from '@/store/modules/user'
-
-import router from '@/router'
-import { storage } from '@/utils/Storage'
 
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix || ''
@@ -91,32 +85,11 @@ const transform: AxiosTransform = {
       return result
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
-    let errorMsg = message
-    const LoginName = PageEnum.BASE_LOGIN_NAME
-    const LoginPath = PageEnum.BASE_LOGIN
+    const errorMsg = message
     switch (code) {
       // 请求失败
       case ResultEnum.ERROR:
         showFailToast(errorMsg)
-        break
-      // token 过期
-      case ResultEnum.TOKEN_EXPIRED:
-        if (router.currentRoute.value?.name === LoginName) {
-          return
-        }
-        // 到登录页
-        errorMsg = '登录超时，请重新登录!'
-        showDialog({
-          title: '提示',
-          message: '登录身份已失效，请重新登录!',
-        })
-          .then(() => {
-            storage.clear()
-            window.location.href = LoginPath
-          })
-          .catch(() => {
-            // on cancel
-          })
         break
     }
     throw new Error(errorMsg)
@@ -184,16 +157,8 @@ const transform: AxiosTransform = {
   /**
    * @description: 请求拦截器处理
    */
-  requestInterceptors: (config, options) => {
-    // 请求之前处理config
-    const userStore = useUserStoreWithOut()
-    const token = userStore.getToken
-    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
-      // jwt token
-      (config as Recordable).headers.Authorization = options.authenticationScheme
-        ? `${options.authenticationScheme} ${token}`
-        : token
-    }
+  requestInterceptors: (config) => {
+    // 鉴权相关（token 注入）已移除，待业务接入 Sa-Token Accesstoken 时在此补充
     return config
   },
 
