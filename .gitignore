@@ -15,7 +15,7 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+/.idea
 .DS_Store
 *.suo
 *.ntvs*
@@ -25,3 +25,15 @@ dist-ssr
 /components.d.ts
 .agents/
 skills-lock.json
+
+# 自动生成的类型声明（unplugin-auto-import 产物，dev/build 时重新生成）
+/types/auto-imports.d.ts
+
+# TypeScript 增量构建缓存
+*.tsbuildinfo
+
+# VSCode Local History 插件
+.history/
+
+# 构建分析报告（rollup-plugin-visualizer 产物）
+/stats.html

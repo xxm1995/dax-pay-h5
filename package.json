@@ -26,7 +26,6 @@
     "lint:lint-staged": "lint-staged"
   },
   "dependencies": {
-    "@types/lodash-es": "^4.17.12",
     "@vueuse/core": "^14.2.1",
     "axios": "^1.4.0",
     "date-fns": "^3.0.6",
@@ -47,6 +46,7 @@
     "@iconify/json": "^2.2.188",
     "@oxc-parser/binding-win32-x64-msvc": "0.115.0",
     "@types/fs-extra": "^11.0.4",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^25.5.0",
     "@types/nprogress": "^0.2.3",
     "@types/qs": "^6.9.11",
