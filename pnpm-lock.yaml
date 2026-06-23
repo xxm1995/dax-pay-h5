@@ -8,15 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@vueuse/core':
-        specifier: ^14.3.0
-        version: 14.3.0(vue@3.5.38(typescript@5.9.3))
       axios:
         specifier: ^1.18.1
         version: 1.18.1
-      date-fns:
-        specifier: ^3.0.6
-        version: 3.0.6
       lodash-es:
         specifier: ^4.18.1
         version: 4.18.1
@@ -35,9 +29,6 @@ importers:
       vant:
         specifier: ^4.9.24
         version: 4.9.24(vue@3.5.38(typescript@5.9.3))
-      vconsole:
-        specifier: ^3.15.1
-        version: 3.15.1
       vue:
         specifier: ^3.5.38
         version: 3.5.38(typescript@5.9.3)
@@ -99,9 +90,6 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
-      cz-git:
-        specifier: ^1.13.1
-        version: 1.13.1
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -135,9 +123,6 @@ importers:
       rimraf:
         specifier: ^6.1.3
         version: 6.1.3
-      rollup:
-        specifier: ^4.62.2
-        version: 4.62.2
       rollup-plugin-visualizer:
         specifier: ^5.11.0
         version: 5.11.0(rollup@4.62.2)
@@ -162,12 +147,12 @@ importers:
       unplugin-vue-components:
         specifier: ^32.1.0
         version: 32.1.0(vue@3.5.38(typescript@5.9.3))
+      vconsole:
+        specifier: ^3.15.1
+        version: 3.15.1
       vite:
         specifier: ^8.1.0
         version: 8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.6.7)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
-      vite-plugin-compression:
-        specifier: ^0.5.1
-        version: 0.5.1(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.6.7)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
       vite-plugin-html:
         specifier: ^3.2.2
         version: 3.2.2(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.6.7)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
@@ -2037,16 +2022,9 @@ packages:
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
-  cz-git@1.13.1:
-    resolution: {integrity: sha512-xeMA5ci+gkBY6uKmqc6nzhG/Q4pmK1DKbVVUgByOTBgregoiYE0f3otEF0ADelyEWH4vNsO1W2o7QZYEe7Nwlw==}
-    engines: {node: '>=v12.20.0'}
-
   dargs@8.1.0:
     resolution: {integrity: sha512-wAV9QHOsNbwnWdNW2FYvE1P56wtgSbM+3SZcdGiWQILwVjACCXDCI3Ai8QlCjMDB8YK5zySiXZYBiwGmNY3lnw==}
     engines: {node: '>=12'}
-
-  date-fns@3.0.6:
-    resolution: {integrity: sha512-W+G99rycpKMMF2/YD064b2lE7jJGUe+EjOES7Q8BIGY8sbNdbgcs9XFTZwvzc9Jx1f3k7LB7gZaZa7f8Agzljg==}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -4365,11 +4343,6 @@ packages:
   vconsole@3.15.1:
     resolution: {integrity: sha512-KH8XLdrq9T5YHJO/ixrjivHfmF2PC2CdVoK6RWZB4yftMykYIaXY1mxZYAic70vADM54kpMQF+dYmvl5NRNy1g==}
 
-  vite-plugin-compression@0.5.1:
-    resolution: {integrity: sha512-5QJKBDc+gNYVqL/skgFAP81Yuzo9R+EAf19d+EtsMF/i8kFUpNi3J/H01QD3Oo8zBQn+NzoCIFkpPLynoOzaJg==}
-    peerDependencies:
-      vite: '>=2.0.0'
-
   vite-plugin-html@3.2.2:
     resolution: {integrity: sha512-vb9C9kcdzcIo/Oc3CLZVS03dL5pDlOFuhGlZYDCJ840BhWl/0nGeZWf3Qy7NlOayscY4Cm/QRgULCQkEZige5Q==}
     peerDependencies:
@@ -5431,7 +5404,8 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@types/web-bluetooth@0.0.21': {}
+  '@types/web-bluetooth@0.0.21':
+    optional: true
 
   '@typescript-eslint/eslint-plugin@8.62.0(@typescript-eslint/parser@8.62.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
@@ -5866,12 +5840,15 @@ snapshots:
       '@vueuse/metadata': 14.3.0
       '@vueuse/shared': 14.3.0(vue@3.5.38(typescript@5.9.3))
       vue: 3.5.38(typescript@5.9.3)
+    optional: true
 
-  '@vueuse/metadata@14.3.0': {}
+  '@vueuse/metadata@14.3.0':
+    optional: true
 
   '@vueuse/shared@14.3.0(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       vue: 3.5.38(typescript@5.9.3)
+    optional: true
 
   JSONStream@1.3.5:
     dependencies:
@@ -6302,11 +6279,7 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  cz-git@1.13.1: {}
-
   dargs@8.1.0: {}
-
-  date-fns@3.0.6: {}
 
   debug@2.6.9:
     dependencies:
@@ -8432,6 +8405,7 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.62.2
       '@rollup/rollup-win32-x64-msvc': 4.62.2
       fsevents: 2.3.3
+    optional: true
 
   run-parallel@1.2.0:
     dependencies:
@@ -8937,15 +8911,6 @@ snapshots:
       copy-text-to-clipboard: 3.2.2
       core-js: 3.49.0
       mutation-observer: 1.0.3
-
-  vite-plugin-compression@0.5.1(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.6.7)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)):
-    dependencies:
-      chalk: 4.1.2
-      debug: 4.4.3
-      fs-extra: 10.1.0
-      vite: 8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.6.7)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
-    transitivePeerDependencies:
-      - supports-color
 
   vite-plugin-html@3.2.2(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.6.7)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)):
     dependencies:

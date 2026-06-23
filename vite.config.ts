@@ -1,6 +1,5 @@
 import type { ConfigEnv, UserConfig } from 'vite'
 import { resolve } from 'node:path'
-import { format } from 'date-fns'
 import { loadEnv } from 'vite'
 import { OUTPUT_DIR } from './build/constant'
 import { wrapperEnv } from './build/utils'
@@ -16,11 +15,18 @@ function pathResolve(dir: string) {
   return resolve(process.cwd(), '.', dir)
 }
 
+// 本地时区的 yyyy-MM-dd HH:mm:ss 格式时间字符串（替代原 date-fns 的 format）
+function nowStr(): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const d = new Date()
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
 const __APP_INFO__ = {
   // APP 后台管理信息
   pkg: { dependencies, devDependencies, name, version },
   // 最后编译时间
-  lastBuildTime: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+  lastBuildTime: nowStr(),
 }
 
 /** @type {import('vite').UserConfig} */
@@ -132,8 +138,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 
     server: {
       host: true,
-      // 服务启动时是否自动打开浏览器
-      open: true,
+      // 服务启动时不自动打开浏览器
+      open: false,
       // 服务端口号
       port: Number(VITE_PORT),
       proxy: createProxy(VITE_PROXY),

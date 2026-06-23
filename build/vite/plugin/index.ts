@@ -4,7 +4,6 @@ import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
-import { configCompressPlugin } from './compress'
 import { configHtmlPlugin } from './html'
 import { configSvgIconsPlugin } from './svgSprite'
 import { configVisualizerConfig } from './visualizer'
@@ -16,13 +15,6 @@ import { configVisualizerConfig } from './visualizer'
  * @returns vitePlugins[]
  */
 export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
-  // VITE_BUILD_COMPRESS 是否启用 gzip 压缩或 brotli 压缩
-  // 可选: gzip | brotli | none，
-  // 如果你需要多种形式，你可以用','来分隔
-
-  // VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE 打包使用压缩时是否删除原始文件，默认为 false
-  const { VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE } = viteEnv
-
   const vitePlugins: (PluginOption | PluginOption[])[] = [
     // have to
     vue(),
@@ -47,7 +39,6 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
         'vue',
         'vue-router',
         'pinia',
-        '@vueuse/core',
       ],
       dts: 'types/auto-imports.d.ts',
     }),
@@ -61,14 +52,6 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
 
   // vite-plugin-svg-icons
   vitePlugins.push(configSvgIconsPlugin(isBuild))
-
-  if (isBuild) {
-    // rollup-plugin-gzip
-    // 加载 gzip 打包
-    vitePlugins.push(
-      configCompressPlugin(VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE),
-    )
-  }
 
   return vitePlugins
 }
