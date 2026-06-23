@@ -1,9 +1,3 @@
-<template>
-  <svg :style="getStyle" aria-hidden="true">
-    <use :xlink:href="symbolId" :fill="color" />
-  </svg>
-</template>
-
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 
@@ -35,5 +29,11 @@ const getStyle = computed((): CSSProperties => {
   }
 })
 </script>
+
+<template>
+  <svg :style="getStyle" aria-hidden="true">
+    <use :xlink:href="symbolId" :fill="color" />
+  </svg>
+</template>
 
 <style scoped lang="less"></style>

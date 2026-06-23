@@ -1,3 +1,38 @@
+<script setup lang="ts">
+import { animates as animateOptions } from '@/settings/animateSetting'
+import { useDesignSettingStore } from '@/store/modules/designSetting'
+
+defineOptions({ name: 'ThemeSetting' })
+
+const designStore = useDesignSettingStore()
+
+function togTheme(color: string) {
+  designStore.appTheme = color
+}
+
+const findCurrentAnimateType = animateOptions.find(
+  item => item.value === designStore.pageAnimateType,
+)
+
+const animateState = reactive({
+  text: findCurrentAnimateType?.text,
+  value: [designStore.pageAnimateType],
+  showPicker: false,
+})
+
+function openAnimatePick() {
+  if (designStore.isPageAnimate) {
+    animateState.showPicker = true
+  }
+}
+
+function handleSaveAnimateType({ selectedOptions }) {
+  animateState.text = selectedOptions[0].text
+  designStore.setPageAnimateType(selectedOptions[0].value)
+  animateState.showPicker = false
+}
+</script>
+
 <template>
   <div>
     <van-divider>系统主题色</van-divider>
@@ -56,38 +91,5 @@
     </van-popup>
   </div>
 </template>
-
-<script setup lang="ts">
-import { animates as animateOptions } from '@/settings/animateSetting'
-import { useDesignSettingStore } from '@/store/modules/designSetting'
-
-const designStore = useDesignSettingStore()
-
-function togTheme(color: string) {
-  designStore.appTheme = color
-}
-
-const findCurrentAnimateType = animateOptions.find(
-  item => item.value === designStore.pageAnimateType,
-)
-
-const animateState = reactive({
-  text: findCurrentAnimateType?.text,
-  value: [designStore.pageAnimateType],
-  showPicker: false,
-})
-
-function openAnimatePick() {
-  if (designStore.isPageAnimate) {
-    animateState.showPicker = true
-  }
-}
-
-function handleSaveAnimateType({ selectedOptions }) {
-  animateState.text = selectedOptions[0].text
-  designStore.setPageAnimateType(selectedOptions[0].value)
-  animateState.showPicker = false
-}
-</script>
 
 <style scoped lang="less"></style>

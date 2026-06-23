@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import Logo from '@/components/Logo.vue'
+
+defineOptions({ name: 'HomePage' })
+
+// 由 vite define 注入的项目信息
+const { pkg, lastBuildTime } = __APP_INFO__
+const version = pkg.version
+</script>
+
 <template>
   <div class="home">
     <div class="home__body">
@@ -17,14 +27,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import Logo from '@/components/Logo.vue'
-
-// 由 vite define 注入的项目信息
-const { pkg, lastBuildTime } = __APP_INFO__
-const version = pkg.version
-</script>
 
 <style scoped lang="less">
 .home {

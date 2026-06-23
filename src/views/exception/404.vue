@@ -1,3 +1,12 @@
+<script lang="ts" setup>
+defineOptions({ name: 'ErrorPageSon' })
+
+const router = useRouter()
+function goHome() {
+  router.push('/')
+}
+</script>
+
 <template>
   <div class="page-container flex flex-col justify-center">
     <div class="text-center">
@@ -13,13 +22,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-const router = useRouter()
-function goHome() {
-  router.push('/')
-}
-</script>
 
 <style lang="less" scoped>
   .page-container {

@@ -1,3 +1,16 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useDesignSettingStore } from '@/store/modules/designSetting'
+import { useRouteStore } from '@/store/modules/route'
+
+defineOptions({ name: 'BasicLayout' })
+
+const routeStore = useRouteStore()
+const designStore = useDesignSettingStore()
+
+const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
+</script>
+
 <template>
   <div
     class="layout-shell h-screen flex flex-col"
@@ -13,17 +26,6 @@
     </RouterView>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useDesignSettingStore } from '@/store/modules/designSetting'
-import { useRouteStore } from '@/store/modules/route'
-
-const routeStore = useRouteStore()
-const designStore = useDesignSettingStore()
-
-const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
-</script>
 
 <style scoped lang="less">
 .layout-shell {

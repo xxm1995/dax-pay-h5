@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { appThemeList } from '@/settings/designSetting'
+import { useDesignSettingStore } from '@/store/modules/designSetting'
+import { hexToRgba } from '@/utils'
+
+defineOptions({ name: 'Logo' })
+
+const defaultAppTheme = appThemeList[0]
+const designStore = useDesignSettingStore()
+</script>
+
 <template>
   <div>
     <SvgIcon v-if="designStore.getAppTheme === defaultAppTheme" class="!h-30 !w-30" name="logo" />
@@ -40,12 +51,3 @@
     </svg>
   </div>
 </template>
-
-<script setup lang="ts">
-import { appThemeList } from '@/settings/designSetting'
-import { useDesignSettingStore } from '@/store/modules/designSetting'
-import { hexToRgba } from '@/utils'
-
-const defaultAppTheme = appThemeList[0]
-const designStore = useDesignSettingStore()
-</script>

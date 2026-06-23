@@ -1,17 +1,3 @@
-<template>
-  <vanConfigProvider :theme="getDarkMode" :theme-vars="getThemeVars()">
-    <RouterView v-slot="{ Component }">
-      <div class="absolute bottom-0 top-0 w-full overflow-hidden">
-        <transition :name="getTransitionName" mode="out-in" appear>
-          <KeepAlive v-if="keepAliveComponents" :include="keepAliveComponents">
-            <component :is="Component" />
-          </KeepAlive>
-        </transition>
-      </div>
-    </RouterView>
-  </vanConfigProvider>
-</template>
-
 <script setup lang="ts">
 import { useDesignSetting } from '@/hooks/setting/useDesignSetting'
 import { useRouteStore } from '@/store/modules/route'
@@ -71,6 +57,20 @@ const getTransitionName = computed(() => {
   return unref(getIsPageAnimate) ? unref(getPageAnimateType) : undefined
 })
 </script>
+
+<template>
+  <vanConfigProvider :theme="getDarkMode" :theme-vars="getThemeVars()">
+    <RouterView v-slot="{ Component }">
+      <div class="absolute bottom-0 top-0 w-full overflow-hidden">
+        <transition :name="getTransitionName" mode="out-in" appear>
+          <KeepAlive v-if="keepAliveComponents" :include="keepAliveComponents">
+            <component :is="Component" />
+          </KeepAlive>
+        </transition>
+      </div>
+    </RouterView>
+  </vanConfigProvider>
+</template>
 
 <style lang="less">
   @import './styles/index.less';
