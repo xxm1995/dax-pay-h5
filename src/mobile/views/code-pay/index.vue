@@ -57,8 +57,14 @@ function pay() {
     <div class="code-pay__brand" />
 
     <!-- 商户 + 金额卡片 -->
-    <div class="code-pay__card">
+    <div class="code-pay__card enter-y">
       <div class="code-pay__merchant">
+        <!-- 商户品牌头像：主色调圆图标 + 店铺 SVG -->
+        <div class="code-pay__avatar">
+          <svg viewBox="0 0 1024 1024" width="24" height="24" aria-hidden="true">
+            <path fill="#fff" d="M832 320 704 320c0-106.048-85.952-192-192-192s-192 85.952-192 192L192 320c-35.36 0-64 28.64-64 64l0 384c0 70.688 57.312 128 128 128l512 0c70.688 0 128-57.312 128-128l0-384C896 348.64 867.36 320 832 320zM512 192c70.688 0 128 57.312 128 128L384 320C384 249.312 441.312 192 512 192zM832 768c0 35.36-28.64 64-64 64L256 832c-35.36 0-64-28.64-64-64l0-384 128 0 0 64c0 17.664 14.336 32 32 32s32-14.336 32-32l0-64 256 0 0 64c0 17.664 14.336 32 32 32s32-14.336 32-32l0-64 128 0L832 768z" />
+          </svg>
+        </div>
         {{ cashierInfo.name }}
       </div>
       <div class="code-pay__amount-label">
@@ -73,13 +79,16 @@ function pay() {
     </div>
 
     <!-- 备注单元格 -->
-    <div class="code-pay__remark" @click="showRemark = true">
+    <div class="code-pay__remark enter-y" @click="showRemark = true">
       <span class="code-pay__remark-label">备注</span>
       <div class="code-pay__remark-value">
         <span v-if="!description" class="code-pay__remark-placeholder">添加备注</span>
         <span v-else>{{ description }}</span>
       </div>
-      <span class="code-pay__remark-arrow">›</span>
+      <!-- 箭头图标用 SVG 替代文字 › -->
+      <svg class="code-pay__remark-arrow" viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true">
+        <path fill="#ccc" d="M340.864 256 600.32 512 340.864 768c-13.312 12.864-12.64 34.624 0.448 48.448 13.056 13.408 34.144 14.016 47.424 0.448l283.52-274.976c6.4-6.24 9.984-14.592 9.984-23.488 0-8.896-3.584-17.248-9.984-23.488L388.736 220.096c-13.28-13.536-34.368-12.96-47.424 0.448C328.224 234.336 327.552 256.064 340.864 268.928z" />
+      </svg>
     </div>
 
     <!-- 备注弹窗 -->
@@ -89,7 +98,7 @@ function pay() {
       show-cancel-button
       confirm-button-text="保存"
       cancel-button-text="取消"
-      confirm-button-color="#108ee9"
+      confirm-button-color="#5d9dfe"
       cancel-button-color="#999"
     >
       <van-field
@@ -119,7 +128,9 @@ function pay() {
 </template>
 
 <style scoped lang="less">
-@brand: #108ee9;
+// 局部主色统一为全局主题色 #5d9dfe，派生加深色用于渐变收尾
+@brand: #5d9dfe;
+@brand-dark: #4a87e0;
 @bg: #f5f5f5;
 @text-main: #333;
 @text-sub: #999;
@@ -135,15 +146,18 @@ function pay() {
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-bottom: 220px;
+  padding-bottom: 280px;
 
   &__brand {
-    height: 120px;
-    background: @brand;
+    height: 160px;
+    // 顶部品牌色块改为渐变，与卡片平滑过渡
+    background: linear-gradient(135deg, @brand 0%, @brand-dark 100%);
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+    // 底部圆角，避免纯色矩形呆板
+    border-radius: 0 0 24px 24px;
   }
 
   &__card {
@@ -153,15 +167,32 @@ function pay() {
     border-radius: 12px;
     padding: 24px;
     margin: 40px 16px 0;
-    box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+    // 卡片阴影加深为主色调柔光，增强浮起感
+    box-shadow: 0 8px 24px rgba(93, 157, 254, 0.12);
   }
 
   &__merchant {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 24px;
     font-size: 18px;
     font-weight: 600;
     color: @text-main;
+  }
+
+  // 商户品牌头像：主色调圆形容器
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, @brand 0%, @brand-dark 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(93, 157, 254, 0.3);
   }
 
   &__amount-label {
@@ -190,6 +221,8 @@ function pay() {
     color: @text-main;
     flex: 1;
     line-height: 1.2;
+    // 金额变化时加平滑过渡
+    transition: color 0.2s ease;
 
     &--zero {
       color: #ccc;
@@ -223,9 +256,10 @@ function pay() {
     color: #ccc;
   }
 
+  // 箭头改为 SVG 元素，去掉文字样式
   &__remark-arrow {
     color: #ccc;
-    font-size: 18px;
+    flex-shrink: 0;
   }
 
   &__remark-field {
