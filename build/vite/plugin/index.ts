@@ -20,6 +20,8 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     vue(),
     // 按需引入VantUi且自动创建组件声明
     Components({
+      // 共享组件目录（移动端使用；PC 端独立，不扫描此处）
+      dirs: ['src/shared/components'],
       dts: true,
       resolvers: [VantResolver()],
       types: [],

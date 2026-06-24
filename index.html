@@ -10,6 +10,22 @@
     <div id="app">
       <script>
         ;(() => {
+          // 设备类型探测：移动端 UA（含 iPadOS 13+ 伪装桌面 UA 的情况）判定为 mobile，其余为 pc
+          // 开发期可用 ?device=pc|mobile 查询参数强制覆盖，便于切端调试
+          const params = new URLSearchParams(window.location.search)
+          const override = params.get('device')
+          const ua = navigator.userAgent
+          const isTouch = navigator.maxTouchPoints > 0
+          const isMobileUA =
+            /(Mobile|Android|iPhone|iPod|Windows Phone)/i.test(ua) || (isTouch && /Macintosh/i.test(ua))
+          window.__DEVICE__ = override === 'pc' || override === 'mobile' ? override : isMobileUA ? 'mobile' : 'pc'
+
+          // PC 端只挂载 #pc-app，隐藏 #app 内的移动端首屏 loading，避免残留转圈
+          if (window.__DEVICE__ === 'pc') {
+            const appEl = document.getElementById('app')
+            if (appEl) appEl.style.display = 'none'
+          }
+
           // 主题色从本地存储读取（用户可配置项持久化）
           const { appTheme = '#5d9dfe' } = JSON.parse(window.localStorage.getItem('DESIGN-SETTING')) || {}
 
@@ -125,6 +141,8 @@
         </div>
       </div>
     </div>
+    <!-- PC 端挂载点（与移动端 #app 并列，同一时刻仅其一被挂载） -->
+    <div id="pc-app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,40 +1,23 @@
-import { createApp } from 'vue'
-import { setupStore } from '@/store'
-import { useDesignSettingWithOut } from '@/store/modules/designSetting'
-import App from './App.vue'
-import router, { setupRouter } from './router'
+import { createMobileApp } from '@/mobile/app'
+import { createPCApp } from '@/pc/app'
+// UnoCSS 全局样式与重置在入口统一导入一次，PC/移动端共用
 import 'virtual:uno.css'
-
-import 'vant/es/toast/style'
-
-import 'vant/es/dialog/style'
-import 'vant/es/notify/style'
-import 'vant/es/image-preview/style'
 // https://unocss.dev/guide/style-reset#tailwind-compat
-// 此重置基于 Tailwind 重置，减去按钮的背景颜色覆盖，以避免与 UI 框架发生冲突。请参阅链接的问题。
+// 此重置基于 Tailwind 重置，减去按钮的背景颜色覆盖，以避免与 UI 框架发生冲突。
 import '@unocss/reset/tailwind-compat.css'
-// Register icon sprite
-import 'virtual:svg-icons-register'
 
-// 开发环境启用 vconsole 移动端调试面板（由 VITE_V_CONSOLE 控制，默认开启）
-if (import.meta.env.DEV && import.meta.env.VITE_V_CONSOLE !== 'false') {
-  import('vconsole').then(({ default: VConsole }) => {
-    // eslint-disable-next-line no-new -- vconsole 以副作用方式实例化以挂载调试面板
-    new VConsole()
-  })
-}
-
+/**
+ * 应用入口分发器
+ *
+ * 由 index.html 内联脚本在 Vue 挂载前写入 window.__DEVICE__（'pc' | 'mobile'），
+ * 此处据此挂载对应应用，首屏即为正确设备 UI，无重定向、无布局闪烁。
+ * - mobile → 挂载到 #app（受 postcss-mobile-forever 限宽 600px 居中）
+ * - pc     → 挂载到 #pc-app（全宽，px 不被转 vw）
+ */
 async function bootstrap() {
-  const app = createApp(App)
-  // 挂载状态管理
-  setupStore(app)
-  // 初始化全局主题：跟随系统 prefers-color-scheme（不支持手动修改）
-  useDesignSettingWithOut().initSystemListener()
-  // 挂载路由
-  setupRouter(app)
-  await router.isReady()
-  // 路由准备就绪后挂载APP实例
-  app.mount('#app', true)
+  const isPC = window.__DEVICE__ === 'pc'
+  const app = isPC ? await createPCApp() : await createMobileApp()
+  app.mount(isPC ? '#pc-app' : '#app', true)
 }
 
 void bootstrap()

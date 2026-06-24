@@ -131,7 +131,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           modifyVars: {},
           javascriptEnabled: true,
           // 注入全局 less 变量
-          additionalData: `@import "src/styles/var.less";`,
+          additionalData: `@import "src/shared/styles/var.less";`,
         },
       },
     },
@@ -145,8 +145,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       proxy: createProxy(VITE_PROXY),
       // 预热文件以降低启动期间的初始页面加载时长
       warmup: {
-        // 预热的客户端文件：首页、views、 components
-        clientFiles: ['./index.html', './src/{views,components}/*'],
+        // 预热的客户端文件：首页、移动端 views、共享 components
+        clientFiles: ['./index.html', './src/{mobile/views,shared/components}/*'],
       },
       // proxy: {
       //     '/api': {

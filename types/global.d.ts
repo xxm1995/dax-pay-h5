@@ -10,6 +10,14 @@ import type {
 // 在不是模块的文件中使用 declare global（即不包含import / export）是错误的，因为这样的文件中的所有内容都在全局范围内。
 
 declare global {
+  // 设备类型：由 index.html 内联脚本在 Vue 挂载前写入，'pc' | 'mobile'
+  const __DEVICE__: 'pc' | 'mobile'
+
+  interface Window {
+    // 设备类型：由 index.html 内联脚本在 Vue 挂载前写入，'pc' | 'mobile'
+    __DEVICE__: 'pc' | 'mobile'
+  }
+
   const __APP_INFO__: {
     pkg: {
       name: string

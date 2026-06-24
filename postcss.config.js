@@ -45,8 +45,9 @@ export default {
     autoprefixer(),
     viewport({
       ...baseViewportOpts,
-      // 只将 vant 转为 375 设计稿的 viewport，其它样式的视图宽度为 750
-      // viewportWidth: file => (file.includes('node_modules/vant/') ? 375 : 750),
+      // PC 端源码不转 vw：PC 页面用 scoped 原生 px + 媒体查询写样式
+      // 见 AGENTS.md「PC/移动端双端支持」约束
+      exclude: [/src\/pc\//],
     }),
   ],
 }
