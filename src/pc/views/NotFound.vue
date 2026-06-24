@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import notFoundImg from '@/shared/assets/icons/exception/404.svg'
+
 defineOptions({ name: 'PcNotFound' })
 
 const router = useRouter()
@@ -10,13 +12,10 @@ function goHome() {
 
 <template>
   <div class="pc-notfound">
-    <img class="pc-notfound__logo" src="/logo.svg" alt="DaxPay">
-    <p class="pc-notfound__code">
-      404
-    </p>
-    <p class="pc-notfound__text">
+    <img class="pc-notfound__img" :src="notFoundImg" alt="404">
+    <h1 class="pc-notfound__text">
       抱歉，你访问的页面不存在
-    </p>
+    </h1>
     <button class="pc-notfound__btn" type="button" @click="goHome">
       返回首页
     </button>
@@ -34,27 +33,21 @@ function goHome() {
   background: #f7f8fa;
 }
 
-.pc-notfound__logo {
-  width: 160px;
+.pc-notfound__img {
+  width: 400px;
   height: auto;
 }
 
-.pc-notfound__code {
-  margin: 24px 0 8px;
-  font-size: 56px;
-  font-weight: 900;
-  line-height: 1;
-  color: #1d2129;
-}
-
 .pc-notfound__text {
-  margin: 0 0 32px;
+  margin: 24px 0 32px;
   font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
   color: #4e5969;
 }
 
 .pc-notfound__btn {
-  padding: 10px 28px;
+  padding: 10px 32px;
   font-size: 14px;
   color: #ffffff;
   background: #5d9dfe;
@@ -69,12 +62,8 @@ function goHome() {
 }
 
 @media (max-width: 768px) {
-  .pc-notfound__logo {
-    width: 120px;
-  }
-
-  .pc-notfound__code {
-    font-size: 44px;
+  .pc-notfound__img {
+    width: 280px;
   }
 }
 </style>

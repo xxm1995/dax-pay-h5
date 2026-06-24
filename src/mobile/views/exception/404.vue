@@ -10,12 +10,12 @@ function goHome() {
 <template>
   <div class="page-container flex flex-col justify-center">
     <div class="text-center">
-      <img src="~@/shared/assets/icons/exception/404.svg" alt="">
+      <img src="~@/shared/assets/icons/exception/404.svg" alt="404">
     </div>
     <div class="text-center">
-      <p class="m-4 text-base">
+      <h1 class="m-4 text-base">
         抱歉，你访问的页面不存在
-      </p>
+      </h1>
       <van-button type="primary" @click="goHome">
         回到首页
       </van-button>
@@ -24,7 +24,7 @@ function goHome() {
 </template>
 
 <style lang="less" scoped>
-  .page-container {
+.page-container {
   height: 100%;
 
   .text-center {
