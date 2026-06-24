@@ -15,4 +15,10 @@
 export const RoutePath = {
   /** 首页（跨端） */
   HOME: '/',
+  /** 收银台（跨端：两端各实现，同 path 各指各 view） */
+  CASHIER: '/cashier/:orderNo',
+  /** 码牌支付（移动独占） */
+  CODE_PAY: '/code-pay/:code',
+  /** 商户对账单（PC 独占） */
+  MERCHANT_STATEMENT: '/merchant/statement',
 } as const

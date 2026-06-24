@@ -3,7 +3,7 @@ import { RoutePath } from '@/shared/router/paths'
 
 const Layout = () => import('@/mobile/layout/index.vue')
 
-// 业务路由模块（等待业务开发，当前仅保留占位首页）
+// 业务路由模块
 const routeModuleList: Array<RouteRecordRaw> = [
   // 首页（根路径 /，与 PC 端首页地址统一）
   {
@@ -22,6 +22,41 @@ const routeModuleList: Array<RouteRecordRaw> = [
           keepAlive: true,
         },
         component: () => import('@/mobile/views/home/index.vue'),
+      },
+    ],
+  },
+  // 收银台（跨端：与 PC 端同 path 各指各 view）
+  {
+    path: RoutePath.CASHIER,
+    name: 'Cashier',
+    component: Layout,
+    meta: {
+      title: '收银台',
+    },
+    children: [
+      {
+        path: '',
+        name: 'CashierPage',
+        meta: {
+          keepAlive: true,
+        },
+        component: () => import('@/mobile/views/cashier/index.vue'),
+      },
+    ],
+  },
+  // 码牌支付（移动独占：PC 端由注册表派生 device-only 存根）
+  {
+    path: RoutePath.CODE_PAY,
+    name: 'CodePay',
+    component: Layout,
+    meta: {
+      title: '码牌支付',
+    },
+    children: [
+      {
+        path: '',
+        name: 'CodePayPage',
+        component: () => import('@/mobile/views/code-pay/index.vue'),
       },
     ],
   },

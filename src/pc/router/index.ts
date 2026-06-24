@@ -19,6 +19,20 @@ const routes: RouteRecordRaw[] = [
     name: 'PcHome',
     component: () => import('@/pc/views/Home.vue'),
   },
+  // 收银台（跨端：与移动端同 path 各指各 view）
+  {
+    path: RoutePath.CASHIER,
+    name: 'PcCashier',
+    component: () => import('@/pc/views/cashier/Index.vue'),
+    meta: { title: '收银台' },
+  },
+  // 商户对账单（PC 独占：移动端由注册表派生 device-only 存根）
+  {
+    path: RoutePath.MERCHANT_STATEMENT,
+    name: 'MerchantStatement',
+    component: () => import('@/pc/views/statement/Index.vue'),
+    meta: { title: '商户对账单' },
+  },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页
   // 用 component 而非 redirect——vue-router 5 下 catch-all + redirect 在初始导航不触发

@@ -12,6 +12,8 @@
  *   { path: RoutePath.MERCHANT_DASHBOARD, name: 'MerchantDashboard', device: 'pc' },
  *   { path: RoutePath.WECHAT_BIND, name: 'WechatBind', device: 'mobile' },
  */
+import { RoutePath } from './paths'
+
 export interface ExclusiveRoute {
   /** 路由 path（引用 RoutePath 常量） */
   path: string
@@ -21,8 +23,13 @@ export interface ExclusiveRoute {
   device: 'pc' | 'mobile'
 }
 
-// 设备独占业务页登记（暂无；新增时按上方示例添加）
-export const EXCLUSIVE_ROUTES: ExclusiveRoute[] = []
+// 设备独占业务页登记（新增时按上方示例添加）
+export const EXCLUSIVE_ROUTES: ExclusiveRoute[] = [
+  // 码牌支付：仅移动端实现
+  { path: RoutePath.CODE_PAY, name: 'CodePay', device: 'mobile' },
+  // 商户对账单：仅 PC 端实现
+  { path: RoutePath.MERCHANT_STATEMENT, name: 'MerchantStatement', device: 'pc' },
+]
 
 /**
  * 返回"非指定端"的独占路由，供该端生成 device-only 提示存根。
