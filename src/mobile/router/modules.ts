@@ -12,7 +12,6 @@ const routeModuleList: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: '首页',
-      icon: 'i-ph:house',
     },
     children: [
       {
