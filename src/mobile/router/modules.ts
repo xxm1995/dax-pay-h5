@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { RoutePath } from '@/shared/router/paths'
 
 const Layout = () => import('@/mobile/layout/index.vue')
 
@@ -6,7 +7,7 @@ const Layout = () => import('@/mobile/layout/index.vue')
 const routeModuleList: Array<RouteRecordRaw> = [
   // 首页（根路径 /，与 PC 端首页地址统一）
   {
-    path: '/',
+    path: RoutePath.HOME,
     name: 'Home',
     component: Layout,
     meta: {

@@ -1,0 +1,33 @@
+/**
+ * 设备独占路由注册表
+ *
+ * 仅"一端"实现的业务页登记在此。两端路由器据此自动派生"对端提示存根"：
+ * 当用户在错误设备打开独占页时（如手机打开 PC-only 页），渲染 device-only
+ * 提示页而非 404。
+ *
+ * 约束：每项需保证其所属端路由器里有对应的"真实路由"，否则该路径在本端
+ * （所属端）反而会落 catch-all 变 404。
+ *
+ * 新增时参照示例（取消注释，并确保所属端已注册真实路由）：
+ *   { path: RoutePath.MERCHANT_DASHBOARD, name: 'MerchantDashboard', device: 'pc' },
+ *   { path: RoutePath.WECHAT_BIND, name: 'WechatBind', device: 'mobile' },
+ */
+export interface ExclusiveRoute {
+  /** 路由 path（引用 RoutePath 常量） */
+  path: string
+  /** 路由 name（全端唯一；对端存根会用 `${name}__stub`） */
+  name: string
+  /** 仅哪端实现 */
+  device: 'pc' | 'mobile'
+}
+
+// 设备独占业务页登记（暂无；新增时按上方示例添加）
+export const EXCLUSIVE_ROUTES: ExclusiveRoute[] = []
+
+/**
+ * 返回"非指定端"的独占路由，供该端生成 device-only 提示存根。
+ * 例：forDevice='mobile' → 返回所有 device='pc' 的独占项（供移动端生成存根）
+ */
+export function otherDeviceExclusives(forDevice: 'pc' | 'mobile'): ExclusiveRoute[] {
+  return EXCLUSIVE_ROUTES.filter(r => r.device !== forDevice)
+}
