@@ -5,7 +5,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { configHtmlPlugin } from './html'
-import { configSvgIconsPlugin } from './svgSprite'
 import { configVisualizerConfig } from './visualizer'
 
 /**
@@ -51,9 +50,6 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
 
   // rollup-plugin-visualizer
   vitePlugins.push(configVisualizerConfig())
-
-  // vite-plugin-svg-icons
-  vitePlugins.push(configSvgIconsPlugin(isBuild))
 
   return vitePlugins
 }

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Logo from '@/shared/components/Logo.vue'
-
 defineOptions({ name: 'HomePage' })
 
 // 由 vite define 注入的项目信息
@@ -12,8 +10,8 @@ const version = pkg.version
   <div class="home">
     <div class="home__body">
       <div class="home__welcome">
-        <!-- DaxPay 文字 logo（默认主题色时显示） -->
-        <Logo />
+        <!-- DaxPay 文字字标（public/logo.svg，与 PC 首页同源） -->
+        <img class="home__logo" src="/logo.svg" alt="DaxPay">
         <!-- 欢迎语 -->
         <div class="home__title">
           欢迎使用 DaxPay
@@ -46,6 +44,12 @@ const version = pkg.version
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  // 文字字标（保比例，mobile-forever 正常转 vw）
+  &__logo {
+    width: 160px;
+    height: auto;
   }
 
   // 欢迎语（参考商业版 text-2xl font-black mt-12）

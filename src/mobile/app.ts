@@ -8,8 +8,6 @@ import 'vant/es/toast/style'
 import 'vant/es/dialog/style'
 import 'vant/es/notify/style'
 import 'vant/es/image-preview/style'
-// Register icon sprite
-import 'virtual:svg-icons-register'
 
 // 开发环境启用 vconsole 移动端调试面板（由 VITE_V_CONSOLE 控制，默认开启）
 if (import.meta.env.DEV && import.meta.env.VITE_V_CONSOLE !== 'false') {
