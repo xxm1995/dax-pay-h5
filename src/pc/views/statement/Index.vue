@@ -1,33 +1,40 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 defineOptions({ name: 'MerchantStatement' })
+
+const { t } = useI18n()
+
+// 支付通道与状态用 code 表示，文案由 i18n 渲染
+type ChannelCode = 'wechat' | 'alipay' | 'union'
+type StatusCode = 'success' | 'fail' | 'pending'
 
 interface Trade {
   time: string
   orderNo: string
   title: string
   amount: number
-  channel: '微信' | '支付宝' | '银联'
-  status: '成功' | '失败' | '处理中'
+  channel: ChannelCode
+  status: StatusCode
 }
 
 // 演示交易流水（mock）
 const trades: Trade[] = [
-  { time: '2026-06-24 10:23:11', orderNo: 'DEMO20260624102311001', title: '会员订阅', amount: 99.00, channel: '微信', status: '成功' },
-  { time: '2026-06-24 09:48:32', orderNo: 'DEMO20260624094832002', title: '商品订单', amount: 158.50, channel: '支付宝', status: '成功' },
-  { time: '2026-06-24 09:12:05', orderNo: 'DEMO20260624091205003', title: '虚拟商品', amount: 12.00, channel: '微信', status: '处理中' },
-  { time: '2026-06-23 22:01:47', orderNo: 'DEMO20260623220147004', title: '服务费', amount: 300.00, channel: '银联', status: '成功' },
-  { time: '2026-06-23 18:34:20', orderNo: 'DEMO20260623183420005', title: '商品订单', amount: 46.80, channel: '支付宝', status: '失败' },
-  { time: '2026-06-23 15:09:56', orderNo: 'DEMO20260623150956006', title: '会员订阅', amount: 99.00, channel: '微信', status: '成功' },
-  { time: '2026-06-23 11:42:13', orderNo: 'DEMO20260623114213007', title: '虚拟商品', amount: 6.00, channel: '微信', status: '成功' },
-  { time: '2026-06-23 08:55:30', orderNo: 'DEMO20260623085530008', title: '商品订单', amount: 218.00, channel: '支付宝', status: '成功' },
+  { time: '2026-06-24 10:23:11', orderNo: 'DEMO20260624102311001', title: '会员订阅', amount: 99.00, channel: 'wechat', status: 'success' },
+  { time: '2026-06-24 09:48:32', orderNo: 'DEMO20260624094832002', title: '商品订单', amount: 158.50, channel: 'alipay', status: 'success' },
+  { time: '2026-06-24 09:12:05', orderNo: 'DEMO20260624091205003', title: '虚拟商品', amount: 12.00, channel: 'wechat', status: 'pending' },
+  { time: '2026-06-23 22:01:47', orderNo: 'DEMO20260623220147004', title: '服务费', amount: 300.00, channel: 'union', status: 'success' },
+  { time: '2026-06-23 18:34:20', orderNo: 'DEMO20260623183420005', title: '商品订单', amount: 46.80, channel: 'alipay', status: 'fail' },
+  { time: '2026-06-23 15:09:56', orderNo: 'DEMO20260623150956006', title: '会员订阅', amount: 99.00, channel: 'wechat', status: 'success' },
+  { time: '2026-06-23 11:42:13', orderNo: 'DEMO20260623114213007', title: '虚拟商品', amount: 6.00, channel: 'wechat', status: 'success' },
+  { time: '2026-06-23 08:55:30', orderNo: 'DEMO20260623085530008', title: '商品订单', amount: 218.00, channel: 'alipay', status: 'success' },
 ]
 
 // 汇总
 const summary = computed(() => {
-  const success = trades.filter(t => t.status === '成功')
-  const totalAmount = success.reduce((sum, t) => sum + t.amount, 0)
+  const success = trades.filter(trade => trade.status === 'success')
+  const totalAmount = success.reduce((sum, trade) => sum + trade.amount, 0)
   const successRate = trades.length ? (success.length / trades.length) * 100 : 0
   return {
     totalAmount: totalAmount.toFixed(2),
@@ -38,9 +45,19 @@ const summary = computed(() => {
   }
 })
 
+// 状态文案
+function statusText(status: StatusCode) {
+  return t(`statement.status.${status}`)
+}
+
+// 通道文案
+function channelText(channel: ChannelCode) {
+  return t(`statement.channel.${channel}`)
+}
+
 // 状态对应样式类
-function statusClass(status: Trade['status']) {
-  return { 成功: 'is-success', 失败: 'is-fail', 处理中: 'is-pending' }[status]
+function statusClass(status: StatusCode) {
+  return { success: 'is-success', fail: 'is-fail', pending: 'is-pending' }[status]
 }
 </script>
 
@@ -48,7 +65,7 @@ function statusClass(status: Trade['status']) {
   <div class="statement">
     <h1 class="statement__heading">
       <span class="statement__heading-bar" />
-      商户对账单
+      {{ t('statement.heading') }}
     </h1>
 
     <!-- 汇总卡片：分色 + 图标 + 左侧色条 -->
@@ -63,7 +80,7 @@ function statusClass(status: Trade['status']) {
               <path fill="currentColor" d="M832 64 192 64C121.3 64 64 121.3 64 192l0 640c0 70.7 57.3 128 128 128l640 0c70.7 0 128-57.3 128-128L960 192C960 121.3 902.7 64 832 64zM192 128l640 0c35.4 0 64 28.6 64 64L192 192C156.6 192 128 163.4 128 128 128 92.6 156.6 128 192 128zM896 832c0 35.4-28.6 64-64 64L192 896c-35.4 0-64-28.6-64-64L128 244.2C148.4 252.6 170.6 256 192 256l704 0c35.4 0 64 28.6 64 64L960 832zM704 544c-35.4 0-64-28.6-64-64s28.6-64 64-64 64 28.6 64 64S739.4 544 704 544z" />
             </svg>
           </span>
-          <span class="statement__summary-label">交易总额（成功）</span>
+          <span class="statement__summary-label">{{ t('statement.totalAmountSuccess') }}</span>
         </div>
         <span class="statement__summary-value statement__summary-value--primary">￥{{ summary.totalAmount }}</span>
       </div>
@@ -78,7 +95,7 @@ function statusClass(status: Trade['status']) {
               <path fill="currentColor" d="M832 128 192 128c-35.2 0-64 28.8-64 64l0 640c0 35.2 28.8 64 64 64l640 0c35.2 0 64-28.8 64-64L896 192C896 156.8 867.2 128 832 128zM832 832 192 832 192 192l640 0L832 832zM320 416l384 0c17.6 0 32-14.4 32-32s-14.4-32-32-32L320 352c-17.6 0-32 14.4-32 32S302.4 416 320 416zM320 544l384 0c17.6 0 32-14.4 32-32s-14.4-32-32-32L320 480c-17.6 0-32 14.4-32 32S302.4 544 320 544zM320 672l256 0c17.6 0 32-14.4 32-32s-14.4-32-32-32L320 608c-17.6 0-32 14.4-32 32S302.4 672 320 672z" />
             </svg>
           </span>
-          <span class="statement__summary-label">交易笔数</span>
+          <span class="statement__summary-label">{{ t('statement.tradeCount') }}</span>
         </div>
         <span class="statement__summary-value">{{ summary.count }}</span>
       </div>
@@ -93,7 +110,7 @@ function statusClass(status: Trade['status']) {
               <path fill="currentColor" d="M832 192 640 192c-17.6 0-32 14.4-32 32s14.4 32 32 32l115.2 0L512 499.2 379.2 366.4c-12.8-12.8-32-12.8-44.8 0L160 540.8c-12.8 12.8-12.8 32 0 44.8 6.4 6.4 14.4 9.6 22.4 9.6s16-3.2 22.4-9.6l152-152 132.8 132.8c12.8 12.8 32 12.8 44.8 0L832 268.8 832 384c0 17.6 14.4 32 32 32s32-14.4 32-32L896 224C896 206.4 881.6 192 864 192L832 192zM864 768 160 768c-17.6 0-32 14.4-32 32s14.4 32 32 32l704 0c17.6 0 32-14.4 32-32S881.6 768 864 768z" />
             </svg>
           </span>
-          <span class="statement__summary-label">支付成功率</span>
+          <span class="statement__summary-label">{{ t('statement.successRate') }}</span>
         </div>
         <span class="statement__summary-value" :class="summary.rateHealthy ? 'statement__summary-value--success' : 'statement__summary-value--warning'">{{ summary.successRate }}%</span>
       </div>
@@ -104,31 +121,31 @@ function statusClass(status: Trade['status']) {
       <table class="statement__table">
         <thead>
           <tr>
-            <th>交易时间</th>
-            <th>订单号</th>
-            <th>商品标题</th>
+            <th>{{ t('statement.column.time') }}</th>
+            <th>{{ t('statement.column.orderNo') }}</th>
+            <th>{{ t('statement.column.title') }}</th>
             <th class="statement__th-amount">
-              金额
+              {{ t('statement.column.amount') }}
             </th>
-            <th>支付通道</th>
-            <th>状态</th>
+            <th>{{ t('statement.column.channel') }}</th>
+            <th>{{ t('statement.column.status') }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="t in trades" :key="t.orderNo">
-            <td>{{ t.time }}</td>
+          <tr v-for="trade in trades" :key="trade.orderNo">
+            <td>{{ trade.time }}</td>
             <td class="statement__mono">
-              {{ t.orderNo }}
+              {{ trade.orderNo }}
             </td>
-            <td>{{ t.title }}</td>
+            <td>{{ trade.title }}</td>
             <td class="statement__amount">
-              ￥{{ t.amount.toFixed(2) }}
+              ￥{{ trade.amount.toFixed(2) }}
             </td>
-            <td>{{ t.channel }}</td>
+            <td>{{ channelText(trade.channel) }}</td>
             <td>
-              <span class="statement__status" :class="statusClass(t.status)">
+              <span class="statement__status" :class="statusClass(trade.status)">
                 <i class="statement__status-dot" />
-                {{ t.status }}
+                {{ statusText(trade.status) }}
               </span>
             </td>
           </tr>
@@ -138,7 +155,7 @@ function statusClass(status: Trade['status']) {
 
     <!-- 空状态 -->
     <div v-else class="statement__empty">
-      <span class="statement__empty-text">暂无交易记录</span>
+      <span class="statement__empty-text">{{ t('statement.empty') }}</span>
     </div>
   </div>
 </template>

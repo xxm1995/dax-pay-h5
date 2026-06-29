@@ -1,0 +1,20 @@
+{
+  "demoOrderTitle": "DaxPay Demo Order",
+  "remainTime": "Payment time left",
+  "remainTimeShort": "Time left",
+  "orderTitle": "Order title",
+  "orderNo": "Order No.",
+  "orderNoLabel": "Order No.: ",
+  "payableAmount": "Amount payable",
+  "selectMethod": "Select a payment method",
+  "recommend": "Recommended",
+  "payNow": "Pay Now",
+  "demoPayStarted": "Demo: {name} payment initiated",
+  "qrcodePayDemo": "Scan to pay (demo)",
+  "qrcodeTip": "Scan the QR code with {name} to complete the payment",
+  "method": {
+    "wechat": "WeChat Pay",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  }
+}

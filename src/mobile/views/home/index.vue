@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 defineOptions({ name: 'HomePage' })
+
+const { t } = useI18n()
 
 // 由 vite define 注入的项目信息
 const { pkg, lastBuildTime } = __APP_INFO__
@@ -14,14 +18,14 @@ const version = pkg.version
         <img class="home__logo" src="/logo.svg" alt="DaxPay">
         <!-- 欢迎语 -->
         <div class="home__title">
-          欢迎使用 DaxPay
+          {{ t('home.welcome') }}
         </div>
       </div>
     </div>
     <!-- 底部项目信息 -->
     <div class="home__footer">
-      <p>版本号: v{{ version }}</p>
-      <p>构建时间: {{ lastBuildTime }}</p>
+      <p>{{ t('home.version') }}: v{{ version }}</p>
+      <p>{{ t('home.buildTime') }}: {{ lastBuildTime }}</p>
     </div>
   </div>
 </template>

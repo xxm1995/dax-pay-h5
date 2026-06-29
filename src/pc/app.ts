@@ -4,6 +4,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createApp } from 'vue'
 import PcApp from '@/pc/App.vue'
 import { pcRouter, setupPCRouter } from '@/pc/router'
+import { setupI18n } from '@/shared/locales'
 
 // PC 端独立的 pinia 实例（与移动端状态隔离，同一时刻仅一套应用运行）
 const pcStore = createPinia()
@@ -26,6 +27,8 @@ function setupPCStore(app: App) {
 export async function createPCApp() {
   const app = createApp(PcApp)
   setupPCStore(app)
+  // 挂载国际化（PC 端独立实例，与移动端共用同一 i18n 模块）
+  setupI18n(app)
   setupPCRouter(app)
   await pcRouter.isReady()
   return app

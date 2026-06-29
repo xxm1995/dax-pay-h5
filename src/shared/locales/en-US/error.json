@@ -1,0 +1,11 @@
+{
+  "notFound": "Sorry, the page you visited does not exist",
+  "deviceOnlyPc": {
+    "title": "This page is only available on desktop",
+    "desc": "Please open this page in a desktop browser"
+  },
+  "deviceOnlyMobile": {
+    "title": "This page is only available on mobile",
+    "desc": "Please scan the QR code or open this page in a mobile browser"
+  }
+}

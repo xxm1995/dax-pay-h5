@@ -1,0 +1,19 @@
+{
+  "requestError": "Request failed, please try again later",
+  "timeout": "Request timed out, please refresh the page and retry!",
+  "networkError": "Network error",
+  "networkErrorDesc": "Please check your network connection",
+  "status": {
+    "401": "Unauthorized (invalid token, username or password)!",
+    "403": "Authorized, but access is forbidden!",
+    "404": "Network request error, resource not found!",
+    "405": "Network request error, method not allowed!",
+    "408": "Network request timed out",
+    "500": "Server error, please contact the administrator!",
+    "501": "Network not implemented",
+    "502": "Network error",
+    "503": "Service unavailable, server temporarily overloaded or under maintenance!",
+    "504": "Network timeout",
+    "505": "HTTP version not supported!"
+  }
+}

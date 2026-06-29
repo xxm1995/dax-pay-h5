@@ -1,0 +1,25 @@
+{
+  "heading": "Merchant Statement",
+  "totalAmountSuccess": "Total Amount (Success)",
+  "tradeCount": "Transactions",
+  "successRate": "Success Rate",
+  "empty": "No transactions",
+  "column": {
+    "time": "Time",
+    "orderNo": "Order No.",
+    "title": "Item",
+    "amount": "Amount",
+    "channel": "Channel",
+    "status": "Status"
+  },
+  "status": {
+    "success": "Success",
+    "fail": "Failed",
+    "pending": "Processing"
+  },
+  "channel": {
+    "wechat": "WeChat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  }
+}

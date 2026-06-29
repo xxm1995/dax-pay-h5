@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import MobileApp from '@/mobile/App.vue'
 import router, { setupRouter } from '@/mobile/router'
+import { setupI18n } from '@/shared/locales'
 import { setupStore } from '@/shared/store'
 import { useDesignSettingWithOut } from '@/shared/store/modules/designSetting'
 import 'vant/es/toast/style'
@@ -25,6 +26,8 @@ export async function createMobileApp() {
   const app = createApp(MobileApp)
   // 挂载状态管理
   setupStore(app)
+  // 挂载国际化（含 dayjs / vant / <html lang> 初始化副作用）
+  setupI18n(app)
   // 初始化全局主题：跟随系统 prefers-color-scheme（不支持手动修改）
   useDesignSettingWithOut().initSystemListener()
   // 挂载路由

@@ -1,0 +1,8 @@
+{
+  "title": "Agreement",
+  "typeNotExist": "Agreement type does not exist",
+  "loadFailed": "Failed to load the agreement",
+  "noContent": "No agreement content",
+  "version": "Version {version}",
+  "effectiveTime": "Effective from {time}"
+}

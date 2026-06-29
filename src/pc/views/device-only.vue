@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
 defineOptions({ name: 'PcDeviceOnly' })
 
+const { t } = useI18n()
 const router = useRouter()
 
 function goHome() {
@@ -11,13 +14,13 @@ function goHome() {
 <template>
   <div class="pc-device-only">
     <p class="pc-device-only__title">
-      此页面仅限手机端访问
+      {{ t('error.deviceOnlyMobile.title') }}
     </p>
     <p class="pc-device-only__desc">
-      请用手机扫描二维码，或在手机浏览器中打开本页面
+      {{ t('error.deviceOnlyMobile.desc') }}
     </p>
     <button class="pc-device-only__btn" type="button" @click="goHome">
-      返回首页
+      {{ t('common.backHome') }}
     </button>
   </div>
 </template>

@@ -1,7 +1,5 @@
 import { isObject, isString } from '@/shared/utils/is'
 
-const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
-
 export function joinTimestamp<T extends boolean>(
   join: boolean,
   restful: T,
@@ -19,7 +17,7 @@ export function joinTimestamp(join: boolean, restful = false): string | object {
 }
 
 /**
- * @description: Format request parameter time
+ * @description: 规整请求参数（去除字符串首尾空白）
  */
 export function formatRequestDate(params: Recordable) {
   if (Object.prototype.toString.call(params) !== '[object Object]') {
@@ -27,9 +25,6 @@ export function formatRequestDate(params: Recordable) {
   }
 
   for (const key in params) {
-    if (params[key] && params[key]._isAMomentObject) {
-      params[key] = params[key].format(DATE_TIME_FORMAT)
-    }
     if (isString(key)) {
       const value = params[key]
       if (value) {

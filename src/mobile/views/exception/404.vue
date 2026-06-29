@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
 defineOptions({ name: 'ErrorPageSon' })
 
+const { t } = useI18n()
 const router = useRouter()
 function goHome() {
   router.push('/')
@@ -14,10 +17,10 @@ function goHome() {
     </div>
     <div class="text-center">
       <h1 class="m-4 text-base">
-        抱歉，你访问的页面不存在
+        {{ t('error.notFound') }}
       </h1>
       <van-button type="primary" @click="goHome">
-        回到首页
+        {{ t('common.backHome') }}
       </van-button>
     </div>
   </div>

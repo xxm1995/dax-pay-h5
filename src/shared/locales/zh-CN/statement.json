@@ -1,0 +1,25 @@
+{
+  "heading": "商户对账单",
+  "totalAmountSuccess": "交易总额（成功）",
+  "tradeCount": "交易笔数",
+  "successRate": "支付成功率",
+  "empty": "暂无交易记录",
+  "column": {
+    "time": "交易时间",
+    "orderNo": "订单号",
+    "title": "商品标题",
+    "amount": "金额",
+    "channel": "支付通道",
+    "status": "状态"
+  },
+  "status": {
+    "success": "成功",
+    "fail": "失败",
+    "pending": "处理中"
+  },
+  "channel": {
+    "wechat": "微信",
+    "alipay": "支付宝",
+    "union": "银联"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "协议",
+  "typeNotExist": "协议类型不存在",
+  "loadFailed": "协议加载失败",
+  "noContent": "暂无协议内容",
+  "version": "版本 {version}",
+  "effectiveTime": "生效时间 {time}"
+}

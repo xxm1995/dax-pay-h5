@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { showNotify } from 'vant'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 defineOptions({ name: 'CodePayPage' })
 
+const { t } = useI18n()
 const route = useRoute()
 const { code } = route.params
 
 // 演示码牌配置（mock，金额类型 random 展示自定义金额输入）
 const cashierInfo = ref({
-  name: '演示收款商户',
+  name: t('codePay.demoMerchant'),
   amountType: 'random' as 'random' | 'fixed',
   amount: '0',
 })
@@ -41,12 +43,12 @@ function onDelete() {
 function pay() {
   const value = Number(amount.value)
   if (!value) {
-    showNotify({ type: 'warning', message: '金额不可为0' })
+    showNotify({ type: 'warning', message: t('codePay.amountZero') })
     return
   }
   showNotify({
     type: 'success',
-    message: `演示：码牌 ${code} 支付 ¥${amount.value}`,
+    message: t('codePay.demoPay', { code, amount: amount.value }),
   })
 }
 </script>
@@ -68,7 +70,7 @@ function pay() {
         {{ cashierInfo.name }}
       </div>
       <div class="code-pay__amount-label">
-        付款金额
+        {{ t('codePay.amountLabel') }}
       </div>
       <div class="code-pay__amount">
         <span class="code-pay__currency">¥</span>
@@ -80,9 +82,9 @@ function pay() {
 
     <!-- 备注单元格 -->
     <div class="code-pay__remark enter-y" @click="showRemark = true">
-      <span class="code-pay__remark-label">备注</span>
+      <span class="code-pay__remark-label">{{ t('codePay.remark') }}</span>
       <div class="code-pay__remark-value">
-        <span v-if="!description" class="code-pay__remark-placeholder">添加备注</span>
+        <span v-if="!description" class="code-pay__remark-placeholder">{{ t('codePay.addRemark') }}</span>
         <span v-else>{{ description }}</span>
       </div>
       <!-- 箭头图标用 SVG 替代文字 › -->
@@ -94,10 +96,10 @@ function pay() {
     <!-- 备注弹窗 -->
     <van-dialog
       v-model:show="showRemark"
-      title="添加备注"
+      :title="t('codePay.addRemark')"
       show-cancel-button
-      confirm-button-text="保存"
-      cancel-button-text="取消"
+      :confirm-button-text="t('common.save')"
+      :cancel-button-text="t('common.cancel')"
       confirm-button-color="#5d9dfe"
       cancel-button-color="#999"
     >
@@ -107,7 +109,7 @@ function pay() {
         autosize
         type="textarea"
         :maxlength="50"
-        placeholder="请输入支付备注内容"
+        :placeholder="t('codePay.remarkPlaceholder')"
         show-word-limit
         class="code-pay__remark-field"
       />
@@ -118,7 +120,7 @@ function pay() {
       v-if="cashierInfo.amountType === 'random'"
       theme="custom"
       extra-key="."
-      close-button-text="确认支付"
+      :close-button-text="t('codePay.confirmPay')"
       :show="true"
       @close="pay"
       @input="onInput"

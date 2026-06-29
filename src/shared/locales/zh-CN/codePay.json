@@ -1,0 +1,10 @@
+{
+  "demoMerchant": "演示收款商户",
+  "amountLabel": "付款金额",
+  "remark": "备注",
+  "addRemark": "添加备注",
+  "remarkPlaceholder": "请输入支付备注内容",
+  "amountZero": "金额不可为0",
+  "confirmPay": "确认支付",
+  "demoPay": "演示：码牌 {code} 支付 ¥{amount}"
+}

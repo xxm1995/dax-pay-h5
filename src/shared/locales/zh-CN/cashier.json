@@ -1,0 +1,20 @@
+{
+  "demoOrderTitle": "DaxPay 演示订单",
+  "remainTime": "支付剩余时间",
+  "remainTimeShort": "剩余支付时间",
+  "orderTitle": "订单标题",
+  "orderNo": "订单编号",
+  "orderNoLabel": "订单编号：",
+  "payableAmount": "应付金额",
+  "selectMethod": "请选择支付方式",
+  "recommend": "推荐",
+  "payNow": "立即支付",
+  "demoPayStarted": "演示：已发起 {name} 支付",
+  "qrcodePayDemo": "扫码支付（演示）",
+  "qrcodeTip": "请使用 {name} 扫码完成支付",
+  "method": {
+    "wechat": "微信支付",
+    "alipay": "支付宝",
+    "union": "银联支付"
+  }
+}

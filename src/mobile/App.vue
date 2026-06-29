@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { useDesignSetting } from '@/shared/hooks/setting/useDesignSetting'
+import { useLocale } from '@/shared/locales'
 import { useRouteStore } from '@/shared/store/modules/route'
 import { darken, lighten } from '@/shared/utils'
 
 const routeStore = useRouteStore()
 const { getDarkMode, getAppTheme, getIsPageAnimate, getPageAnimateType } = useDesignSetting()
+// vant 语言包（跟随当前语言，驱动 vant 内置组件文案：Dialog 按钮、Picker 等）
+const { vantLocale } = useLocale()
 
 // 需要缓存的路由组件
 const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
@@ -59,7 +62,7 @@ const getTransitionName = computed(() => {
 </script>
 
 <template>
-  <vanConfigProvider :theme="getDarkMode" :theme-vars="getThemeVars()">
+  <vanConfigProvider :theme="getDarkMode" :theme-vars="getThemeVars()" :locale="vantLocale">
     <RouterView v-slot="{ Component }">
       <div class="absolute bottom-0 top-0 w-full overflow-hidden">
         <transition :name="getTransitionName" mode="out-in" appear>

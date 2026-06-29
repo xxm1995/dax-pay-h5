@@ -6,6 +6,7 @@ import axios from 'axios'
 import { showDialog, showFailToast } from 'vant'
 import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/shared/enums/httpEnum'
 import { useGlobSetting } from '@/shared/hooks/setting'
+import { t } from '@/shared/locales'
 import { deepMerge, isUrl } from '@/shared/utils'
 import { isString } from '@/shared/utils/is/'
 import { setObjToUrlParams } from '@/shared/utils/urlUtils'
@@ -50,29 +51,29 @@ const transform: AxiosTransform = {
 
     if (!data) {
       // return '[HTTP] Request has no return value';
-      throw new Error('请求出错，请稍候重试')
+      throw new Error(t('http.requestError'))
     }
-    //  这里 code，result，message为 后台统一的字段，需要修改为项目自己的接口返回格式
-    const { code, result, message } = data
+    // 后台统一返回格式：{ code, message, data }
+    const { code, data: resultData, message } = data
     // 请求成功
     const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS
     // 是否显示提示信息
     if (isShowMessage) {
       if (hasSuccess && (successMessageText || isShowSuccessMessage)) {
         showDialog({
-          message: successMessageText || message || '操作成功！',
+          message: successMessageText || message || t('common.operationSuccess'),
         }).then(() => {
           // on close
         })
       }
       else if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
         // 是否显示自定义信息提示
-        showFailToast(message || errorMessageText || '操作失败！')
+        showFailToast(message || errorMessageText || t('common.operationFailed'))
       }
       else if (!hasSuccess && options.errorMessageMode === 'modal') {
         // errorMessageMode=‘custom-modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
         showDialog({
-          title: '提示',
+          title: t('common.tip'),
           message,
         }).then(() => {
           // on close
@@ -82,7 +83,7 @@ const transform: AxiosTransform = {
 
     // 接口请求成功，直接返回结果
     if (code === ResultEnum.SUCCESS) {
-      return result
+      return resultData
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
     const errorMsg = message
@@ -173,13 +174,13 @@ const transform: AxiosTransform = {
     const err: string = error.toString()
     try {
       if (code === 'ECONNABORTED' && message.includes('timeout')) {
-        showFailToast('接口请求超时，请刷新页面重试!')
+        showFailToast(t('http.timeout'))
         return
       }
       if (err && err.includes('Network Error')) {
         showDialog({
-          title: '网络异常',
-          message: '请检查您的网络连接是否正常',
+          title: t('http.networkError'),
+          message: t('http.networkErrorDesc'),
         })
           .then(() => {})
           .catch(() => {})

@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import notFoundImg from '@/shared/assets/icons/exception/404.svg'
 
 defineOptions({ name: 'PcNotFound' })
 
+const { t } = useI18n()
 const router = useRouter()
 
 function goHome() {
@@ -14,10 +16,10 @@ function goHome() {
   <div class="pc-notfound">
     <img class="pc-notfound__img" :src="notFoundImg" alt="404">
     <h1 class="pc-notfound__text">
-      抱歉，你访问的页面不存在
+      {{ t('error.notFound') }}
     </h1>
     <button class="pc-notfound__btn" type="button" @click="goHome">
-      返回首页
+      {{ t('common.backHome') }}
     </button>
   </div>
 </template>

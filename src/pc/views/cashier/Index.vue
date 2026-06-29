@@ -1,31 +1,37 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 defineOptions({ name: 'PcCashier' })
 
+const { t } = useI18n()
 const route = useRoute()
 
 // 演示订单数据（mock，不连后端）
-const order = {
-  title: 'DaxPay 演示订单',
+const order = computed(() => ({
+  title: t('cashier.demoOrderTitle'),
   orderNo: route.params.orderNo as string,
   amount: 0.01,
   expiredTime: Date.now() + 15 * 60 * 1000,
-}
+}))
 
-// 演示支付方式（mock）
+// 演示支付方式（mock）— name 由 i18n 按 icon 渲染
 interface PayMethod {
   id: string
-  name: string
   icon: 'wechat' | 'alipay' | 'union'
   recommend?: boolean
 }
 const payMethods: PayMethod[] = [
-  { id: '1', name: '微信支付', icon: 'wechat', recommend: true },
-  { id: '2', name: '支付宝', icon: 'alipay' },
-  { id: '3', name: '银联支付', icon: 'union' },
+  { id: '1', icon: 'wechat', recommend: true },
+  { id: '2', icon: 'alipay' },
+  { id: '3', icon: 'union' },
 ]
+
+// 支付方式名称（跟随语言）
+function methodName(item: PayMethod) {
+  return t(`cashier.method.${item.icon}`)
+}
 
 const selectId = ref<string>(payMethods[0]!.id)
 
@@ -41,7 +47,7 @@ const countdown = computed(() => {
 })
 
 function startCountdown() {
-  remainSeconds.value = Math.max(0, Math.floor((order.expiredTime - Date.now()) / 1000))
+  remainSeconds.value = Math.max(0, Math.floor((order.value.expiredTime - Date.now()) / 1000))
   timer = setInterval(() => {
     if (remainSeconds.value > 0) {
       remainSeconds.value--
@@ -73,7 +79,7 @@ onUnmounted(() => {
       <!-- 订单头部 -->
       <div class="pc-cashier__header">
         <div class="pc-cashier__countdown">
-          <span class="pc-cashier__countdown-label">剩余支付时间</span>
+          <span class="pc-cashier__countdown-label">{{ t('cashier.remainTimeShort') }}</span>
           <span class="pc-cashier__countdown-time">
             {{ countdown.h }}:{{ countdown.m }}:{{ countdown.s }}
           </span>
@@ -82,13 +88,13 @@ onUnmounted(() => {
           {{ order.title }}
         </div>
         <div class="pc-cashier__price">
-          <span class="pc-cashier__price-label">应付金额</span>
+          <span class="pc-cashier__price-label">{{ t('cashier.payableAmount') }}</span>
           <p>
             <span>￥</span>{{ order.amount }}
           </p>
         </div>
         <div class="pc-cashier__order-no">
-          订单编号: {{ order.orderNo }}
+          {{ t('cashier.orderNoLabel') }}{{ order.orderNo }}
         </div>
       </div>
 
@@ -115,8 +121,8 @@ onUnmounted(() => {
                 <path fill="#fff" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm130.4 590.4c-39.1 27.8-86.8 43.6-138.4 43.6-130.4 0-236-105.6-236-236s105.6-236 236-236c45.6 0 88.2 13 124 35.4l-58.5 58.5c-19.4-9-40.9-14-63.5-14-85.2 0-154.4 69.2-154.4 154.4S384.8 544.3 470 544.3c52.6 0 98.9-26.4 126.4-66.6l70.6 70.6c-7.8 2.1-15.8 4-24.6 6.7z" />
               </svg>
             </span>
-            <span class="pc-cashier__method-name">{{ item.name }}</span>
-            <span v-if="item.recommend" class="pc-cashier__recommend">推荐</span>
+            <span class="pc-cashier__method-name">{{ methodName(item) }}</span>
+            <span v-if="item.recommend" class="pc-cashier__recommend">{{ t('cashier.recommend') }}</span>
           </div>
         </div>
 
@@ -156,10 +162,10 @@ onUnmounted(() => {
           </div>
           <div class="pc-cashier__qrcode-tip">
             <p class="pc-cashier__qrcode-title">
-              扫码支付（演示）
+              {{ t('cashier.qrcodePayDemo') }}
             </p>
             <p class="pc-cashier__qrcode-sub">
-              请使用 {{ payMethods.find(i => i.id === selectId)?.name }} 扫码完成支付
+              {{ t('cashier.qrcodeTip', { name: methodName(payMethods.find(i => i.id === selectId)!) }) }}
             </p>
           </div>
         </div>
@@ -167,7 +173,7 @@ onUnmounted(() => {
 
       <!-- 立即支付按钮（支付前） -->
       <button v-if="!showQrcode" class="pc-cashier__pay-btn" @click="pay">
-        立即支付
+        {{ t('cashier.payNow') }}
       </button>
     </div>
   </div>

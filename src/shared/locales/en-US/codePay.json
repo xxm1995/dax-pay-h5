@@ -1,0 +1,10 @@
+{
+  "demoMerchant": "Demo Merchant",
+  "amountLabel": "Amount",
+  "remark": "Remark",
+  "addRemark": "Add remark",
+  "remarkPlaceholder": "Enter payment remark",
+  "amountZero": "Amount cannot be 0",
+  "confirmPay": "Confirm Payment",
+  "demoPay": "Demo: code {code} payment ¥{amount}"
+}

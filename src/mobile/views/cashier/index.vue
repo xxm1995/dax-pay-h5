@@ -1,33 +1,39 @@
 <script lang="ts" setup>
 import { showToast } from 'vant'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 defineOptions({ name: 'CashierPage' })
 
+const { t } = useI18n()
 const route = useRoute()
 
 // 演示订单数据（mock，不连后端）
-const order = {
-  title: 'DaxPay 演示订单',
+const order = computed(() => ({
+  title: t('cashier.demoOrderTitle'),
   orderNo: route.params.orderNo as string,
   amount: 0.01,
   // 15 分钟后过期
   expiredTime: Date.now() + 15 * 60 * 1000,
-}
+}))
 
-// 演示支付方式（mock）
+// 演示支付方式（mock）— name 由 i18n 按 icon 渲染
 interface PayMethod {
   id: string
-  name: string
   icon: 'wechat' | 'alipay' | 'union'
   recommend?: boolean
 }
 const payMethods: PayMethod[] = [
-  { id: '1', name: '微信支付', icon: 'wechat', recommend: true },
-  { id: '2', name: '支付宝', icon: 'alipay' },
-  { id: '3', name: '银联支付', icon: 'union' },
+  { id: '1', icon: 'wechat', recommend: true },
+  { id: '2', icon: 'alipay' },
+  { id: '3', icon: 'union' },
 ]
+
+// 支付方式名称（跟随语言）
+function methodName(item: PayMethod) {
+  return t(`cashier.method.${item.icon}`)
+}
 
 // 选中的支付方式（默认推荐项）
 const selectId = ref<string>(payMethods[0]!.id)
@@ -44,7 +50,7 @@ const countdown = computed(() => {
 })
 
 function startCountdown() {
-  remainSeconds.value = Math.max(0, Math.floor((order.expiredTime - Date.now()) / 1000))
+  remainSeconds.value = Math.max(0, Math.floor((order.value.expiredTime - Date.now()) / 1000))
   timer = setInterval(() => {
     if (remainSeconds.value > 0) {
       remainSeconds.value--
@@ -60,7 +66,7 @@ function pay() {
   const selected = payMethods.find(it => it.id === selectId.value)
   showToast({
     type: 'success',
-    message: `演示：已发起 ${selected?.name ?? ''} 支付`,
+    message: t('cashier.demoPayStarted', { name: selected ? methodName(selected) : '' }),
   })
 }
 
@@ -81,18 +87,18 @@ onUnmounted(() => {
         <span class="cashier__amount">{{ order.amount }}</span>
       </div>
       <div class="cashier__countdown">
-        <span class="cashier__countdown-label">支付剩余时间</span>
+        <span class="cashier__countdown-label">{{ t('cashier.remainTime') }}</span>
         <span class="cashier__countdown-time">
           {{ countdown.h }}:{{ countdown.m }}:{{ countdown.s }}
         </span>
       </div>
       <div class="cashier__detail">
         <div class="cashier__detail-row">
-          <span>订单标题</span>
+          <span>{{ t('cashier.orderTitle') }}</span>
           <span>{{ order.title }}</span>
         </div>
         <div class="cashier__detail-row">
-          <span>订单编号</span>
+          <span>{{ t('cashier.orderNo') }}</span>
           <span>{{ order.orderNo }}</span>
         </div>
       </div>
@@ -101,7 +107,7 @@ onUnmounted(() => {
     <!-- 支付方式选择 -->
     <div class="cashier__body enter-y">
       <div class="cashier__section-title">
-        请选择支付方式
+        {{ t('cashier.selectMethod') }}
       </div>
       <div class="cashier__list">
         <div
@@ -125,8 +131,8 @@ onUnmounted(() => {
               </svg>
             </div>
             <div class="cashier__pay-name">
-              {{ item.name }}
-              <span v-if="item.recommend" class="cashier__recommend">推荐</span>
+              {{ methodName(item) }}
+              <span v-if="item.recommend" class="cashier__recommend">{{ t('cashier.recommend') }}</span>
             </div>
           </div>
           <div class="cashier__radio" :class="{ 'cashier__radio--checked': item.id === selectId }" />
@@ -137,7 +143,7 @@ onUnmounted(() => {
     <!-- 底部支付按钮 -->
     <div class="cashier__footer enter-y">
       <button class="cashier__pay-btn" @click="pay">
-        立即支付 ￥{{ order.amount }}
+        {{ t('cashier.payNow') }} ￥{{ order.amount }}
       </button>
     </div>
   </div>

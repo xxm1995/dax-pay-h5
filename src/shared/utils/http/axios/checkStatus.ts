@@ -1,5 +1,12 @@
 import { showFailToast } from 'vant'
+import { t } from '@/shared/locales'
 
+/**
+ * HTTP 状态码错误提示
+ *
+ * - 400 及未知状态：提示后端返回的 `msg`（动态内容，不翻译）
+ * - 401/403/404/405/408/500/501/502/503/504/505：固定文案，走 i18n（http.status.{code}）
+ */
 export function checkStatus(status: number, msg: string): void {
   switch (status) {
     case 400:
@@ -9,38 +16,38 @@ export function checkStatus(status: number, msg: string): void {
     // 未登录则跳转登录页面，并携带当前页面的路径
     // 在登录成功后返回当前页面，这一步需要在登录页操作。
     case 401:
-      showFailToast('用户没有权限（令牌、用户名、密码错误）!')
+      showFailToast(t(`http.status.401`))
       break
     case 403:
-      showFailToast('用户得到授权，但是访问是被禁止的。!')
+      showFailToast(t('http.status.403'))
       break
     // 404请求不存在
     case 404:
-      showFailToast('网络请求错误，未找到该资源!')
+      showFailToast(t('http.status.404'))
       break
     case 405:
-      showFailToast('网络请求错误，请求方法未允许!')
+      showFailToast(t('http.status.405'))
       break
     case 408:
-      showFailToast('网络请求超时')
+      showFailToast(t('http.status.408'))
       break
     case 500:
-      showFailToast('服务器错误,请联系管理员!')
+      showFailToast(t('http.status.500'))
       break
     case 501:
-      showFailToast('网络未实现')
+      showFailToast(t('http.status.501'))
       break
     case 502:
-      showFailToast('网络错误')
+      showFailToast(t('http.status.502'))
       break
     case 503:
-      showFailToast('服务不可用，服务器暂时过载或维护!')
+      showFailToast(t('http.status.503'))
       break
     case 504:
-      showFailToast('网络超时')
+      showFailToast(t('http.status.504'))
       break
     case 505:
-      showFailToast('http版本不支持该请求!')
+      showFailToast(t('http.status.505'))
       break
     default:
       showFailToast(msg)
