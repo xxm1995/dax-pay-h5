@@ -57,9 +57,10 @@ export interface RequestOptions {
   withToken?: boolean
 }
 
+// 与后端 cn.daxpay.open.platform.core.rest.result.Result 对齐
 export interface Result<T = any> {
   code: number
   type?: 'success' | 'error' | 'warning'
   message: string
-  result?: T
+  data?: T
 }
