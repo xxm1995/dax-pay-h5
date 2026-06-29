@@ -59,6 +59,22 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
+  // 协议展示页（跨端：与 PC 端同 path 各指各 view，链接可独立分享）
+  {
+    path: RoutePath.PROTOCOL,
+    name: 'Protocol',
+    component: Layout,
+    meta: {
+      title: '协议',
+    },
+    children: [
+      {
+        path: '',
+        name: 'ProtocolPage',
+        component: () => import('@/mobile/views/protocol/index.vue'),
+      },
+    ],
+  },
 ]
 
 export default routeModuleList

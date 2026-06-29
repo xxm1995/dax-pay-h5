@@ -33,6 +33,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/statement/Index.vue'),
     meta: { title: '商户对账单' },
   },
+  // 协议展示页（跨端：与移动端同 path 各指各 view，链接可独立分享）
+  {
+    path: RoutePath.PROTOCOL,
+    name: 'PcProtocol',
+    component: () => import('@/pc/views/protocol/Index.vue'),
+    meta: { title: '协议' },
+  },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页
   // 用 component 而非 redirect——vue-router 5 下 catch-all + redirect 在初始导航不触发

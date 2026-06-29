@@ -21,4 +21,6 @@ export const RoutePath = {
   CODE_PAY: '/code-pay/:code',
   /** 商户对账单（PC 独占） */
   MERCHANT_STATEMENT: '/merchant/statement',
+  /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */
+  PROTOCOL: '/protocol/:protocolType',
 } as const
