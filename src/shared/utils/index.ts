@@ -3,7 +3,12 @@ import { isObject } from './is/index'
 export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
   let key: string
   for (key in target) {
-    src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key])
+    if (isObject(src[key])) {
+      src[key] = deepMerge(src[key], target[key])
+    }
+    else {
+      src[key] = target[key]
+    }
   }
   return src
 }
@@ -17,7 +22,11 @@ export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
 function addLight(color: string, amount: number) {
   const cc = Number.parseInt(color, 16) + amount
   const c = cc > 255 ? 255 : cc
-  return c.toString(16).length > 1 ? c.toString(16) : `0${c.toString(16)}`
+  const hex = c.toString(16)
+  if (hex.length > 1) {
+    return hex
+  }
+  return `0${hex}`
 }
 
 /**
@@ -78,7 +87,11 @@ export function arrayTrans(arr: number[]): number[][] {
 function subtractLight(color: string, amount: number) {
   const cc = Number.parseInt(color, 16) - amount
   const c = cc < 0 ? 0 : cc
-  return c.toString(16).length > 1 ? c.toString(16) : `0${c.toString(16)}`
+  const hex = c.toString(16)
+  if (hex.length > 1) {
+    return hex
+  }
+  return `0${hex}`
 }
 
 export function hexToRgba(hex: string, opacity: number) {
