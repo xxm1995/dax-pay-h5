@@ -32,7 +32,7 @@ DaxPay 开源版支付系统的移动端网关应用，基于 vue3-vant4-mobile 
 # 安装项目依赖
 pnpm install
 
-# 启动开发服务器（端口 9100）
+# 启动开发服务器（端口 9500）
 pnpm run dev
 
 # 构建打包
