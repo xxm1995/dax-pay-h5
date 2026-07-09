@@ -75,6 +75,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
+  // 支付宝认证落地页（移动独占：支付宝 App 内 JSAPI 取码）
+  {
+    path: RoutePath.AUTH_ALIPAY,
+    name: 'AlipayAuth',
+    component: () => import('@/mobile/views/auth/alipay/index.vue'),
+    meta: {
+      title: '支付宝认证',
+    },
+  },
 ]
 
 export default routeModuleList

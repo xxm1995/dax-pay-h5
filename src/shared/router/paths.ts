@@ -23,4 +23,6 @@ export const RoutePath = {
   MERCHANT_STATEMENT: '/merchant/statement',
   /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */
   PROTOCOL: '/protocol/:protocolType',
+  /** 支付宝认证落地页（移动独占：JSAPI 取码） */
+  AUTH_ALIPAY: '/auth/alipay/:aliAppId/:queryCode',
 } as const

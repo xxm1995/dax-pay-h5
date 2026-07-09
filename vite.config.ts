@@ -142,6 +142,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       open: false,
       // 服务端口号
       port: Number(VITE_PORT),
+      // 允许 nginx 反代的自定义域名访问(抖音 OAuth 本地调试)
+      allowedHosts: true,
       proxy: createProxy(VITE_PROXY),
       // 预热文件以降低启动期间的初始页面加载时长
       warmup: {
