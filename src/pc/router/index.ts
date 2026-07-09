@@ -40,6 +40,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/protocol/Index.vue'),
     meta: { title: '协议' },
   },
+  // 微信认证落地页（跨端：与移动端同 path 各指各 view，PC 微信内置浏览器可访问）
+  {
+    path: RoutePath.AUTH_WECHAT,
+    name: 'PcWechatAuth',
+    component: () => import('@/pc/views/auth/wechat/Index.vue'),
+    meta: { title: '微信认证' },
+  },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页
   // 用 component 而非 redirect——vue-router 5 下 catch-all + redirect 在初始导航不触发

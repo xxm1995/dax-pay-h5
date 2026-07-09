@@ -84,6 +84,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
       title: '支付宝认证',
     },
   },
+  // 微信认证落地页（跨端：与 PC 端同 path 各指各 view，微信公众号 OAuth 重定向回调取 code）
+  {
+    path: RoutePath.AUTH_WECHAT,
+    name: 'WechatAuth',
+    component: () => import('@/mobile/views/auth/wechat/index.vue'),
+    meta: {
+      title: '微信认证',
+    },
+  },
 ]
 
 export default routeModuleList

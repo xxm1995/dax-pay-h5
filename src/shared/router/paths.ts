@@ -25,4 +25,6 @@ export const RoutePath = {
   PROTOCOL: '/protocol/:protocolType',
   /** 支付宝认证落地页（移动独占：JSAPI 取码） */
   AUTH_ALIPAY: '/auth/alipay/:aliAppId/:queryCode',
+  /** 微信认证落地页（跨端：公众号 OAuth 重定向回调，PC 微信内置浏览器也可访问） */
+  AUTH_WECHAT: '/auth/wechat/:authToken',
 } as const
