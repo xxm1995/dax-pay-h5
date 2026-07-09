@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "正在完成代运营授权...",
+    "secureTip": "支付宝代运营授权",
+    "successMsg": "授权成功",
+    "failTitle": "授权失败",
+    "close": "关闭页面",
+    "authCodeMissing": "授权码获取失败",
+    "stateMissing": "通道商户信息获取失败",
+    "stateInvalid": "通道商户信息无效",
+    "authFail": "授权失败，请稍后重试"
+  }
+}

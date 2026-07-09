@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "Completing agent authorization...",
+    "secureTip": "Alipay agent authorization",
+    "successMsg": "Authorization successful",
+    "failTitle": "Authorization failed",
+    "close": "Close",
+    "authCodeMissing": "Failed to get authorization code",
+    "stateMissing": "Failed to get channel merchant info",
+    "stateInvalid": "Invalid channel merchant info",
+    "authFail": "Authorization failed, please try again later"
+  }
+}

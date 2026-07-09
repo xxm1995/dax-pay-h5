@@ -84,6 +84,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
       title: '支付宝认证',
     },
   },
+  // 支付宝代运营授权落地页（移动独占：授权回跳换 app_auth_token）
+  {
+    path: RoutePath.ISV_AUTH_ALIPAY,
+    name: 'AlipayIsvAuth',
+    component: () => import('@/mobile/views/isv-auth/alipay/index.vue'),
+    meta: {
+      title: '支付宝代运营授权',
+    },
+  },
   // 微信认证落地页（跨端：与 PC 端同 path 各指各 view，微信公众号 OAuth 重定向回调取 code）
   {
     path: RoutePath.AUTH_WECHAT,
