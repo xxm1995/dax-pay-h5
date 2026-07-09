@@ -4,6 +4,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
+import wechatLogo from '@/shared/assets/icons/channel/wechat.svg'
 
 defineOptions({ name: 'PcWechatAuth' })
 
@@ -115,7 +116,7 @@ function handleBack() {
       <!-- 加载中 -->
       <div v-if="loading" class="pc-wechat-auth__panel">
         <div class="pc-wechat-auth__logo">
-          <span>微</span>
+          <img :src="wechatLogo" alt="WeChat" width="48" height="48">
         </div>
         <div class="pc-wechat-auth__spinner" />
         <p class="pc-wechat-auth__loading-text">
@@ -215,12 +216,14 @@ function handleBack() {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #07c160, #5fd39a);
-  border-radius: 18px;
   margin-bottom: 28px;
+}
+
+.pc-wechat-auth__logo img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
 }
 
 .pc-wechat-auth__spinner {

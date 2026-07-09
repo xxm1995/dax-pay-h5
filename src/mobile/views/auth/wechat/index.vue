@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
+import wechatLogo from '@/shared/assets/icons/channel/wechat.svg'
 
 defineOptions({ name: 'WechatAuthPage' })
 
@@ -91,15 +92,15 @@ function handleBack() {
     <!-- 加载中 -->
     <div v-if="loading" class="loading-box">
       <div class="logo-wrapper">
-        <div class="channel-logo">
-          微
-        </div>
+        <img class="channel-logo" :src="wechatLogo" alt="WeChat" width="64" height="64">
       </div>
       <van-loading vertical color="#07c160" size="32px">
         <span class="loading-text">{{ t('auth.wechat.loading') }}</span>
       </van-loading>
       <div class="footer-tip">
-        <van-icon name="shield-o" />
+        <svg class="tip-icon" viewBox="0 0 1024 1024" width="14" height="14" aria-hidden="true">
+          <path fill="#07c160" d="M512 64 128 224v320c0 198 154 366 384 416 230-50 384-218 384-416V224L512 64z m0 380c-70 0-128-58-128-128s58-128 128-128 128 58 128 128-58 128-128 128z" />
+        </svg>
         <span>{{ t('auth.wechat.secureTip') }}</span>
       </div>
     </div>
@@ -107,7 +108,9 @@ function handleBack() {
     <!-- 失败 -->
     <div v-else-if="failed" class="result-box">
       <div class="status-icon">
-        <van-icon name="close" color="#ee0a24" size="64px" />
+        <svg viewBox="0 0 1024 1024" width="64" height="64" aria-hidden="true">
+          <path fill="#ee0a24" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 561.7-41.8 41.8L512 515.8 360.3 667.5l-41.8-41.8L470.2 474 318.5 322.3l41.8-41.8L512 432.2l151.7-151.7 41.8 41.8L553.8 474l151.7 151.7z" />
+        </svg>
       </div>
       <h3 class="result-title">
         {{ t('auth.wechat.failTitle') }}
@@ -125,7 +128,9 @@ function handleBack() {
     <!-- 成功结果 -->
     <div v-else class="result-box">
       <div class="status-icon">
-        <van-icon name="checked" color="#07c160" size="64px" />
+        <svg viewBox="0 0 1024 1024" width="64" height="64" aria-hidden="true">
+          <path fill="#07c160" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 225.7L416 615.5 318.5 518l-45.3 45.3L416 706l351.8-351.8-45.3-45.3z" />
+        </svg>
       </div>
       <h3 class="result-title">
         {{ t('auth.wechat.successTitle') }}
@@ -135,7 +140,9 @@ function handleBack() {
           <span class="label">{{ t('auth.wechat.openId') }}</span>
           <div class="value-box" @click="handleCopy">
             <span class="value">{{ authResult.openId }}</span>
-            <van-icon name="records" class="copy-icon" />
+            <svg class="copy-icon" viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true">
+              <path fill="#07c160" d="M768 128H192a64 64 0 0 0-64 64v512h64V192h576V128z m192 192v512a64 64 0 0 1-64 64H384a64 64 0 0 1-64-64V320a64 64 0 0 1 64-64h512a64 64 0 0 1 64 64z m-64 0H384v512h512V320z" />
+            </svg>
           </div>
         </div>
       </div>
@@ -179,16 +186,10 @@ function handleBack() {
       margin-bottom: 24px;
 
       .channel-logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: block;
         width: 64px;
         height: 64px;
-        font-size: 28px;
-        font-weight: 700;
-        color: #fff;
-        background: linear-gradient(135deg, #07c160, #5fd39a);
-        border-radius: 16px;
+        object-fit: contain;
       }
     }
 
@@ -205,10 +206,9 @@ function handleBack() {
       font-size: 12px;
       color: #999;
 
-      .van-icon {
+      .tip-icon {
+        flex-shrink: 0;
         margin-right: 4px;
-        font-size: 14px;
-        color: #07c160;
       }
     }
   }
@@ -216,6 +216,7 @@ function handleBack() {
   .result-box {
     .status-icon {
       margin-bottom: 16px;
+      line-height: 0;
     }
 
     .result-title {
@@ -272,8 +273,6 @@ function handleBack() {
 
           .copy-icon {
             flex-shrink: 0;
-            font-size: 16px;
-            color: #07c160;
           }
         }
       }
