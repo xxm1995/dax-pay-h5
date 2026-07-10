@@ -5,14 +5,15 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
-import wechatLogo from '@/shared/assets/icons/channel/wechat.svg'
+import douyinLogo from '@/shared/assets/icons/channel/douyin.svg'
 
-defineOptions({ name: 'WechatAuthPage' })
+defineOptions({ name: 'DouyinAuthPage' })
 
 const { t } = useI18n()
 const route = useRoute()
 
-// 微信 OAuth 重定向回调: query 携带 code(微信回传) + state(会话标识 authToken)
+// 抖音 silent_auth 重定向回调: 固定路径(无 path 参数), code 和 state 均在 query 中
+// state 携带 authToken(由后端 generateDouyinAuthUrl 写入), 用于恢复认证会话
 const authToken = route.query.state as string
 const code = route.query.code as string | undefined
 
@@ -40,11 +41,11 @@ function markFailed(msg: string) {
  */
 function init() {
   if (!authToken || !code) {
-    markFailed(t('auth.wechat.codeMissing'))
+    markFailed(t('auth.douyin.codeMissing'))
     return
   }
   authAndGet({
-    authType: 'wechat',
+    authType: 'douyin',
     authCode: code,
     authToken,
   })
@@ -53,7 +54,7 @@ function init() {
       loading.value = false
     })
     .catch((err: Error) => {
-      markFailed(err?.message || t('auth.wechat.authFail'))
+      markFailed(err?.message || t('auth.douyin.authFail'))
     })
 }
 
@@ -67,15 +68,15 @@ async function handleCopy() {
   }
   try {
     await navigator.clipboard.writeText(value)
-    showSuccessToast(t('auth.wechat.copySuccess'))
+    showSuccessToast(t('auth.douyin.copySuccess'))
   }
   catch {
-    showFailToast(t('auth.wechat.copyFail'))
+    showFailToast(t('auth.douyin.copyFail'))
   }
 }
 
 /**
- * 返回上一页(微信内嵌浏览器无直接关闭 API, 用历史回退兜底)
+ * 返回上一页(抖音内嵌 WebView 用历史回退兜底)
  */
 function handleBack() {
   if (window.history.length > 1) {
@@ -92,16 +93,16 @@ function handleBack() {
     <!-- 加载中 -->
     <div v-if="loading" class="loading-box">
       <div class="logo-wrapper">
-        <img class="channel-logo" :src="wechatLogo" alt="WeChat" width="64" height="64">
+        <img class="channel-logo" :src="douyinLogo" alt="Douyin" width="64" height="64">
       </div>
-      <van-loading vertical color="#07c160" size="32px">
-        <span class="loading-text">{{ t('auth.wechat.loading') }}</span>
+      <van-loading vertical color="#000000" size="32px">
+        <span class="loading-text">{{ t('auth.douyin.loading') }}</span>
       </van-loading>
       <div class="footer-tip">
         <svg class="tip-icon" viewBox="0 0 1024 1024" width="14" height="14" aria-hidden="true">
-          <path fill="#07c160" d="M512 64 128 224v320c0 198 154 366 384 416 230-50 384-218 384-416V224L512 64z m0 380c-70 0-128-58-128-128s58-128 128-128 128 58 128 128-58 128-128 128z" />
+          <path fill="#000000" d="M512 64 128 224v320c0 198 154 366 384 416 230-50 384-218 384-416V224L512 64z m0 380c-70 0-128-58-128-128s58-128 128-128 128 58 128 128-58 128-128 128z" />
         </svg>
-        <span>{{ t('auth.wechat.secureTip') }}</span>
+        <span>{{ t('auth.douyin.secureTip') }}</span>
       </div>
     </div>
 
@@ -114,14 +115,14 @@ function handleBack() {
         </svg>
       </div>
       <h3 class="result-title">
-        {{ t('auth.wechat.failTitle') }}
+        {{ t('auth.douyin.failTitle') }}
       </h3>
       <p class="fail-msg">
         {{ failMsg }}
       </p>
       <div class="action-buttons">
         <van-button plain round block class="close-btn" @click="handleBack">
-          {{ t('auth.wechat.close') }}
+          {{ t('auth.douyin.close') }}
         </van-button>
       </div>
     </div>
@@ -130,30 +131,30 @@ function handleBack() {
     <div v-else class="result-box">
       <div class="status-icon">
         <svg viewBox="0 0 1024 1024" width="64" height="64" aria-hidden="true">
-          <circle cx="512" cy="512" r="448" fill="#07c160" />
+          <circle cx="512" cy="512" r="448" fill="#000000" />
           <path fill="#fff" d="M705.5 289.7L416 615.5 318.5 518l-45.3 45.3L416 706l351.8-351.8-45.3-45.3z" />
         </svg>
       </div>
       <h3 class="result-title">
-        {{ t('auth.wechat.successTitle') }}
+        {{ t('auth.douyin.successTitle') }}
       </h3>
       <div class="info-card">
         <div class="info-item">
-          <span class="label">{{ t('auth.wechat.openId') }}</span>
+          <span class="label">{{ t('auth.douyin.openId') }}</span>
           <div class="value-box" @click="handleCopy">
             <span class="value">{{ authResult.openId }}</span>
             <svg class="copy-icon" viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true">
-              <path fill="#07c160" d="M768 128H192a64 64 0 0 0-64 64v512h64V192h576V128z m192 192v512a64 64 0 0 1-64 64H384a64 64 0 0 1-64-64V320a64 64 0 0 1 64-64h512a64 64 0 0 1 64 64z m-64 0H384v512h512V320z" />
+              <path fill="#000000" d="M768 128H192a64 64 0 0 0-64 64v512h64V192h576V128z m192 192v512a64 64 0 0 1-64 64H384a64 64 0 0 1-64-64V320a64 64 0 0 1 64-64h512a64 64 0 0 1 64 64z m-64 0H384v512h512V320z" />
             </svg>
           </div>
         </div>
       </div>
       <div class="action-buttons">
-        <van-button type="primary" color="#07c160" round block @click="handleCopy">
-          {{ t('auth.wechat.copy') }}
+        <van-button type="primary" color="#000000" round block @click="handleCopy">
+          {{ t('auth.douyin.copy') }}
         </van-button>
         <van-button plain round block class="close-btn" @click="handleBack">
-          {{ t('auth.wechat.close') }}
+          {{ t('auth.douyin.close') }}
         </van-button>
       </div>
     </div>

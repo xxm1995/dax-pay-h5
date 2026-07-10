@@ -11,8 +11,8 @@ defineOptions({ name: 'PcWechatAuth' })
 const { t } = useI18n()
 const route = useRoute()
 
-// 微信 OAuth 重定向回调: path 携带 authToken, query 携带 code
-const authToken = route.params.authToken as string
+// 微信 OAuth 重定向回调: query 携带 code(微信回传) + state(会话标识 authToken)
+const authToken = route.query.state as string
 const code = route.query.code as string | undefined
 
 const loading = ref(true)

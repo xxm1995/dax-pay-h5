@@ -75,7 +75,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // 支付宝认证落地页（移动独占：支付宝 App 内 JSAPI 取码）
+  // 支付宝认证落地页（移动独占：支付宝 OAuth 重定向回调）
   {
     path: RoutePath.AUTH_ALIPAY,
     name: 'AlipayAuth',
@@ -100,6 +100,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
     component: () => import('@/mobile/views/auth/wechat/index.vue'),
     meta: {
       title: '微信认证',
+    },
+  },
+  // 抖音认证落地页（移动独占：抖音 silent_auth 重定向回调取 code）
+  {
+    path: RoutePath.AUTH_DOUYIN,
+    name: 'DouyinAuth',
+    component: () => import('@/mobile/views/auth/douyin/index.vue'),
+    meta: {
+      title: '抖音认证',
     },
   },
 ]

@@ -27,10 +27,12 @@ export interface ExclusiveRoute {
 export const EXCLUSIVE_ROUTES: ExclusiveRoute[] = [
   // 码牌支付：仅移动端实现
   { path: RoutePath.CODE_PAY, name: 'CodePay', device: 'mobile' },
-  // 支付宝认证落地页：仅移动端实现（支付宝 App 内 JSAPI）
+  // 支付宝认证落地页：仅移动端实现（支付宝 OAuth 重定向回调）
   { path: RoutePath.AUTH_ALIPAY, name: 'AlipayAuth', device: 'mobile' },
   // 支付宝代运营授权落地页：仅移动端实现（支付宝授权回跳）
   { path: RoutePath.ISV_AUTH_ALIPAY, name: 'AlipayIsvAuth', device: 'mobile' },
+  // 抖音认证落地页：仅移动端实现（抖音 App 内 WebView silent_auth 重定向回调）
+  { path: RoutePath.AUTH_DOUYIN, name: 'DouyinAuth', device: 'mobile' },
   // 商户对账单：仅 PC 端实现
   { path: RoutePath.MERCHANT_STATEMENT, name: 'MerchantStatement', device: 'pc' },
 ]

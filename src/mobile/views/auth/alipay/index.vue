@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { AuthResult } from '@/shared/api/channel-auth'
 import { showFailToast, showSuccessToast } from 'vant'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
@@ -9,42 +9,21 @@ import alipayLogo from '@/shared/assets/icons/channel/alipay.svg'
 
 defineOptions({ name: 'AlipayAuthPage' })
 
-// AlipayJSAPI 全局类型
-declare const ap: {
-  getAuthCode: (
-    options: { appId: string | string[], scopes: string[] },
-    callback: (res: { authCode?: string, error?: number, errorMessage?: string }) => void,
-  ) => void
-}
-
-declare const AlipayJSBridge: {
-  call: (name: string) => void
-}
-
 const { t } = useI18n()
 const route = useRoute()
 
-const aliAppId = route.params.aliAppId as string
-const queryCode = route.params.queryCode as string
+// 支付宝 OAuth 重定向回调: query 携带 auth_code(支付宝回传) + state(会话标识 authToken)
+const authToken = route.query.state as string
+const code = route.query.auth_code as string | undefined
 
 const loading = ref(true)
 const authResult = ref<AuthResult>({})
 const failed = ref(false)
 const failMsg = ref('')
 
-// 动态加载支付宝 JSAPI
-const script = document.createElement('script')
-script.setAttribute(
-  'src',
-  'https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.min.js',
-)
-document.head.appendChild(script)
-script.onload = () => {
+onMounted(() => {
   init()
-}
-script.onerror = () => {
-  markFailed(t('auth.alipay.sdkLoadFail'))
-}
+})
 
 /**
  * 标记失败状态
@@ -57,37 +36,25 @@ function markFailed(msg: string) {
 }
 
 /**
- * 页面初始化: JSAPI 取 authCode 后回写后端
+ * 页面初始化: 取回调 auth_code + authToken 换取 userId 后回写后端
  */
 function init() {
-  if (!aliAppId || !queryCode) {
-    markFailed(t('auth.alipay.paramMissing'))
+  if (!authToken || !code) {
+    markFailed(t('auth.alipay.codeMissing'))
     return
   }
-  ap.getAuthCode(
-    {
-      appId: aliAppId,
-      scopes: ['auth_base'],
-    },
-    (res) => {
-      if (!res.authCode) {
-        markFailed(res.errorMessage || t('auth.alipay.authCodeFail'))
-        return
-      }
-      authAndGet({
-        authType: 'alipay',
-        authCode: res.authCode,
-        queryCode,
-      })
-        .then((data) => {
-          authResult.value = data ?? {}
-          loading.value = false
-        })
-        .catch((err: Error) => {
-          markFailed(err?.message || t('auth.alipay.authFail'))
-        })
-    },
-  )
+  authAndGet({
+    authType: 'alipay',
+    authCode: code,
+    authToken,
+  })
+    .then((data) => {
+      authResult.value = data ?? {}
+      loading.value = false
+    })
+    .catch((err: Error) => {
+      markFailed(err?.message || t('auth.alipay.authFail'))
+    })
 }
 
 /**
@@ -112,10 +79,21 @@ async function handleCopy() {
  */
 function handleClose() {
   try {
-    AlipayJSBridge.call('closeWebview')
+    // 支付宝环境可能注入 AlipayJSBridge
+    const bridge = (window as unknown as { AlipayJSBridge?: { call: (name: string) => void } }).AlipayJSBridge
+    if (bridge) {
+      bridge.call('closeWebview')
+      return
+    }
   }
   catch {
     // 非支付宝环境忽略
+  }
+  if (window.history.length > 1) {
+    window.history.back()
+  }
+  else {
+    window.close()
   }
 }
 </script>

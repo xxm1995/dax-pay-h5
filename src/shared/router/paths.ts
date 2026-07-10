@@ -23,10 +23,12 @@ export const RoutePath = {
   MERCHANT_STATEMENT: '/merchant/statement',
   /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */
   PROTOCOL: '/protocol/:protocolType',
-  /** 支付宝认证落地页（移动独占：JSAPI 取码） */
-  AUTH_ALIPAY: '/auth/alipay/:aliAppId/:queryCode',
+  /** 支付宝认证落地页（移动独占：OAuth 重定向回调，authToken 通过 state 查询参数传递） */
+  AUTH_ALIPAY: '/auth/alipay',
   /** 支付宝代运营授权落地页（移动独占：支付宝授权回跳换 app_auth_token） */
   ISV_AUTH_ALIPAY: '/isv-auth/alipay',
-  /** 微信认证落地页（跨端：公众号 OAuth 重定向回调，PC 微信内置浏览器也可访问） */
-  AUTH_WECHAT: '/auth/wechat/:authToken',
+  /** 微信认证落地页（跨端：公众号 OAuth 重定向回调，PC 微信内置浏览器也可访问，authToken 通过 state 查询参数传递） */
+  AUTH_WECHAT: '/auth/wechat',
+  /** 抖音认证落地页（移动独占：抖音 silent_auth 重定向回调，authToken 通过 state 查询参数传递） */
+  AUTH_DOUYIN: '/auth/douyin',
 } as const
