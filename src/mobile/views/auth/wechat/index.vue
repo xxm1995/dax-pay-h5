@@ -109,7 +109,8 @@ function handleBack() {
     <div v-else-if="failed" class="result-box">
       <div class="status-icon">
         <svg viewBox="0 0 1024 1024" width="64" height="64" aria-hidden="true">
-          <path fill="#ee0a24" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 561.7-41.8 41.8L512 515.8 360.3 667.5l-41.8-41.8L470.2 474 318.5 322.3l41.8-41.8L512 432.2l151.7-151.7 41.8 41.8L553.8 474l151.7 151.7z" />
+          <circle cx="512" cy="512" r="448" fill="#ee0a24" />
+          <path fill="#fff" d="M705.5 625.7l-41.8 41.8L512 515.8 360.3 667.5l-41.8-41.8L470.2 474 318.5 322.3l41.8-41.8L512 432.2l151.7-151.7 41.8 41.8L553.8 474l151.7 151.7z" />
         </svg>
       </div>
       <h3 class="result-title">
@@ -129,7 +130,8 @@ function handleBack() {
     <div v-else class="result-box">
       <div class="status-icon">
         <svg viewBox="0 0 1024 1024" width="64" height="64" aria-hidden="true">
-          <path fill="#07c160" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 225.7L416 615.5 318.5 518l-45.3 45.3L416 706l351.8-351.8-45.3-45.3z" />
+          <circle cx="512" cy="512" r="448" fill="#07c160" />
+          <path fill="#fff" d="M705.5 289.7L416 615.5 318.5 518l-45.3 45.3L416 706l351.8-351.8-45.3-45.3z" />
         </svg>
       </div>
       <h3 class="result-title">
