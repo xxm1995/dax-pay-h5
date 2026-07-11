@@ -17,6 +17,8 @@ export const RoutePath = {
   HOME: '/',
   /** 收银台（跨端：两端各实现，同 path 各指各 view） */
   CASHIER: '/cashier/:orderNo',
+  /** 聚合扫码支付（跨端：两端各实现） */
+  AGGREGATE: '/aggregate/:orderNo',
   /** 码牌支付（移动独占） */
   CODE_PAY: '/code-pay/:code',
   /** 商户对账单（PC 独占） */

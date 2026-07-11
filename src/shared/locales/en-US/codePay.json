@@ -6,5 +6,7 @@
   "remarkPlaceholder": "Enter payment remark",
   "amountZero": "Amount cannot be 0",
   "confirmPay": "Confirm Payment",
-  "demoPay": "Demo: code {code} payment ¥{amount}"
+  "demoPay": "Demo: code {code} payment ¥{amount}",
+  "loadFail": "Failed to load QR code info, please try again later",
+  "merchantDefault": "Merchant"
 }

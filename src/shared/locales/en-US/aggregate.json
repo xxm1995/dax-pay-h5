@@ -1,0 +1,17 @@
+{
+  "defaultTitle": "Aggregate Pay",
+  "orderNo": "Order No",
+  "countdown": "Time left",
+  "sceneLabel": "Scene",
+  "scene": {
+    "wechat": "WeChat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  },
+  "loadFail": "Failed to load order",
+  "payFail": "Failed to start payment",
+  "paying": "Paying...",
+  "retry": "Retry",
+  "paid": "Paid",
+  "useAppPay": "Complete payment in the app"
+}

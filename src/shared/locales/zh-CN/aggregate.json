@@ -1,0 +1,17 @@
+{
+  "defaultTitle": "聚合支付",
+  "orderNo": "订单号",
+  "countdown": "剩余时间",
+  "sceneLabel": "支付环境",
+  "scene": {
+    "wechat": "微信",
+    "alipay": "支付宝",
+    "union": "云闪付"
+  },
+  "loadFail": "订单加载失败",
+  "payFail": "发起支付失败",
+  "paying": "支付中...",
+  "retry": "重新支付",
+  "paid": "支付成功",
+  "useAppPay": "请在支付App内完成支付"
+}

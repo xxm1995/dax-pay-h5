@@ -26,6 +26,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/cashier/Index.vue'),
     meta: { title: '收银台' },
   },
+  // 聚合扫码支付（跨端）
+  {
+    path: RoutePath.AGGREGATE,
+    name: 'PcAggregate',
+    component: () => import('@/pc/views/aggregate/Index.vue'),
+    meta: { title: '聚合支付' },
+  },
   // 商户对账单（PC 独占：移动端由注册表派生 device-only 存根）
   {
     path: RoutePath.MERCHANT_STATEMENT,

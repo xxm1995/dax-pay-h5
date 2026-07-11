@@ -43,6 +43,22 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
+  // 聚合扫码支付（跨端）
+  {
+    path: RoutePath.AGGREGATE,
+    name: 'Aggregate',
+    component: Layout,
+    meta: {
+      title: '聚合支付',
+    },
+    children: [
+      {
+        path: '',
+        name: 'AggregatePage',
+        component: () => import('@/mobile/views/aggregate/index.vue'),
+      },
+    ],
+  },
   // 码牌支付（移动独占：PC 端由注册表派生 device-only 存根）
   {
     path: RoutePath.CODE_PAY,
