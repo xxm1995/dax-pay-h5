@@ -15,6 +15,6 @@
   "method": {
     "wechat": "WeChat Pay",
     "alipay": "Alipay",
-    "union": "UnionPay"
+    "union_pay": "UnionPay"
   }
 }

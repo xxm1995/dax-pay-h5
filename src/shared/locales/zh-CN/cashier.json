@@ -15,6 +15,6 @@
   "method": {
     "wechat": "微信支付",
     "alipay": "支付宝",
-    "union": "银联支付"
+    "union_pay": "银联支付"
   }
 }

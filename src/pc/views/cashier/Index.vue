@@ -19,13 +19,13 @@ const order = computed(() => ({
 // 演示支付方式（mock）— name 由 i18n 按 icon 渲染
 interface PayMethod {
   id: string
-  icon: 'wechat' | 'alipay' | 'union'
+  icon: 'wechat' | 'alipay' | 'union_pay'
   recommend?: boolean
 }
 const payMethods: PayMethod[] = [
   { id: '1', icon: 'wechat', recommend: true },
   { id: '2', icon: 'alipay' },
-  { id: '3', icon: 'union' },
+  { id: '3', icon: 'union_pay' },
 ]
 
 // 支付方式名称（跟随语言）
@@ -339,7 +339,7 @@ onUnmounted(() => {
   background: #1677ff;
 }
 
-.pc-cashier__method-icon--union {
+.pc-cashier__method-icon--union_pay {
   background: #e60012;
 }
 
