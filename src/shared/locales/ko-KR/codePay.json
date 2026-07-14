@@ -1,0 +1,12 @@
+{
+  "demoMerchant": "데모 판매자",
+  "amountLabel": "양",
+  "remark": "주목",
+  "addRemark": "비고 추가",
+  "remarkPlaceholder": "결제 비고를 입력하세요",
+  "amountZero": "금액은 0일 수 없습니다.",
+  "confirmPay": "결제 확인",
+  "demoPay": "데모: 코드 {code} 결제 ¥{amount}",
+  "loadFail": "QR 코드 정보를 로드하지 못했습니다. 나중에 다시 시도해 주세요.",
+  "merchantDefault": "상인"
+}

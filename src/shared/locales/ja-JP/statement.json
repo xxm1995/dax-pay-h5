@@ -1,0 +1,25 @@
+{
+  "heading": "販売者の声明",
+  "totalAmountSuccess": "合計金額（成功）",
+  "tradeCount": "取引",
+  "successRate": "成功率",
+  "empty": "取引なし",
+  "column": {
+    "time": "時間",
+    "orderNo": "注文番号",
+    "title": "アイテム",
+    "amount": "額",
+    "channel": "チャネル",
+    "status": "状態"
+  },
+  "status": {
+    "success": "成功",
+    "fail": "失敗した",
+    "pending": "処理"
+  },
+  "channel": {
+    "wechat": "微信",
+    "alipay": "アリペイ",
+    "union": "銀聯"
+  }
+}

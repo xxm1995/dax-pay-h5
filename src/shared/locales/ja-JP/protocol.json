@@ -1,0 +1,8 @@
+{
+  "title": "合意",
+  "typeNotExist": "契約タイプが存在しません",
+  "loadFailed": "契約書の読み込みに失敗しました",
+  "noContent": "契約内容なし",
+  "version": "バージョン {version}",
+  "effectiveTime": "{time} から有効"
+}

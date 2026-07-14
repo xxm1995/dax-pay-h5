@@ -1,0 +1,17 @@
+{
+  "defaultTitle": "총액지불",
+  "orderNo": "주문 번호",
+  "countdown": "남은 시간",
+  "sceneLabel": "장면",
+  "scene": {
+    "wechat": "위챗",
+    "alipay": "알리페이",
+    "union": "유니온페이"
+  },
+  "loadFail": "주문을 로드하지 못했습니다.",
+  "payFail": "결제를 시작하지 못했습니다.",
+  "paying": "지불 중...",
+  "retry": "다시 해 보다",
+  "paid": "유급의",
+  "useAppPay": "앱에서 결제 완료"
+}

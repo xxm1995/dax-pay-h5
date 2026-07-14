@@ -1,0 +1,8 @@
+{
+  "title": "합의",
+  "typeNotExist": "계약 유형이 존재하지 않습니다.",
+  "loadFailed": "계약을 로드하지 못했습니다.",
+  "noContent": "동의 내용 없음",
+  "version": "버전 {version}",
+  "effectiveTime": "{time}부터 유효"
+}

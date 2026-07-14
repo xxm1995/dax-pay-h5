@@ -1,0 +1,25 @@
+{
+  "heading": "판매자 명세서",
+  "totalAmountSuccess": "총액(성공)",
+  "tradeCount": "업무",
+  "successRate": "성공률",
+  "empty": "거래 없음",
+  "column": {
+    "time": "시간",
+    "orderNo": "주문번호",
+    "title": "목",
+    "amount": "양",
+    "channel": "채널",
+    "status": "상태"
+  },
+  "status": {
+    "success": "성공",
+    "fail": "실패한",
+    "pending": "처리"
+  },
+  "channel": {
+    "wechat": "위챗",
+    "alipay": "알리페이",
+    "union": "유니온페이"
+  }
+}

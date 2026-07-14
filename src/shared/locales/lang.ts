@@ -1,11 +1,11 @@
 /**
  * 语言选项与浏览器探测
  *
- * 语言代码与后端 common-i18n 对齐：zh-CN / en-US / zh-TW / zh-HK
+ * 语言代码与后端 common-i18n 对齐：zh-CN / en-US / zh-TW / zh-HK / ja-JP / ko-KR
  */
 
 /** 应用支持的语言代码（与后端 common-i18n 一致） */
-export type AppLocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | 'zh-HK'
+export type AppLocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | 'zh-HK' | 'ja-JP' | 'ko-KR'
 
 export interface AppLocaleOption {
   /** 语言代码 */
@@ -44,6 +44,18 @@ export const APP_LOCALES: AppLocaleOption[] = [
     dayjsLocale: 'zh-hk',
     vantLoader: () => import('vant/es/locale/lang/zh-HK.mjs'),
   },
+  {
+    code: 'ja-JP',
+    htmlLang: 'ja',
+    dayjsLocale: 'ja',
+    vantLoader: () => import('vant/es/locale/lang/ja-JP.mjs'),
+  },
+  {
+    code: 'ko-KR',
+    htmlLang: 'ko',
+    dayjsLocale: 'ko',
+    vantLoader: () => import('vant/es/locale/lang/ko-KR.mjs'),
+  },
 ]
 
 /** 默认语言 */
@@ -72,6 +84,8 @@ export function getLocaleOption(code: string): AppLocaleOption | undefined {
  * - zh-Hant（无地区）→ zh-TW
  * - 其他中文（含 zh-CN / zh-Hans）→ zh-CN
  * - 英文变体 → en-US
+ * - 日语变体 → ja-JP
+ * - 韩语变体 → ko-KR
  * - 其余回退到默认语言
  */
 export function matchBrowserLocale(): AppLocaleCode {
@@ -86,6 +100,12 @@ export function matchBrowserLocale(): AppLocaleCode {
     const lower = lang.toLowerCase().replace(/_/g, '-')
     if (lower.startsWith('en')) {
       return 'en-US'
+    }
+    if (lower.startsWith('ja')) {
+      return 'ja-JP'
+    }
+    if (lower.startsWith('ko')) {
+      return 'ko-KR'
     }
     if (!lower.startsWith('zh')) {
       continue

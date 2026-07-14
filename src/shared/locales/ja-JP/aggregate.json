@@ -1,0 +1,17 @@
+{
+  "defaultTitle": "総支払額",
+  "orderNo": "注文番号",
+  "countdown": "残り時間",
+  "sceneLabel": "シーン",
+  "scene": {
+    "wechat": "微信",
+    "alipay": "アリペイ",
+    "union": "銀聯"
+  },
+  "loadFail": "オーダーのロードに失敗しました",
+  "payFail": "支払いの開始に失敗しました",
+  "paying": "支払い中...",
+  "retry": "リトライ",
+  "paid": "有料",
+  "useAppPay": "アプリ内で支払いを完了する"
+}

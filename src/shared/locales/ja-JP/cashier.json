@@ -1,0 +1,20 @@
+{
+  "demoOrderTitle": "DaxPay デモ注文",
+  "remainTime": "支払い残り時間",
+  "remainTimeShort": "残り時間",
+  "orderTitle": "注文タイトル",
+  "orderNo": "注文番号",
+  "orderNoLabel": "注文番号:",
+  "payableAmount": "支払額",
+  "selectMethod": "支払い方法を選択してください",
+  "recommend": "推奨",
+  "payNow": "今すぐ支払う",
+  "demoPayStarted": "デモ: {name} 支払いが開始されました",
+  "qrcodePayDemo": "スキャンして支払う (デモ)",
+  "qrcodeTip": "{name} で QR コードをスキャンして支払いを完了してください",
+  "method": {
+    "wechat": "ウィーチャットペイ",
+    "alipay": "アリペイ",
+    "union_pay": "銀聯"
+  }
+}

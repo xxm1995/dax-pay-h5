@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "에이전트 승인을 완료하는 중...",
+    "secureTip": "Alipay 대리점 승인",
+    "successMsg": "승인 성공",
+    "failTitle": "승인 실패",
+    "close": "닫다",
+    "authCodeMissing": "인증코드를 받지 못했습니다.",
+    "stateMissing": "채널 판매자 정보를 가져오지 못했습니다.",
+    "stateInvalid": "잘못된 채널 판매자 정보",
+    "authFail": "승인에 실패했습니다. 나중에 다시 시도해 주세요."
+  }
+}

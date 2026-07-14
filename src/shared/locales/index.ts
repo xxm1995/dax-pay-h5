@@ -11,6 +11,8 @@ import dayjs from 'dayjs'
 import { ref } from 'vue'
 import { createI18n } from 'vue-i18n'
 import enUS from './en-US'
+import jaJP from './ja-JP'
+import koKR from './ko-KR'
 import {
   APP_LOCALES,
   DEFAULT_LOCALE,
@@ -33,6 +35,8 @@ const i18n = createI18n({
     'en-US': enUS,
     'zh-TW': zhTW,
     'zh-HK': zhHK,
+    'ja-JP': jaJP,
+    'ko-KR': koKR,
   },
   missingWarn: false,
   fallbackWarn: false,

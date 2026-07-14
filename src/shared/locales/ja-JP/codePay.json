@@ -1,0 +1,12 @@
+{
+  "demoMerchant": "デモマーチャント",
+  "amountLabel": "額",
+  "remark": "述べる",
+  "addRemark": "コメントを追加",
+  "remarkPlaceholder": "支払備考を入力してください",
+  "amountZero": "金額を0にすることはできません",
+  "confirmPay": "支払いの確認",
+  "demoPay": "デモ: コード {code} 支払い ¥{amount}",
+  "loadFail": "QR コード情報を読み込めませんでした。後でもう一度お試しください。",
+  "merchantDefault": "商人"
+}

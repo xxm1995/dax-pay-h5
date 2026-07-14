@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "エージェントの認証を完了しています...",
+    "secureTip": "Alipay 代理店の承認",
+    "successMsg": "認可成功",
+    "failTitle": "認証に失敗しました",
+    "close": "近い",
+    "authCodeMissing": "認証コードの取得に失敗しました",
+    "stateMissing": "チャネル販売者情報の取得に失敗しました",
+    "stateInvalid": "チャネル販売者情報が無効です",
+    "authFail": "認証に失敗しました。後でもう一度お試しください"
+  }
+}
