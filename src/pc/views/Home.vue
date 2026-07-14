@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import WebsiteFooter from '@/shared/components/WebsiteFooter.vue'
+import {
+  getLogoUrl,
+  getSystemName,
+  websiteConfig,
+} from '@/shared/logics/init-website-config'
 
 defineOptions({ name: 'PcHome' })
 
@@ -8,22 +15,32 @@ const { t } = useI18n()
 // 由 vite define 注入的项目信息（与移动端首页一致）
 const { pkg, lastBuildTime } = __APP_INFO__
 const version = pkg.version
+
+const logoUrl = computed(() => {
+  void websiteConfig.value
+  return getLogoUrl()
+})
+
+const titleText = computed(() => {
+  void websiteConfig.value
+  const name = getSystemName()
+  return name || t('home.welcome')
+})
 </script>
 
 <template>
   <div class="pc-home">
     <div class="pc-home__body">
       <div class="pc-home__welcome">
-        <!-- DaxPay 文字徽标（与移动端首页默认 logo 一致，public/logo.svg） -->
-        <img class="pc-home__logo" src="/logo.svg" alt="DaxPay">
-        <!-- 欢迎语 -->
+        <!-- 站点 logo(配置优先, 默认 public/logo.svg) -->
+        <img class="pc-home__logo" :src="logoUrl" :alt="titleText">
         <div class="pc-home__title">
-          {{ t('home.welcome') }}
+          {{ titleText }}
         </div>
       </div>
     </div>
-    <!-- 底部项目信息 -->
     <div class="pc-home__footer">
+      <WebsiteFooter />
       <p>{{ t('home.version') }}: v{{ version }}</p>
       <p>{{ t('home.buildTime') }}: {{ lastBuildTime }}</p>
     </div>
@@ -53,7 +70,7 @@ const version = pkg.version
 }
 
 .pc-home__logo {
-  width: 180px;
+  width: 200px;
   height: auto;
 }
 
@@ -62,32 +79,33 @@ const version = pkg.version
   text-align: center;
   font-size: 28px;
   font-weight: 900;
-  color: #1d2129;
+  color: #303133;
 }
 
 .pc-home__footer {
   position: fixed;
-  bottom: 24px;
+  bottom: 32px;
   left: 0;
   right: 0;
   text-align: center;
   font-size: 12px;
-  opacity: 0.5;
   line-height: 1.6;
-  color: #4e5969;
+  color: rgb(0 0 0 / 45%);
 }
 
 .pc-home__footer p {
   margin: 0;
 }
 
+/* PC 页脚组件内尺寸保持 px, 不被 vw 转换(组件在 shared, 但本页 scoped 不穿透;
+   WebsiteFooter 自身用 12px, PC 可接受; 若被 mobile-forever 误转则依赖 postcss exclude) */
 @media (max-width: 768px) {
   .pc-home__logo {
-    width: 140px;
+    width: 160px;
   }
 
   .pc-home__title {
-    font-size: 22px;
+    font-size: 24px;
   }
 }
 </style>

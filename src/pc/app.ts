@@ -29,6 +29,9 @@ export async function createPCApp() {
   setupPCStore(app)
   // 挂载国际化（PC 端独立实例，与移动端共用同一 i18n 模块）
   setupI18n(app)
+  // 站点配置: 缓存先 apply 防闪, 再远程 hash 比对
+  const { initWebsiteConfig } = await import('@/shared/logics/init-website-config')
+  await initWebsiteConfig()
   setupPCRouter(app)
   await pcRouter.isReady()
   return app

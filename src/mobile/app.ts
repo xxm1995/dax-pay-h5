@@ -30,6 +30,9 @@ export async function createMobileApp() {
   setupI18n(app)
   // 初始化全局主题：跟随系统 prefers-color-scheme（不支持手动修改）
   useDesignSettingWithOut().initSystemListener()
+  // 站点配置: 缓存先 apply 防闪, 再远程 hash 比对
+  const { initWebsiteConfig } = await import('@/shared/logics/init-website-config')
+  await initWebsiteConfig()
   // 挂载路由
   setupRouter(app)
   await router.isReady()

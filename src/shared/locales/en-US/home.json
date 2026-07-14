@@ -1,5 +1,8 @@
 {
   "welcome": "Welcome to DaxPay",
   "version": "Version",
-  "buildTime": "Build time"
+  "buildTime": "Build time",
+  "footerPhone": "Phone: ",
+  "footerEmail": "Email: ",
+  "footerWechat": "WeChat: "
 }

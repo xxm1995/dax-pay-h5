@@ -92,6 +92,6 @@
     "commit-msg": "npx --no-install commitlint --edit $1"
   },
   "lint-staged": {
-    "*": "eslint --fix"
+    "*.{js,ts,tsx,vue}": "eslint --fix"
   }
 }

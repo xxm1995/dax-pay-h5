@@ -1,5 +1,8 @@
 {
   "welcome": "欢迎使用 DaxPay",
   "version": "版本号",
-  "buildTime": "构建时间"
+  "buildTime": "构建时间",
+  "footerPhone": "电话：",
+  "footerEmail": "邮箱：",
+  "footerWechat": "微信："
 }
