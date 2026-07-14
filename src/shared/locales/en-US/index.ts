@@ -1,3 +1,4 @@
+import aggregate from './aggregate.json'
 import auth from './auth.json'
 import cashier from './cashier.json'
 import codePay from './codePay.json'
@@ -20,4 +21,5 @@ export default {
   statement,
   home,
   error,
+  aggregate,
 }
