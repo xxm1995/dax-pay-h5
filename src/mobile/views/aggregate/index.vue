@@ -41,7 +41,7 @@ const paid = computed(() => order.value.status === 'paid')
 /**
  * 根据 UA 识别收银场景
  */
-function detectScene(): string {
+function detectClientEnv(): string {
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('micromessenger')) {
     return 'wechat_pay'
@@ -59,14 +59,14 @@ function detectScene(): string {
 /**
  * 场景展示名
  */
-function sceneLabel(scene: string) {
-  if (scene === 'alipay') {
-    return t('aggregate.scene.alipay')
+function clientEnvLabel(clientEnv: string) {
+  if (clientEnv === 'alipay') {
+    return t('aggregate.clientEnv.alipay')
   }
-  if (scene === 'union_pay') {
-    return t('aggregate.scene.union')
+  if (clientEnv === 'union_pay') {
+    return t('aggregate.clientEnv.union')
   }
-  return t('aggregate.scene.wechat')
+  return t('aggregate.clientEnv.wechat')
 }
 
 onMounted(async () => {
@@ -123,10 +123,10 @@ async function doPay() {
   }
   paying.value = true
   try {
-    const scene = detectScene()
+    const clientEnv = detectClientEnv()
     payResult.value = await aggregatePay({
       orderNo,
-      scene,
+      clientEnv,
       device: 'mobile',
     })
     // 同步成功
@@ -216,7 +216,7 @@ function redirectIfNeeded() {
           <div v-if="remainSeconds > 0 && !paid">
             {{ t('aggregate.countdown') }}: {{ countdown }}
           </div>
-          <div>{{ t('aggregate.sceneLabel') }}: {{ sceneLabel(detectScene()) }}</div>
+          <div>{{ t('aggregate.clientEnvLabel') }}: {{ clientEnvLabel(detectClientEnv()) }}</div>
         </div>
       </div>
 

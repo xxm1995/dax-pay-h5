@@ -2,8 +2,8 @@
   "defaultTitle": "총액지불",
   "orderNo": "주문 번호",
   "countdown": "남은 시간",
-  "sceneLabel": "장면",
-  "scene": {
+  "clientEnvLabel": "장면",
+  "clientEnv": {
     "wechat": "위챗",
     "alipay": "알리페이",
     "union": "유니온페이"

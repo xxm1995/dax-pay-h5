@@ -2,8 +2,8 @@
   "defaultTitle": "総支払額",
   "orderNo": "注文番号",
   "countdown": "残り時間",
-  "sceneLabel": "シーン",
-  "scene": {
+  "clientEnvLabel": "シーン",
+  "clientEnv": {
     "wechat": "微信",
     "alipay": "アリペイ",
     "union": "銀聯"

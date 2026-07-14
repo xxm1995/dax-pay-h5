@@ -50,7 +50,7 @@ export function getGatewayOrder(orderNo: string): Promise<GatewayOrderInfo> {
 /** 聚合扫码发起支付 */
 export function aggregatePay(data: {
   orderNo: string
-  scene: string
+  clientEnv: string
   openId?: string
   device?: string
   clientIp?: string

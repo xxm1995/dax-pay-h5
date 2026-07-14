@@ -2,8 +2,8 @@
   "defaultTitle": "Aggregate Pay",
   "orderNo": "Order No",
   "countdown": "Time left",
-  "sceneLabel": "Scene",
-  "scene": {
+  "clientEnvLabel": "Scene",
+  "clientEnv": {
     "wechat": "WeChat",
     "alipay": "Alipay",
     "union": "UnionPay"

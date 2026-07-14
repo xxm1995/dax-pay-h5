@@ -2,8 +2,8 @@
   "defaultTitle": "จ่ายเงินรวม",
   "orderNo": "หมายเลขคำสั่งซื้อ",
   "countdown": "เหลือเวลา",
-  "sceneLabel": "ฉาก",
-  "scene": {
+  "clientEnvLabel": "ฉาก",
+  "clientEnv": {
     "wechat": "วีแชท",
     "alipay": "อาลีเพย์",
     "union": "ยูเนี่ยนเพย์"

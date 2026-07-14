@@ -29,7 +29,7 @@ const amountYuan = computed(() => {
 
 const paid = computed(() => order.value.status === 'paid')
 
-function detectScene(): string {
+function detectClientEnv(): string {
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('micromessenger')) {
     return 'wechat_pay'
@@ -78,7 +78,7 @@ async function doPay() {
   try {
     payResult.value = await aggregatePay({
       orderNo,
-      scene: detectScene(),
+      clientEnv: detectClientEnv(),
       device: 'pc',
     })
     if (payResult.value?.status === 'success') {

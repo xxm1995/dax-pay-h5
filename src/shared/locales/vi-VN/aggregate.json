@@ -2,8 +2,8 @@
   "defaultTitle": "Tổng lương",
   "orderNo": "Số thứ tự",
   "countdown": "Thời gian còn lại",
-  "sceneLabel": "Bối cảnh",
-  "scene": {
+  "clientEnvLabel": "Bối cảnh",
+  "clientEnv": {
     "wechat": "WeChat",
     "alipay": "Alipay",
     "union": "UnionPay"

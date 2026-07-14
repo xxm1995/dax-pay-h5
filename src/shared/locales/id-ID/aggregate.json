@@ -2,8 +2,8 @@
   "defaultTitle": "Pembayaran Agregat",
   "orderNo": "Nomor Pesanan",
   "countdown": "Waktu tersisa",
-  "sceneLabel": "Pemandangan",
-  "scene": {
+  "clientEnvLabel": "Pemandangan",
+  "clientEnv": {
     "wechat": "Wechat wechat",
     "alipay": "Alipay",
     "union": "UnionPay"

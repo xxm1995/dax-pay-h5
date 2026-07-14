@@ -2,8 +2,8 @@
   "defaultTitle": "聚合支付",
   "orderNo": "订单号",
   "countdown": "剩余时间",
-  "sceneLabel": "支付环境",
-  "scene": {
+  "clientEnvLabel": "支付环境",
+  "clientEnv": {
     "wechat": "微信",
     "alipay": "支付宝",
     "union": "云闪付"
