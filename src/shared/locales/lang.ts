@@ -1,11 +1,11 @@
 /**
  * 语言选项与浏览器探测
  *
- * 语言代码与后端 common-i18n 对齐：仅支持 zh-CN / en-US。
+ * 语言代码与后端 common-i18n 对齐：zh-CN / en-US / zh-TW / zh-HK
  */
 
 /** 应用支持的语言代码（与后端 common-i18n 一致） */
-export type AppLocaleCode = 'zh-CN' | 'en-US'
+export type AppLocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | 'zh-HK'
 
 export interface AppLocaleOption {
   /** 语言代码 */
@@ -32,6 +32,18 @@ export const APP_LOCALES: AppLocaleOption[] = [
     dayjsLocale: 'en',
     vantLoader: () => import('vant/es/locale/lang/en-US.mjs'),
   },
+  {
+    code: 'zh-TW',
+    htmlLang: 'zh-Hant-TW',
+    dayjsLocale: 'zh-tw',
+    vantLoader: () => import('vant/es/locale/lang/zh-TW.mjs'),
+  },
+  {
+    code: 'zh-HK',
+    htmlLang: 'zh-Hant-HK',
+    dayjsLocale: 'zh-hk',
+    vantLoader: () => import('vant/es/locale/lang/zh-HK.mjs'),
+  },
 ]
 
 /** 默认语言 */
@@ -55,8 +67,11 @@ export function getLocaleOption(code: string): AppLocaleOption | undefined {
 
 /**
  * 从浏览器 navigator.language 匹配已支持的语言
- * - 任意中文变体（zh / zh-CN / zh-TW / zh-HK）→ zh-CN
- * - 任意英文变体（en / en-US / en-GB）→ en-US
+ * - zh-TW / zh-Hant-TW → zh-TW
+ * - zh-HK / zh-MO / zh-Hant-HK / zh-Hant-MO → zh-HK
+ * - zh-Hant（无地区）→ zh-TW
+ * - 其他中文（含 zh-CN / zh-Hans）→ zh-CN
+ * - 英文变体 → en-US
  * - 其余回退到默认语言
  */
 export function matchBrowserLocale(): AppLocaleCode {
@@ -68,27 +83,40 @@ export function matchBrowserLocale(): AppLocaleCode {
     if (!lang) {
       continue
     }
-    const lower = lang.toLowerCase()
-    if (lower.startsWith('zh')) {
-      return 'zh-CN'
-    }
+    const lower = lang.toLowerCase().replace(/_/g, '-')
     if (lower.startsWith('en')) {
       return 'en-US'
     }
+    if (!lower.startsWith('zh')) {
+      continue
+    }
+    // 台湾
+    if (lower.includes('tw') || lower === 'zh-hant-tw') {
+      return 'zh-TW'
+    }
+    // 香港 / 澳门 → 港包
+    if (lower.includes('hk') || lower.includes('mo')) {
+      return 'zh-HK'
+    }
+    // 无地区繁体 → 台湾
+    if (lower === 'zh-hant' || lower.startsWith('zh-hant-')) {
+      return 'zh-TW'
+    }
+    // 简体及其他中文
+    return 'zh-CN'
   }
   return DEFAULT_LOCALE
 }
 
 /**
- * 解析初始语言，优先级：localStorage > 浏览器语言 > 默认
+ * 解析初始语言：localStorage 显式选择 > 浏览器探测 > 默认
  */
 export function resolveInitialLocale(): AppLocaleCode {
-  if (typeof localStorage === 'undefined') {
-    return matchBrowserLocale()
-  }
-  const saved = localStorage.getItem(LOCALE_STORAGE_KEY)
-  if (saved && getLocaleOption(saved)) {
-    return saved as AppLocaleCode
+  if (typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (stored && getLocaleOption(stored)) {
+      return stored as AppLocaleCode
+    }
   }
   return matchBrowserLocale()
 }

@@ -1,0 +1,8 @@
+{
+  "title": "協議",
+  "typeNotExist": "協議類型不存在",
+  "loadFailed": "協議加載失敗",
+  "noContent": "暫無協議內容",
+  "version": "版本 {version}",
+  "effectiveTime": "生效時間 {time}"
+}

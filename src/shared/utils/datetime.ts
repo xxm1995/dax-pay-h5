@@ -13,6 +13,8 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import 'dayjs/locale/en'
 import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/zh-hk'
+import 'dayjs/locale/zh-tw'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)

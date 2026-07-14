@@ -6,7 +6,7 @@ import axios from 'axios'
 import { showDialog, showFailToast } from 'vant'
 import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/shared/enums/httpEnum'
 import { useGlobSetting } from '@/shared/hooks/setting'
-import { t } from '@/shared/locales'
+import { getCurrentLocale, t } from '@/shared/locales'
 import { deepMerge, isUrl } from '@/shared/utils'
 import { isString } from '@/shared/utils/is/'
 import { setObjToUrlParams } from '@/shared/utils/urlUtils'
@@ -159,7 +159,9 @@ const transform: AxiosTransform = {
    * @description: 请求拦截器处理
    */
   requestInterceptors: (config) => {
-    // 鉴权相关（token 注入）已移除，待业务接入 Sa-Token Accesstoken 时在此补充
+    // 注入 Accept-Language，使后端按请求语言返回国际化消息
+    config.headers = config.headers ?? {}
+    config.headers['Accept-Language'] = getCurrentLocale()
     return config
   },
 

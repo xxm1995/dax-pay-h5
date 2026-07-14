@@ -1,0 +1,11 @@
+{
+  "confirm": "確認",
+  "cancel": "取消",
+  "save": "保存",
+  "back": "返回",
+  "backHome": "返回首頁",
+  "loading": "加載中...",
+  "tip": "提示",
+  "operationSuccess": "操作成功！",
+  "operationFailed": "操作失敗！"
+}

@@ -19,6 +19,8 @@ import {
   resolveInitialLocale,
 } from './lang'
 import zhCN from './zh-CN'
+import zhHK from './zh-HK'
+import zhTW from './zh-TW'
 
 export type { AppLocaleCode, AppLocaleOption }
 
@@ -29,6 +31,8 @@ const i18n = createI18n({
   messages: {
     'zh-CN': zhCN,
     'en-US': enUS,
+    'zh-TW': zhTW,
+    'zh-HK': zhHK,
   },
   missingWarn: false,
   fallbackWarn: false,
