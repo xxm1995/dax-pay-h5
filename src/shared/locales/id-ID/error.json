@@ -1,0 +1,11 @@
+{
+  "notFound": "Maaf, halaman yang Anda kunjungi tidak ada",
+  "deviceOnlyPc": {
+    "title": "Halaman ini hanya tersedia di desktop",
+    "desc": "Silakan buka halaman ini di browser desktop"
+  },
+  "deviceOnlyMobile": {
+    "title": "Halaman ini hanya tersedia di perangkat seluler",
+    "desc": "Silakan pindai kode QR atau buka halaman ini di browser seluler"
+  }
+}

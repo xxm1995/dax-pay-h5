@@ -1,0 +1,25 @@
+{
+  "heading": "Penyata Peniaga",
+  "totalAmountSuccess": "Jumlah Jumlah (Kejayaan)",
+  "tradeCount": "Transaksi",
+  "successRate": "Kadar Kejayaan",
+  "empty": "Tiada transaksi",
+  "column": {
+    "time": "Masa",
+    "orderNo": "Pesanan No.",
+    "title": "item",
+    "amount": "Jumlah",
+    "channel": "Saluran",
+    "status": "Status"
+  },
+  "status": {
+    "success": "Kejayaan",
+    "fail": "gagal",
+    "pending": "Memproses"
+  },
+  "channel": {
+    "wechat": "WeChat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  }
+}

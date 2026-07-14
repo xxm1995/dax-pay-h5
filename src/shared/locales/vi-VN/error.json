@@ -1,0 +1,11 @@
+{
+  "notFound": "Xin lỗi, trang bạn truy cập không tồn tại",
+  "deviceOnlyPc": {
+    "title": "Trang này chỉ có sẵn trên máy tính để bàn",
+    "desc": "Vui lòng mở trang này trong trình duyệt trên máy tính để bàn"
+  },
+  "deviceOnlyMobile": {
+    "title": "Trang này chỉ có sẵn trên thiết bị di động",
+    "desc": "Vui lòng quét mã QR hoặc mở trang này trong trình duyệt di động"
+  }
+}

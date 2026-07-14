@@ -1,0 +1,19 @@
+{
+  "requestError": "Permintaan gagal, sila cuba lagi kemudian",
+  "timeout": "Permintaan tamat masa, sila muat semula halaman dan cuba semula!",
+  "networkError": "Ralat rangkaian",
+  "networkErrorDesc": "Sila semak sambungan rangkaian anda",
+  "status": {
+    "401": "Tidak dibenarkan (token, nama pengguna atau kata laluan tidak sah)!",
+    "403": "Dibenarkan, tetapi akses dilarang!",
+    "404": "Ralat permintaan rangkaian, sumber tidak ditemui!",
+    "405": "Ralat permintaan rangkaian, kaedah tidak dibenarkan!",
+    "408": "Permintaan rangkaian tamat masa",
+    "500": "Ralat pelayan, sila hubungi pentadbir!",
+    "501": "Rangkaian tidak dilaksanakan",
+    "502": "Ralat rangkaian",
+    "503": "Perkhidmatan tidak tersedia, pelayan terlebih beban buat sementara waktu atau dalam penyelenggaraan!",
+    "504": "Tamat masa rangkaian",
+    "505": "Versi HTTP tidak disokong!"
+  }
+}

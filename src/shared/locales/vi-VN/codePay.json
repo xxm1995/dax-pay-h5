@@ -1,0 +1,12 @@
+{
+  "demoMerchant": "Người bán demo",
+  "amountLabel": "Số lượng",
+  "remark": "Nhận xét",
+  "addRemark": "Thêm nhận xét",
+  "remarkPlaceholder": "Nhập ghi chú thanh toán",
+  "amountZero": "Số tiền không thể bằng 0",
+  "confirmPay": "Xác nhận thanh toán",
+  "demoPay": "Bản demo: mã {code} thanh toán ¥{amount}",
+  "loadFail": "Không tải được thông tin mã QR, vui lòng thử lại sau",
+  "merchantDefault": "Thương gia"
+}

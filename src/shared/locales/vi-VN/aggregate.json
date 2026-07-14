@@ -1,0 +1,17 @@
+{
+  "defaultTitle": "Tổng lương",
+  "orderNo": "Số thứ tự",
+  "countdown": "Thời gian còn lại",
+  "sceneLabel": "Bối cảnh",
+  "scene": {
+    "wechat": "WeChat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  },
+  "loadFail": "Không thể tải đơn hàng",
+  "payFail": "Không thể bắt đầu thanh toán",
+  "paying": "Đang trả tiền...",
+  "retry": "Thử lại",
+  "paid": "Trả",
+  "useAppPay": "Hoàn tất thanh toán trong ứng dụng"
+}

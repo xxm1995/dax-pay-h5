@@ -1,0 +1,8 @@
+{
+  "title": "Perjanjian",
+  "typeNotExist": "Jenis perjanjian tidak wujud",
+  "loadFailed": "Gagal memuatkan perjanjian",
+  "noContent": "Tiada kandungan perjanjian",
+  "version": "Versi {version}",
+  "effectiveTime": "Berkuat kuasa dari {time}"
+}

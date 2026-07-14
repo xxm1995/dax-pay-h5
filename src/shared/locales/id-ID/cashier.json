@@ -1,0 +1,20 @@
+{
+  "demoOrderTitle": "Pesanan Demo DaxPay",
+  "remainTime": "Waktu pembayaran tersisa",
+  "remainTimeShort": "Waktu tersisa",
+  "orderTitle": "Judul pesanan",
+  "orderNo": "Nomor Pesanan.",
+  "orderNoLabel": "Nomor Pesanan:",
+  "payableAmount": "Jumlah yang harus dibayar",
+  "selectMethod": "Pilih metode pembayaran",
+  "recommend": "Direkomendasikan",
+  "payNow": "Bayar Sekarang",
+  "demoPayStarted": "Demo: {name} pembayaran dimulai",
+  "qrcodePayDemo": "Pindai untuk membayar (demo)",
+  "qrcodeTip": "Pindai kode QR dengan {name} untuk menyelesaikan pembayaran",
+  "method": {
+    "wechat": "Pembayaran WeChat",
+    "alipay": "Alipay",
+    "union_pay": "UnionPay"
+  }
+}

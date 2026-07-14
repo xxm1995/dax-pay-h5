@@ -1,11 +1,22 @@
 /**
  * 语言选项与浏览器探测
  *
- * 语言代码与后端 common-i18n 对齐：zh-CN / en-US / zh-TW / zh-HK / ja-JP / ko-KR
+ * 语言代码与后端 common-i18n 对齐：
+ * zh-CN / en-US / zh-TW / zh-HK / ja-JP / ko-KR / id-ID / vi-VN / th-TH / ms-MY
  */
 
 /** 应用支持的语言代码（与后端 common-i18n 一致） */
-export type AppLocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | 'zh-HK' | 'ja-JP' | 'ko-KR'
+export type AppLocaleCode
+  = | 'zh-CN'
+    | 'en-US'
+    | 'zh-TW'
+    | 'zh-HK'
+    | 'ja-JP'
+    | 'ko-KR'
+    | 'id-ID'
+    | 'vi-VN'
+    | 'th-TH'
+    | 'ms-MY'
 
 export interface AppLocaleOption {
   /** 语言代码 */
@@ -56,6 +67,31 @@ export const APP_LOCALES: AppLocaleOption[] = [
     dayjsLocale: 'ko',
     vantLoader: () => import('vant/es/locale/lang/ko-KR.mjs'),
   },
+  {
+    code: 'id-ID',
+    htmlLang: 'id',
+    dayjsLocale: 'id',
+    vantLoader: () => import('vant/es/locale/lang/id-ID.mjs'),
+  },
+  {
+    code: 'vi-VN',
+    htmlLang: 'vi',
+    dayjsLocale: 'vi',
+    vantLoader: () => import('vant/es/locale/lang/vi-VN.mjs'),
+  },
+  {
+    code: 'th-TH',
+    htmlLang: 'th',
+    dayjsLocale: 'th',
+    vantLoader: () => import('vant/es/locale/lang/th-TH.mjs'),
+  },
+  {
+    code: 'ms-MY',
+    htmlLang: 'ms',
+    dayjsLocale: 'ms',
+    // vant 无 ms-MY 包，组件文案回退英文
+    vantLoader: () => import('vant/es/locale/lang/en-US.mjs'),
+  },
 ]
 
 /** 默认语言 */
@@ -86,6 +122,7 @@ export function getLocaleOption(code: string): AppLocaleOption | undefined {
  * - 英文变体 → en-US
  * - 日语变体 → ja-JP
  * - 韩语变体 → ko-KR
+ * - 印尼 / 越南 / 泰 / 马来 → 对应 BCP47
  * - 其余回退到默认语言
  */
 export function matchBrowserLocale(): AppLocaleCode {
@@ -106,6 +143,18 @@ export function matchBrowserLocale(): AppLocaleCode {
     }
     if (lower.startsWith('ko')) {
       return 'ko-KR'
+    }
+    if (lower.startsWith('id')) {
+      return 'id-ID'
+    }
+    if (lower.startsWith('vi')) {
+      return 'vi-VN'
+    }
+    if (lower.startsWith('th')) {
+      return 'th-TH'
+    }
+    if (lower.startsWith('ms')) {
+      return 'ms-MY'
     }
     if (!lower.startsWith('zh')) {
       continue

@@ -1,0 +1,20 @@
+{
+  "demoOrderTitle": "Đơn đặt hàng demo DaxPay",
+  "remainTime": "Thời gian thanh toán còn lại",
+  "remainTimeShort": "Thời gian còn lại",
+  "orderTitle": "Tiêu đề đơn hàng",
+  "orderNo": "Số thứ tự",
+  "orderNoLabel": "Số thứ tự:",
+  "payableAmount": "Số tiền phải trả",
+  "selectMethod": "Chọn phương thức thanh toán",
+  "recommend": "Khuyến khích",
+  "payNow": "Thanh toán ngay",
+  "demoPayStarted": "Bản trình diễn: {name} khoản thanh toán đã được bắt đầu",
+  "qrcodePayDemo": "Quét để thanh toán (demo)",
+  "qrcodeTip": "Quét mã QR bằng {name} để hoàn tất thanh toán",
+  "method": {
+    "wechat": "WeChat trả tiền",
+    "alipay": "Alipay",
+    "union_pay": "UnionPay"
+  }
+}

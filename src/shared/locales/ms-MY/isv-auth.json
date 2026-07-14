@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "Melengkapkan kebenaran ejen...",
+    "secureTip": "Keizinan ejen Alipay",
+    "successMsg": "Keizinan berjaya",
+    "failTitle": "Keizinan gagal",
+    "close": "tutup",
+    "authCodeMissing": "Gagal mendapatkan kod kebenaran",
+    "stateMissing": "Gagal mendapatkan maklumat pedagang saluran",
+    "stateInvalid": "Maklumat pedagang saluran tidak sah",
+    "authFail": "Keizinan gagal, sila cuba lagi kemudian"
+  }
+}

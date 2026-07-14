@@ -1,0 +1,8 @@
+{
+  "title": "Hiệp định",
+  "typeNotExist": "Loại thỏa thuận không tồn tại",
+  "loadFailed": "Không tải được thỏa thuận",
+  "noContent": "Không có nội dung thỏa thuận",
+  "version": "Phiên bản {version}",
+  "effectiveTime": "Có hiệu lực từ {time}"
+}

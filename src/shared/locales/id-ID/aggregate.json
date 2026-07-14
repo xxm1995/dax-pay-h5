@@ -1,0 +1,17 @@
+{
+  "defaultTitle": "Pembayaran Agregat",
+  "orderNo": "Nomor Pesanan",
+  "countdown": "Waktu tersisa",
+  "sceneLabel": "Pemandangan",
+  "scene": {
+    "wechat": "Wechat wechat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  },
+  "loadFail": "Gagal memuat pesanan",
+  "payFail": "Gagal memulai pembayaran",
+  "paying": "Pembayaran...",
+  "retry": "Mencoba kembali",
+  "paid": "Dibayar",
+  "useAppPay": "Selesaikan pembayaran di aplikasi"
+}

@@ -1,0 +1,25 @@
+{
+  "heading": "Pernyataan Pedagang",
+  "totalAmountSuccess": "Jumlah Total (Sukses)",
+  "tradeCount": "Transaksi",
+  "successRate": "Tingkat Keberhasilan",
+  "empty": "Tidak ada transaksi",
+  "column": {
+    "time": "Waktu",
+    "orderNo": "Nomor Pesanan.",
+    "title": "Barang",
+    "amount": "Jumlah",
+    "channel": "Saluran",
+    "status": "Status"
+  },
+  "status": {
+    "success": "Kesuksesan",
+    "fail": "Gagal",
+    "pending": "Pengolahan"
+  },
+  "channel": {
+    "wechat": "Wechat wechat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  }
+}

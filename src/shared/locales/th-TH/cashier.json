@@ -1,0 +1,20 @@
+{
+  "demoOrderTitle": "คำสั่งสาธิต DaxPay",
+  "remainTime": "เหลือเวลาชำระเงิน",
+  "remainTimeShort": "เหลือเวลา",
+  "orderTitle": "ชื่อคำสั่งซื้อ",
+  "orderNo": "หมายเลขคำสั่งซื้อ",
+  "orderNoLabel": "หมายเลขคำสั่งซื้อ:",
+  "payableAmount": "จำนวนเงินที่ต้องชำระ",
+  "selectMethod": "เลือกวิธีการชำระเงิน",
+  "recommend": "ที่แนะนำ",
+  "payNow": "ชำระเงินตอนนี้",
+  "demoPayStarted": "การสาธิต: {name} เริ่มการชำระเงินแล้ว",
+  "qrcodePayDemo": "สแกนเพื่อชำระเงิน (สาธิต)",
+  "qrcodeTip": "สแกนโค้ด QR ด้วย {name} เพื่อชำระเงินให้เสร็จสิ้น",
+  "method": {
+    "wechat": "วีแชต เพย์",
+    "alipay": "อาลีเพย์",
+    "union_pay": "ยูเนี่ยนเพย์"
+  }
+}

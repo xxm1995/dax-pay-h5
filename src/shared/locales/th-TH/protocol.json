@@ -1,0 +1,8 @@
+{
+  "title": "ข้อตกลง",
+  "typeNotExist": "ไม่มีประเภทข้อตกลง",
+  "loadFailed": "โหลดข้อตกลงไม่สำเร็จ",
+  "noContent": "ไม่มีเนื้อหาข้อตกลง",
+  "version": "เวอร์ชัน {version}",
+  "effectiveTime": "มีผลตั้งแต่ {time}"
+}

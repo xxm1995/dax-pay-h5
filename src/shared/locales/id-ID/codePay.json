@@ -1,0 +1,12 @@
+{
+  "demoMerchant": "Pedagang Demo",
+  "amountLabel": "Jumlah",
+  "remark": "Komentar",
+  "addRemark": "Tambahkan komentar",
+  "remarkPlaceholder": "Masukkan keterangan pembayaran",
+  "amountZero": "Jumlahnya tidak boleh 0",
+  "confirmPay": "Konfirmasi Pembayaran",
+  "demoPay": "Demo: kode {code} pembayaran ¥{amount}",
+  "loadFail": "Gagal memuat info kode QR, coba lagi nanti",
+  "merchantDefault": "Pedagang"
+}

@@ -1,0 +1,19 @@
+{
+  "requestError": "Yêu cầu không thành công, vui lòng thử lại sau",
+  "timeout": "Yêu cầu đã hết thời gian chờ, vui lòng tải lại trang và thử lại!",
+  "networkError": "Lỗi mạng",
+  "networkErrorDesc": "Vui lòng kiểm tra kết nối mạng của bạn",
+  "status": {
+    "401": "Trái phép (mã thông báo, tên người dùng hoặc mật khẩu không hợp lệ)!",
+    "403": "Được ủy quyền, nhưng quyền truy cập bị cấm!",
+    "404": "Lỗi yêu cầu mạng, không tìm thấy tài nguyên!",
+    "405": "Lỗi yêu cầu mạng, phương pháp không được phép!",
+    "408": "Yêu cầu mạng đã hết thời gian chờ",
+    "500": "Lỗi máy chủ, vui lòng liên hệ quản trị viên!",
+    "501": "Mạng chưa được triển khai",
+    "502": "Lỗi mạng",
+    "503": "Dịch vụ không khả dụng, máy chủ tạm thời quá tải hoặc đang bảo trì!",
+    "504": "Hết thời gian chờ mạng",
+    "505": "Phiên bản HTTP không được hỗ trợ!"
+  }
+}

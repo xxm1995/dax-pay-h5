@@ -1,0 +1,19 @@
+{
+  "requestError": "Permintaan gagal, coba lagi nanti",
+  "timeout": "Waktu permintaan telah habis, harap segarkan halaman dan coba lagi!",
+  "networkError": "Kesalahan jaringan",
+  "networkErrorDesc": "Silakan periksa koneksi jaringan Anda",
+  "status": {
+    "401": "Tidak sah (token, nama pengguna atau kata sandi tidak valid)!",
+    "403": "Diizinkan, tetapi akses dilarang!",
+    "404": "Kesalahan permintaan jaringan, sumber daya tidak ditemukan!",
+    "405": "Kesalahan permintaan jaringan, metode tidak diizinkan!",
+    "408": "Waktu permintaan jaringan habis",
+    "500": "Kesalahan server, silakan hubungi administrator!",
+    "501": "Jaringan tidak diterapkan",
+    "502": "Kesalahan jaringan",
+    "503": "Layanan tidak tersedia, server kelebihan beban untuk sementara atau sedang dalam pemeliharaan!",
+    "504": "Batas waktu jaringan habis",
+    "505": "Versi HTTP tidak didukung!"
+  }
+}

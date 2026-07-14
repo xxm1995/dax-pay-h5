@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "Menyelesaikan otorisasi agen...",
+    "secureTip": "Otorisasi agen Alipay",
+    "successMsg": "Otorisasi berhasil",
+    "failTitle": "Otorisasi gagal",
+    "close": "Menutup",
+    "authCodeMissing": "Gagal mendapatkan kode otorisasi",
+    "stateMissing": "Gagal mendapatkan info pedagang saluran",
+    "stateInvalid": "Info pedagang saluran tidak valid",
+    "authFail": "Otorisasi gagal, coba lagi nanti"
+  }
+}

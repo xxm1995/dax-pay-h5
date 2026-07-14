@@ -11,6 +11,7 @@ import dayjs from 'dayjs'
 import { ref } from 'vue'
 import { createI18n } from 'vue-i18n'
 import enUS from './en-US'
+import idID from './id-ID'
 import jaJP from './ja-JP'
 import koKR from './ko-KR'
 import {
@@ -20,6 +21,9 @@ import {
   LOCALE_STORAGE_KEY,
   resolveInitialLocale,
 } from './lang'
+import msMY from './ms-MY'
+import thTH from './th-TH'
+import viVN from './vi-VN'
 import zhCN from './zh-CN'
 import zhHK from './zh-HK'
 import zhTW from './zh-TW'
@@ -37,6 +41,10 @@ const i18n = createI18n({
     'zh-HK': zhHK,
     'ja-JP': jaJP,
     'ko-KR': koKR,
+    'id-ID': idID,
+    'vi-VN': viVN,
+    'th-TH': thTH,
+    'ms-MY': msMY,
   },
   missingWarn: false,
   fallbackWarn: false,

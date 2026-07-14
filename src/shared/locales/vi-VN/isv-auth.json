@@ -1,0 +1,13 @@
+{
+  "alipay": {
+    "loading": "Hoàn tất ủy quyền đại lý...",
+    "secureTip": "Ủy quyền đại lý Alipay",
+    "successMsg": "Ủy quyền thành công",
+    "failTitle": "Ủy quyền không thành công",
+    "close": "Đóng",
+    "authCodeMissing": "Không lấy được mã ủy quyền",
+    "stateMissing": "Không lấy được thông tin người bán kênh",
+    "stateInvalid": "Thông tin người bán kênh không hợp lệ",
+    "authFail": "Ủy quyền không thành công, vui lòng thử lại sau"
+  }
+}

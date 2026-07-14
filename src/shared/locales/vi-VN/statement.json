@@ -1,0 +1,25 @@
+{
+  "heading": "Tuyên bố của người bán",
+  "totalAmountSuccess": "Tổng số tiền (Thành công)",
+  "tradeCount": "Giao dịch",
+  "successRate": "Tỷ lệ thành công",
+  "empty": "Không có giao dịch",
+  "column": {
+    "time": "Thời gian",
+    "orderNo": "Số thứ tự",
+    "title": "Mục",
+    "amount": "Số lượng",
+    "channel": "Kênh",
+    "status": "Trạng thái"
+  },
+  "status": {
+    "success": "Thành công",
+    "fail": "Thất bại",
+    "pending": "Xử lý"
+  },
+  "channel": {
+    "wechat": "WeChat",
+    "alipay": "Alipay",
+    "union": "UnionPay"
+  }
+}
