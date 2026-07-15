@@ -16,5 +16,10 @@
     "wechat": "微信支付",
     "alipay": "支付寶",
     "union_pay": "銀聯支付"
-  }
+  },
+  "loadFail": "載入訂單失敗",
+  "payFail": "支付發起失敗",
+  "paid": "支付成功",
+  "paying": "支付中...",
+  "emptyItems": "暫無可用支付方式"
 }

@@ -19,8 +19,8 @@ export const RoutePath = {
   CASHIER: '/cashier/:orderNo',
   /** 聚合扫码支付（跨端：两端各实现） */
   AGGREGATE: '/aggregate/:orderNo',
-  /** 码牌支付（移动独占） */
-  CODE_PAY: '/code-pay/:code',
+  /** 码牌支付 H5（移动独占, path 与后端 getCodeLink /h/{code} 一致） */
+  CODE_PAY: '/h/:code',
   /** 商户对账单（PC 独占） */
   MERCHANT_STATEMENT: '/merchant/statement',
   /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */

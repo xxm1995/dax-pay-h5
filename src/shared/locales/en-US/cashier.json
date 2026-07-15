@@ -16,5 +16,10 @@
     "wechat": "WeChat Pay",
     "alipay": "Alipay",
     "union_pay": "UnionPay"
-  }
+  },
+  "loadFail": "Failed to load order",
+  "payFail": "Failed to start payment",
+  "paid": "Payment successful",
+  "paying": "Paying...",
+  "emptyItems": "No payment methods available"
 }

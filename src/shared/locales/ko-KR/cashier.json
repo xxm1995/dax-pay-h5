@@ -16,5 +16,10 @@
     "wechat": "위챗페이",
     "alipay": "알리페이",
     "union_pay": "유니온페이"
-  }
+  },
+  "loadFail": "주문 로드 실패",
+  "payFail": "결제 시작 실패",
+  "paid": "결제 성공",
+  "paying": "결제 중...",
+  "emptyItems": "사용 가능한 결제 수단이 없습니다"
 }

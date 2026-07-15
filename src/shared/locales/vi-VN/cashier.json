@@ -16,5 +16,10 @@
     "wechat": "WeChat trả tiền",
     "alipay": "Alipay",
     "union_pay": "UnionPay"
-  }
+  },
+  "loadFail": "Không tải được đơn hàng",
+  "payFail": "Không thể bắt đầu thanh toán",
+  "paid": "Thanh toán thành công",
+  "paying": "Đang thanh toán...",
+  "emptyItems": "Không có phương thức thanh toán"
 }

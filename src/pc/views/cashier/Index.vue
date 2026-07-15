@@ -1,43 +1,38 @@
 <script lang="ts" setup>
+import type { CashierItemPublic, GatewayOrderInfo } from '@/shared/api/gateway'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gateway'
 
 defineOptions({ name: 'PcCashier' })
 
 const { t } = useI18n()
 const route = useRoute()
+const orderNo = route.params.orderNo as string
 
-// 演示订单数据（mock，不连后端）
-const order = computed(() => ({
-  title: t('cashier.demoOrderTitle'),
-  orderNo: route.params.orderNo as string,
-  amount: 0.01,
-  expiredTime: Date.now() + 15 * 60 * 1000,
-}))
+const loading = ref(true)
+const paying = ref(false)
+const loadError = ref('')
+const order = ref<GatewayOrderInfo>({})
+const payMethods = ref<CashierItemPublic[]>([])
+const selectId = ref<string>('')
+const payBody = ref('')
+const showQrcode = ref(false)
 
-// 演示支付方式（mock）— name 由 i18n 按 icon 渲染
-interface PayMethod {
-  id: string
-  icon: 'wechat' | 'alipay' | 'union_pay'
-  recommend?: boolean
-}
-const payMethods: PayMethod[] = [
-  { id: '1', icon: 'wechat', recommend: true },
-  { id: '2', icon: 'alipay' },
-  { id: '3', icon: 'union_pay' },
-]
-
-// 支付方式名称（跟随语言）
-function methodName(item: PayMethod) {
-  return t(`cashier.method.${item.icon}`)
-}
-
-const selectId = ref<string>(payMethods[0]!.id)
-
-// 倒计时（原生 setInterval，项目无 @vueuse/core）
 const remainSeconds = ref(0)
 let timer: ReturnType<typeof setInterval> | null = null
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+const amountYuan = computed(() => {
+  if (!order.value.amount) {
+    return '0.00'
+  }
+  return (order.value.amount / 100).toFixed(2)
+})
+
+const paid = computed(() => order.value.status === 'paid')
+
 const countdown = computed(() => {
   const s = remainSeconds.value
   const h = String(Math.floor(s / 3600)).padStart(2, '0')
@@ -46,135 +41,235 @@ const countdown = computed(() => {
   return { h, m, s: sec }
 })
 
-function startCountdown() {
-  remainSeconds.value = Math.max(0, Math.floor((order.value.expiredTime - Date.now()) / 1000))
-  timer = setInterval(() => {
-    if (remainSeconds.value > 0) {
-      remainSeconds.value--
-    }
-    else if (timer) {
-      clearInterval(timer)
-    }
-  }, 1000)
+function methodName(item?: CashierItemPublic | null) {
+  if (!item) {
+    return ''
+  }
+  if (item.name) {
+    return item.name
+  }
+  const icon = item.icon || 'wechat'
+  const key = `cashier.method.${icon}`
+  const label = t(key)
+  return label === key ? icon : label
 }
 
-// 支付后展示二维码占位
-const showQrcode = ref(false)
-
-function pay() {
-  showQrcode.value = true
+function iconClass(icon?: string) {
+  if (icon === 'wechat' || icon === 'wechat_pay') {
+    return 'wechat'
+  }
+  if (icon === 'alipay') {
+    return 'alipay'
+  }
+  if (icon === 'union_pay') {
+    return 'union_pay'
+  }
+  return 'wechat'
 }
 
-onMounted(startCountdown)
+onMounted(async () => {
+  await loadPage()
+})
+
 onUnmounted(() => {
   if (timer) {
     clearInterval(timer)
   }
+  if (pollTimer) {
+    clearInterval(pollTimer)
+  }
 })
+
+async function loadPage() {
+  loading.value = true
+  loadError.value = ''
+  try {
+    order.value = await getGatewayOrder(orderNo)
+    if (order.value.expiredTime) {
+      const exp = new Date(order.value.expiredTime).getTime()
+      remainSeconds.value = Math.max(0, Math.floor((exp - Date.now()) / 1000))
+      timer = setInterval(() => {
+        if (remainSeconds.value > 0) {
+          remainSeconds.value--
+        }
+        else if (timer) {
+          clearInterval(timer)
+        }
+      }, 1000)
+    }
+    if (!paid.value) {
+      // WEB 收银台: cashierType=web, clientEnv 不传
+      payMethods.value = await listCashierItems({
+        orderNo,
+        cashierType: 'web',
+      })
+      const recommend = payMethods.value.find(i => i.recommend)
+      selectId.value = (recommend || payMethods.value[0])?.id || ''
+    }
+  }
+  catch (e: any) {
+    loadError.value = e?.message || t('cashier.loadFail')
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+async function pay() {
+  if (paying.value || paid.value || !selectId.value) {
+    return
+  }
+  paying.value = true
+  try {
+    const result = await cashierPay({
+      orderNo,
+      itemId: selectId.value,
+      cashierType: 'web',
+      device: 'pc',
+    })
+    if (result?.status === 'success') {
+      order.value.status = 'paid'
+      return
+    }
+    if (result?.payBody) {
+      if (result.payBodyType === 'url') {
+        window.location.href = result.payBody
+        return
+      }
+      // 二维码类: 展示 payBody 文本(可后续接二维码组件)
+      payBody.value = result.payBody
+      showQrcode.value = true
+      startPoll()
+      return
+    }
+    startPoll()
+  }
+  catch (e: any) {
+    loadError.value = e?.message || t('cashier.payFail')
+  }
+  finally {
+    paying.value = false
+  }
+}
+
+function startPoll() {
+  if (pollTimer) {
+    clearInterval(pollTimer)
+  }
+  pollTimer = setInterval(async () => {
+    try {
+      const latest = await getGatewayOrder(orderNo)
+      order.value = latest
+      if (latest.status === 'paid') {
+        if (pollTimer) {
+          clearInterval(pollTimer)
+        }
+        if (latest.returnUrl) {
+          window.location.href = latest.returnUrl
+        }
+      }
+    }
+    catch {
+      // ignore
+    }
+  }, 2000)
+}
 </script>
 
 <template>
   <div class="pc-cashier">
     <div class="pc-cashier__box">
-      <!-- 订单头部 -->
-      <div class="pc-cashier__header">
-        <div class="pc-cashier__countdown">
-          <span class="pc-cashier__countdown-label">{{ t('cashier.remainTimeShort') }}</span>
-          <span class="pc-cashier__countdown-time">
-            {{ countdown.h }}:{{ countdown.m }}:{{ countdown.s }}
-          </span>
-        </div>
-        <div class="pc-cashier__title">
-          {{ order.title }}
-        </div>
-        <div class="pc-cashier__price">
-          <span class="pc-cashier__price-label">{{ t('cashier.payableAmount') }}</span>
-          <p>
-            <span>￥</span>{{ order.amount }}
-          </p>
-        </div>
-        <div class="pc-cashier__order-no">
-          {{ t('cashier.orderNoLabel') }}{{ order.orderNo }}
-        </div>
+      <div v-if="loading" class="pc-cashier__content">
+        {{ t('cashier.paying') }}
       </div>
-
-      <!-- 内容区 -->
-      <div class="pc-cashier__content">
-        <!-- 支付方式网格（支付前） -->
-        <div v-if="!showQrcode" class="pc-cashier__grid">
-          <div
-            v-for="item in payMethods"
-            :key="item.id"
-            class="pc-cashier__method"
-            :class="{ 'pc-cashier__method--active': item.id === selectId }"
-            @click="selectId = item.id"
-          >
-            <span class="pc-cashier__method-icon" :class="`pc-cashier__method-icon--${item.icon}`">
-              <!-- 内联 SVG 品牌图标：微信支付 / 支付宝 / 银联 -->
-              <svg v-if="item.icon === 'wechat'" viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
-                <path fill="#fff" d="M690.1 377.4c5.9 0 11.8.2 17.6.5-24.4-128.7-158.3-227.1-322.3-227.1C205.2 150.8 64 271.4 64 420.2c0 81.1 43.6 146.4 116.6 197.4l-29.2 88.4 102.2-52.6c36.5 7.2 65.9 14.6 101.9 14.6 5.4 0 10.8-.2 16.2-.5-3.4-11.8-5.3-24.1-5.3-36.9 0-153.7 129.4-253.2 323.7-253.2zM544.9 267.6c21.5 0 35.7 14.2 35.7 35.7 0 21.3-14.2 35.8-35.7 35.8s-42.9-14.5-42.9-35.8c0-21.5 21.4-35.7 42.9-35.7zM269.3 338.3c-21.5 0-43.3-14.2-43.3-35.7 0-21.3 21.8-35.8 43.3-35.8 21.3 0 35.6 14.5 35.6 35.8 0 21.5-14.3 35.7-35.6 35.7z" />
-              </svg>
-              <svg v-else-if="item.icon === 'alipay'" viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
-                <path fill="#fff" d="M843.1 608.6c-23.4-49.7-54.2-105.8-91.7-166.2-37.8-60.4-77.1-115.3-117.6-164.4-44.6-12.3-91.7-18.8-140.4-18.8-101.3 0-194.4 34.4-266.9 91.9-83.3 66-133.5 162.7-133.5 269.5 0 103.9 49.5 199.1 133.7 265.7 76.2 60.2 174.3 95.3 280.1 95.3 138.6 0 262.2-57.3 339-147.1-33.9-26-99-62.7-202.9-99.3-29.4 39.5-72.9 64.8-128.1 64.8-99.5 0-176.4-72.2-176.4-176.4 0-99.1 71.5-177 176.4-177 78.2 0 137.6 41.6 161.8 103.9 73.6 30.9 132.3 56.9 167.4 76.5l72.1 36.1z" />
-              </svg>
-              <svg v-else viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
-                <path fill="#fff" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm130.4 590.4c-39.1 27.8-86.8 43.6-138.4 43.6-130.4 0-236-105.6-236-236s105.6-236 236-236c45.6 0 88.2 13 124 35.4l-58.5 58.5c-19.4-9-40.9-14-63.5-14-85.2 0-154.4 69.2-154.4 154.4S384.8 544.3 470 544.3c52.6 0 98.9-26.4 126.4-66.6l70.6 70.6c-7.8 2.1-15.8 4-24.6 6.7z" />
-              </svg>
+      <div v-else-if="loadError" class="pc-cashier__content">
+        {{ loadError }}
+      </div>
+      <template v-else>
+        <!-- 订单头部 -->
+        <div class="pc-cashier__header">
+          <div v-if="remainSeconds > 0 && !paid" class="pc-cashier__countdown">
+            <span class="pc-cashier__countdown-label">{{ t('cashier.remainTimeShort') }}</span>
+            <span class="pc-cashier__countdown-time">
+              {{ countdown.h }}:{{ countdown.m }}:{{ countdown.s }}
             </span>
-            <span class="pc-cashier__method-name">{{ methodName(item) }}</span>
-            <span v-if="item.recommend" class="pc-cashier__recommend">{{ t('cashier.recommend') }}</span>
+          </div>
+          <div class="pc-cashier__title">
+            {{ order.title || t('cashier.demoOrderTitle') }}
+          </div>
+          <div class="pc-cashier__price">
+            <span class="pc-cashier__price-label">{{ t('cashier.payableAmount') }}</span>
+            <p>
+              <span>￥</span>{{ amountYuan }}
+            </p>
+          </div>
+          <div class="pc-cashier__order-no">
+            {{ t('cashier.orderNoLabel') }}{{ order.orderNo }}
           </div>
         </div>
 
-        <!-- 二维码占位（支付后） -->
-        <div v-else class="pc-cashier__qrcode">
-          <div class="pc-cashier__qrcode-box">
-            <!-- 四角 L 型装饰角标，提升扫码区仪式感 -->
-            <span class="pc-cashier__corner pc-cashier__corner--tl" />
-            <span class="pc-cashier__corner pc-cashier__corner--tr" />
-            <span class="pc-cashier__corner pc-cashier__corner--bl" />
-            <span class="pc-cashier__corner pc-cashier__corner--br" />
-            <svg viewBox="0 0 100 100" class="pc-cashier__qrcode-svg" aria-hidden="true">
-              <rect width="100" height="100" fill="#fff" />
-              <g fill="#1d2129">
-                <rect x="8" y="8" width="24" height="24" />
-                <rect x="14" y="14" width="12" height="12" fill="#fff" />
-                <rect x="18" y="18" width="4" height="4" />
-                <rect x="68" y="8" width="24" height="24" />
-                <rect x="74" y="14" width="12" height="12" fill="#fff" />
-                <rect x="78" y="18" width="4" height="4" />
-                <rect x="8" y="68" width="24" height="24" />
-                <rect x="14" y="74" width="12" height="12" fill="#fff" />
-                <rect x="18" y="78" width="4" height="4" />
-                <rect x="40" y="8" width="6" height="6" /><rect x="54" y="8" width="6" height="6" />
-                <rect x="40" y="20" width="6" height="6" /><rect x="54" y="20" width="6" height="6" />
-                <rect x="8" y="40" width="6" height="6" /><rect x="20" y="40" width="6" height="6" />
-                <rect x="40" y="40" width="6" height="6" /><rect x="54" y="40" width="6" height="6" />
-                <rect x="68" y="40" width="6" height="6" /><rect x="86" y="40" width="6" height="6" />
-                <rect x="40" y="54" width="6" height="6" /><rect x="68" y="54" width="6" height="6" />
-                <rect x="86" y="54" width="6" height="6" />
-                <rect x="40" y="68" width="6" height="6" /><rect x="54" y="68" width="6" height="6" />
-                <rect x="68" y="68" width="6" height="6" /><rect x="86" y="68" width="6" height="6" />
-                <rect x="40" y="80" width="6" height="6" /><rect x="68" y="80" width="6" height="6" />
-                <rect x="86" y="80" width="6" height="6" />
-              </g>
-            </svg>
+        <!-- 内容区 -->
+        <div class="pc-cashier__content">
+          <div v-if="paid" class="pc-cashier__method-name">
+            {{ t('cashier.paid') }}
           </div>
-          <div class="pc-cashier__qrcode-tip">
-            <p class="pc-cashier__qrcode-title">
-              {{ t('cashier.qrcodePayDemo') }}
-            </p>
-            <p class="pc-cashier__qrcode-sub">
-              {{ t('cashier.qrcodeTip', { name: methodName(payMethods.find(i => i.id === selectId)!) }) }}
-            </p>
+          <!-- 支付方式网格（支付前） -->
+          <div v-else-if="!showQrcode" class="pc-cashier__grid">
+            <div
+              v-for="item in payMethods"
+              :key="item.id"
+              class="pc-cashier__method"
+              :class="{ 'pc-cashier__method--active': item.id === selectId }"
+              @click="selectId = item.id"
+            >
+              <span class="pc-cashier__method-icon" :class="`pc-cashier__method-icon--${iconClass(item.icon)}`">
+                <svg v-if="iconClass(item.icon) === 'wechat'" viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
+                  <path fill="#fff" d="M690.1 377.4c5.9 0 11.8.2 17.6.5-24.4-128.7-158.3-227.1-322.3-227.1C205.2 150.8 64 271.4 64 420.2c0 81.1 43.6 146.4 116.6 197.4l-29.2 88.4 102.2-52.6c36.5 7.2 65.9 14.6 101.9 14.6 5.4 0 10.8-.2 16.2-.5-3.4-11.8-5.3-24.1-5.3-36.9 0-153.7 129.4-253.2 323.7-253.2zM544.9 267.6c21.5 0 35.7 14.2 35.7 35.7 0 21.3-14.2 35.8-35.7 35.8s-42.9-14.5-42.9-35.8c0-21.5 21.4-35.7 42.9-35.7zM269.3 338.3c-21.5 0-43.3-14.2-43.3-35.7 0-21.3 21.8-35.8 43.3-35.8 21.3 0 35.6 14.5 35.6 35.8 0 21.5-14.3 35.7-35.6 35.7z" />
+                </svg>
+                <svg v-else-if="iconClass(item.icon) === 'alipay'" viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
+                  <path fill="#fff" d="M843.1 608.6c-23.4-49.7-54.2-105.8-91.7-166.2-37.8-60.4-77.1-115.3-117.6-164.4-44.6-12.3-91.7-18.8-140.4-18.8-101.3 0-194.4 34.4-266.9 91.9-83.3 66-133.5 162.7-133.5 269.5 0 103.9 49.5 199.1 133.7 265.7 76.2 60.2 174.3 95.3 280.1 95.3 138.6 0 262.2-57.3 339-147.1-33.9-26-99-62.7-202.9-99.3-29.4 39.5-72.9 64.8-128.1 64.8-99.5 0-176.4-72.2-176.4-176.4 0-99.1 71.5-177 176.4-177 78.2 0 137.6 41.6 161.8 103.9 73.6 30.9 132.3 56.9 167.4 76.5l72.1 36.1z" />
+                </svg>
+                <svg v-else viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
+                  <path fill="#fff" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm130.4 590.4c-39.1 27.8-86.8 43.6-138.4 43.6-130.4 0-236-105.6-236-236s105.6-236 236-236c45.6 0 88.2 13 124 35.4l-58.5 58.5c-19.4-9-40.9-14-63.5-14-85.2 0-154.4 69.2-154.4 154.4S384.8 544.3 470 544.3c52.6 0 98.9-26.4 126.4-66.6l70.6 70.6c-7.8 2.1-15.8 4-24.6 6.7z" />
+                </svg>
+              </span>
+              <span class="pc-cashier__method-name">{{ methodName(item) }}</span>
+              <span v-if="item.recommend" class="pc-cashier__recommend">{{ t('cashier.recommend') }}</span>
+            </div>
+          </div>
+
+          <!-- 二维码/支付参数展示 -->
+          <div v-else class="pc-cashier__qrcode">
+            <div class="pc-cashier__qrcode-box">
+              <span class="pc-cashier__corner pc-cashier__corner--tl" />
+              <span class="pc-cashier__corner pc-cashier__corner--tr" />
+              <span class="pc-cashier__corner pc-cashier__corner--bl" />
+              <span class="pc-cashier__corner pc-cashier__corner--br" />
+              <p class="pc-cashier__qrcode-sub" style="word-break: break-all; padding: 8px; font-size: 12px;">
+                {{ payBody }}
+              </p>
+            </div>
+            <div class="pc-cashier__qrcode-tip">
+              <p class="pc-cashier__qrcode-title">
+                {{ t('cashier.qrcodePayDemo') }}
+              </p>
+              <p class="pc-cashier__qrcode-sub">
+                {{ t('cashier.qrcodeTip', { name: methodName(payMethods.find(i => i.id === selectId)) }) }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- 立即支付按钮（支付前） -->
-      <button v-if="!showQrcode" class="pc-cashier__pay-btn" @click="pay">
-        {{ t('cashier.payNow') }}
-      </button>
+        <!-- 立即支付按钮（支付前） -->
+        <button
+          v-if="!showQrcode && !paid"
+          class="pc-cashier__pay-btn"
+          :disabled="paying || !selectId"
+          @click="pay"
+        >
+          {{ paying ? t('cashier.paying') : t('cashier.payNow') }}
+        </button>
+      </template>
     </div>
   </div>
 </template>
