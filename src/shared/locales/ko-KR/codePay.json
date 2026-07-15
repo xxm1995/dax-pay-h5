@@ -8,5 +8,9 @@
   "confirmPay": "결제 확인",
   "demoPay": "데모: 코드 {code} 결제 ¥{amount}",
   "loadFail": "QR 코드 정보를 로드하지 못했습니다. 나중에 다시 시도해 주세요.",
-  "merchantDefault": "상인"
+  "merchantDefault": "상인",
+  "paySuccess": "결제 성공",
+  "payFail": "결제 실패, 다시 시도하세요",
+  "payLaunched": "결제가 시작되었습니다",
+  "payPending": "주문이 생성되었습니다. 결제를 완료하세요"
 }

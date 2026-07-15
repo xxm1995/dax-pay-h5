@@ -8,5 +8,9 @@
   "confirmPay": "支払いの確認",
   "demoPay": "デモ: コード {code} 支払い ¥{amount}",
   "loadFail": "QR コード情報を読み込めませんでした。後でもう一度お試しください。",
-  "merchantDefault": "商人"
+  "merchantDefault": "商人",
+  "paySuccess": "支払い成功",
+  "payFail": "支払いに失敗しました",
+  "payLaunched": "支払いを開始しました",
+  "payPending": "注文が作成されました。支払いを完了してください"
 }

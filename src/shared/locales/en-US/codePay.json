@@ -8,5 +8,9 @@
   "confirmPay": "Confirm Payment",
   "demoPay": "Demo: code {code} payment ¥{amount}",
   "loadFail": "Failed to load QR code info, please try again later",
-  "merchantDefault": "Merchant"
+  "merchantDefault": "Merchant",
+  "paySuccess": "Payment successful",
+  "payFail": "Payment failed, please retry",
+  "payLaunched": "Payment launched",
+  "payPending": "Order created, please complete payment"
 }

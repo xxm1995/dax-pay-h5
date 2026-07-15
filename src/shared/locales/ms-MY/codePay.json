@@ -8,5 +8,9 @@
   "confirmPay": "Sahkan Pembayaran",
   "demoPay": "Demo: kod {code} pembayaran ¥{amount}",
   "loadFail": "Gagal memuatkan maklumat kod QR, sila cuba sebentar lagi",
-  "merchantDefault": "saudagar"
+  "merchantDefault": "saudagar",
+  "paySuccess": "Payment successful",
+  "payFail": "Payment failed, please retry",
+  "payLaunched": "Payment launched",
+  "payPending": "Order created, please complete payment"
 }

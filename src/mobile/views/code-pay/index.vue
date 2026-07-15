@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import type { CodePayInfo } from '@/shared/api/code-pay'
+import type { CodePayInfo, CodePayResult } from '@/shared/api/code-pay'
 import { showNotify, showSuccessToast } from 'vant'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useRoute } from 'vue-router'
-import { getCodePayInfo } from '@/shared/api/code-pay'
+import { codePay, getCodePayInfo } from '@/shared/api/code-pay'
 
 defineOptions({ name: 'CodePayPage' })
 
@@ -15,8 +15,10 @@ const { code } = route.params
 
 // 码牌信息(从后端加载)
 const loading = ref(true)
+const paying = ref(false)
 const loadError = ref('')
 const info = ref<CodePayInfo>({})
+const payResult = ref<CodePayResult | null>(null)
 
 // 自定义金额输入(random 模式)
 const amount = ref('0')
@@ -31,7 +33,30 @@ const displayAmount = computed(() => {
   return amount.value
 })
 
+const paid = computed(() => payResult.value?.status === 'success')
+
 onMounted(loadInfo)
+
+/**
+ * 根据 UA 识别客户端环境(与后端 ClientEnvEnum 对齐)
+ */
+function detectClientEnv(): string {
+  const ua = navigator.userAgent.toLowerCase()
+  if (ua.includes('micromessenger')) {
+    return 'wechat_pay'
+  }
+  if (ua.includes('alipayclient') || ua.includes('alipay')) {
+    return 'alipay'
+  }
+  if (ua.includes('unionpay') || ua.includes('cloudpay') || ua.includes('upwallet')) {
+    return 'union_pay'
+  }
+  if (ua.includes('aweme') || ua.includes('toutiao') || ua.includes('douyin')) {
+    return 'douyin'
+  }
+  // 浏览器扫码预览: 后端会拒绝 browser, 默认按微信便于开发调试
+  return 'wechat_pay'
+}
 
 /**
  * 加载码牌信息
@@ -66,19 +91,66 @@ function onDelete() {
   amount.value = amount.value.slice(0, -1) || '0'
 }
 
-// 确认支付(一期演示, 二期接入真实支付链路)
-function pay() {
+/**
+ * 元 → 分
+ */
+function yuanToFen(yuan: string): number {
+  const n = Number(yuan)
+  if (!Number.isFinite(n) || n <= 0) {
+    return 0
+  }
+  return Math.round(n * 100)
+}
+
+/**
+ * 确认支付: 调后端码牌支付, 按 payBody 跳转/展示
+ */
+async function pay() {
+  if (paying.value || paid.value) {
+    return
+  }
   // 固定金额模式直接用码牌金额, 自定义模式校验输入
+  let amountFen: number | undefined
   if (info.value.amountType === 'random') {
-    const value = Number(amount.value)
-    if (!value) {
+    amountFen = yuanToFen(amount.value)
+    if (!amountFen) {
       showNotify({ type: 'warning', message: t('codePay.amountZero') })
       return
     }
   }
-  showSuccessToast({
-    message: t('codePay.demoPay', { code, amount: displayAmount.value }),
-  })
+  paying.value = true
+  try {
+    payResult.value = await codePay({
+      code: code as string,
+      amount: amountFen,
+      description: description.value || undefined,
+      clientEnv: detectClientEnv(),
+      // 一期 H5; 小程序传 mini
+      runtime: 'h5',
+      device: 'mobile',
+    })
+    if (payResult.value?.status === 'success') {
+      showSuccessToast(t('codePay.paySuccess'))
+      return
+    }
+    // 链接类直接跳转
+    if (payResult.value?.payBody && payResult.value.payBodyType === 'url') {
+      window.location.href = payResult.value.payBody
+      return
+    }
+    // 其它 payBody(jsapi 等)一期提示已下单, OAuth/调起后续完善
+    if (payResult.value?.payBody) {
+      showSuccessToast(t('codePay.payLaunched'))
+      return
+    }
+    showNotify({ type: 'warning', message: t('codePay.payPending') })
+  }
+  catch (e: any) {
+    showNotify({ type: 'danger', message: e?.message || t('codePay.payFail') })
+  }
+  finally {
+    paying.value = false
+  }
 }
 </script>
 
@@ -174,8 +246,8 @@ function pay() {
       />
       <!-- 固定金额: 底部确认支付按钮 -->
       <div v-else class="code-pay__fixed-pay">
-        <button class="code-pay__fixed-pay-btn" @click="pay">
-          {{ t('codePay.confirmPay') }} ¥{{ displayAmount }}
+        <button class="code-pay__fixed-pay-btn" :disabled="paying || paid" @click="pay">
+          {{ paid ? t('codePay.paySuccess') : `${t('codePay.confirmPay')} ¥${displayAmount}` }}
         </button>
       </div>
     </template>

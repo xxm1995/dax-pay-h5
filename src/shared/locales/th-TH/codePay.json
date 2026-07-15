@@ -8,5 +8,9 @@
   "confirmPay": "ยืนยันการชำระเงิน",
   "demoPay": "สาธิต: รหัส {code} การชำระเงิน ¥{amount}",
   "loadFail": "โหลดข้อมูลโค้ด QR ไม่สำเร็จ โปรดลองอีกครั้งในภายหลัง",
-  "merchantDefault": "พ่อค้า"
+  "merchantDefault": "พ่อค้า",
+  "paySuccess": "Payment successful",
+  "payFail": "Payment failed, please retry",
+  "payLaunched": "Payment launched",
+  "payPending": "Order created, please complete payment"
 }

@@ -8,5 +8,9 @@
   "confirmPay": "Xác nhận thanh toán",
   "demoPay": "Bản demo: mã {code} thanh toán ¥{amount}",
   "loadFail": "Không tải được thông tin mã QR, vui lòng thử lại sau",
-  "merchantDefault": "Thương gia"
+  "merchantDefault": "Thương gia",
+  "paySuccess": "Payment successful",
+  "payFail": "Payment failed, please retry",
+  "payLaunched": "Payment launched",
+  "payPending": "Order created, please complete payment"
 }

@@ -8,5 +8,9 @@
   "confirmPay": "確認支付",
   "demoPay": "演示：碼牌 {code} 支付 ¥{amount}",
   "loadFail": "碼牌信息加載失敗, 請稍後重試",
-  "merchantDefault": "收款商户"
+  "merchantDefault": "收款商户",
+  "paySuccess": "支付成功",
+  "payFail": "支付失敗, 請重試",
+  "payLaunched": "支付已拉起",
+  "payPending": "訂單已建立, 請完成支付"
 }
