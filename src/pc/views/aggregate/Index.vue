@@ -32,7 +32,7 @@ const paid = computed(() => order.value.status === 'paid')
 function detectClientEnv(): string {
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('micromessenger')) {
-    return 'wechat_pay'
+    return 'wechat'
   }
   if (ua.includes('alipayclient') || ua.includes('alipay')) {
     return 'alipay'
@@ -40,7 +40,7 @@ function detectClientEnv(): string {
   if (ua.includes('unionpay') || ua.includes('cloudpay')) {
     return 'union_pay'
   }
-  return 'wechat_pay'
+  return 'wechat'
 }
 
 onMounted(async () => {

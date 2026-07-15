@@ -46,7 +46,7 @@ const paid = computed(() => order.value.status === 'paid')
 function detectClientEnv(): string {
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('micromessenger')) {
-    return 'wechat_pay'
+    return 'wechat'
   }
   if (ua.includes('alipayclient') || ua.includes('alipay')) {
     return 'alipay'
@@ -81,7 +81,7 @@ function iconClass(icon?: string) {
   if (icon && known.includes(icon)) {
     return icon
   }
-  if (icon === 'wechat_pay') {
+  if (icon === 'wechat') {
     return 'wechat'
   }
   return 'wechat'

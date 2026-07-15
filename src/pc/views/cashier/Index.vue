@@ -55,7 +55,7 @@ function methodName(item?: CashierItemPublic | null) {
 }
 
 function iconClass(icon?: string) {
-  if (icon === 'wechat' || icon === 'wechat_pay') {
+  if (icon === 'wechat' || icon === 'wechat') {
     return 'wechat'
   }
   if (icon === 'alipay') {

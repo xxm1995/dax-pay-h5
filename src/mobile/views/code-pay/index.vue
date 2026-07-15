@@ -43,7 +43,7 @@ onMounted(loadInfo)
 function detectClientEnv(): string {
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('micromessenger')) {
-    return 'wechat_pay'
+    return 'wechat'
   }
   if (ua.includes('alipayclient') || ua.includes('alipay')) {
     return 'alipay'
@@ -55,7 +55,7 @@ function detectClientEnv(): string {
     return 'douyin'
   }
   // 浏览器扫码预览: 后端会拒绝 browser, 默认按微信便于开发调试
-  return 'wechat_pay'
+  return 'wechat'
 }
 
 /**
@@ -64,6 +64,10 @@ function detectClientEnv(): string {
 async function loadInfo() {
   try {
     info.value = await getCodePayInfo(code as string)
+    // 小程序码牌应在小程序落地, H5 页仅支持 h5 形态
+    if (info.value.programType === 'mini_app') {
+      loadError.value = t('codePay.miniAppOnly')
+    }
   }
   catch (e: any) {
     loadError.value = e?.message || t('codePay.loadFail')
@@ -109,6 +113,10 @@ async function pay() {
   if (paying.value || paid.value) {
     return
   }
+  if (info.value.programType === 'mini_app') {
+    showNotify({ type: 'warning', message: t('codePay.miniAppOnly') })
+    return
+  }
   // 固定金额模式直接用码牌金额, 自定义模式校验输入
   let amountFen: number | undefined
   if (info.value.amountType === 'random') {
@@ -125,7 +133,7 @@ async function pay() {
       amount: amountFen,
       description: description.value || undefined,
       clientEnv: detectClientEnv(),
-      // 一期 H5; 小程序传 mini
+      // H5 码牌固定 h5, 与 programType 一致
       runtime: 'h5',
       device: 'mobile',
     })

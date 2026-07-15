@@ -44,7 +44,7 @@ const paid = computed(() => order.value.status === 'paid')
 function detectClientEnv(): string {
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('micromessenger')) {
-    return 'wechat_pay'
+    return 'wechat'
   }
   if (ua.includes('alipayclient') || ua.includes('alipay')) {
     return 'alipay'
@@ -53,7 +53,7 @@ function detectClientEnv(): string {
     return 'union_pay'
   }
   // 默认按微信处理(浏览器扫码预览)
-  return 'wechat_pay'
+  return 'wechat'
 }
 
 /**
