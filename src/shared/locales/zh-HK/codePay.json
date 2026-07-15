@@ -12,5 +12,6 @@
   "paySuccess": "支付成功",
   "payFail": "支付失敗, 請重試",
   "payLaunched": "支付已拉起",
-  "payPending": "訂單已建立, 請完成支付"
+  "payPending": "訂單已建立, 請完成支付",
+  "miniAppOnly": "該碼牌為小程序碼，請使用小程序掃碼支付"
 }

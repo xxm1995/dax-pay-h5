@@ -12,5 +12,6 @@
   "paySuccess": "Payment successful",
   "payFail": "Payment failed, please retry",
   "payLaunched": "Payment launched",
-  "payPending": "Order created, please complete payment"
+  "payPending": "Order created, please complete payment",
+  "miniAppOnly": "This is a mini-program QR code. Please pay in the mini program."
 }

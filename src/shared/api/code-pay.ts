@@ -18,6 +18,8 @@ export interface CodePayInfo {
   amountType?: AmountType
   /** 固定金额(分, amountType=fixed 时返回) */
   fixedAmount?: number
+  /** 落地程序类型 h5 / mini_app */
+  programType?: string
 }
 
 /**
