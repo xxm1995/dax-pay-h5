@@ -9,17 +9,33 @@
   "selectMethod": "Select a payment method",
   "recommend": "Recommended",
   "payNow": "Pay Now",
-  "demoPayStarted": "Demo: {name} payment initiated",
-  "qrcodePayDemo": "Scan to pay (demo)",
+  "qrcodePay": "Scan to pay",
   "qrcodeTip": "Scan the QR code with {name} to complete the payment",
   "method": {
     "wechat": "WeChat Pay",
     "alipay": "Alipay",
-    "union_pay": "UnionPay"
+    "union_pay": "UnionPay",
+    "douyin": "Douyin Pay",
+    "aggregate_pay": "Aggregate Pay",
+    "visa": "Visa",
+    "mastercard": "Mastercard"
   },
   "loadFail": "Failed to load order",
   "payFail": "Failed to start payment",
   "paid": "Payment successful",
   "paying": "Paying...",
-  "emptyItems": "No payment methods available"
+  "emptyItems": "No payment methods available",
+  "expired": "Order expired",
+  "jsapiPending": "Authorization is required to complete payment in this app. Coming soon.",
+  "payLaunched": "Payment started. Please finish in your wallet app.",
+  "envRedirecting": "Opening checkout...",
+  "authUrlFail": "Failed to get authorization URL",
+  "payCancel": "Payment cancelled",
+  "closed": "Order closed",
+  "failed": "Payment failed",
+  "closedTip": "This order has been closed and cannot be paid.",
+  "failedTip": "Payment was unsuccessful. Please try again.",
+  "expiredTip": "The order was not paid in time and has expired.",
+  "loadFailTip": "Please check that the order link is correct.",
+  "closePage": "Close"
 }

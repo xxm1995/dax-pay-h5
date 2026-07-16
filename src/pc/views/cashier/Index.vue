@@ -1,9 +1,21 @@
 <script lang="ts" setup>
+/**
+ * PC WEB 收银台（cashierType=web，不按 clientEnv 分桶）
+ */
 import type { CashierItemPublic, GatewayOrderInfo } from '@/shared/api/gateway'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gateway'
+import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
+import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
+import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
+import { fenToYuan } from '@/shared/utils/pay-amount'
+import {
+  redirectToPayUrl,
+  resolvePayResult,
+  submitPayForm,
+} from '@/shared/utils/pay-result'
 
 defineOptions({ name: 'PcCashier' })
 
@@ -14,24 +26,59 @@ const orderNo = route.params.orderNo as string
 const loading = ref(true)
 const paying = ref(false)
 const loadError = ref('')
+const payError = ref('')
 const order = ref<GatewayOrderInfo>({})
 const payMethods = ref<CashierItemPublic[]>([])
 const selectId = ref<string>('')
-const payBody = ref('')
 const showQrcode = ref(false)
+const qrContent = ref('')
 
 const remainSeconds = ref(0)
-let timer: ReturnType<typeof setInterval> | null = null
-let pollTimer: ReturnType<typeof setInterval> | null = null
+let countdownTimer: ReturnType<typeof setInterval> | null = null
 
-const amountYuan = computed(() => {
-  if (!order.value.amount) {
-    return '0.00'
+const amountYuan = computed(() => fenToYuan(order.value.amount))
+const paid = computed(() => order.value.status === 'paid')
+const expired = computed(() => remainSeconds.value <= 0 && !!order.value.expiredTime && !paid.value)
+
+// 终态判定: 订单不可继续支付（用于跳过支付项请求并展示结果卡片）
+const closed = computed(() => order.value.status === 'closed')
+const failed = computed(() => order.value.status === 'failed')
+const isTerminal = computed(() =>
+  paid.value || closed.value || failed.value || order.value.status === 'expired' || expired.value,
+)
+
+// 结果态类型（关单/失败/过期/加载失败），非空时渲染结果卡片
+type ResultState = 'closed' | 'failed' | 'expired' | 'loadError'
+const resultState = computed<ResultState | ''>(() => {
+  // 订单加载失败优先（订单不存在/网络异常）
+  if (loadError.value) {
+    return 'loadError'
   }
-  return (order.value.amount / 100).toFixed(2)
+  if (closed.value) {
+    return 'closed'
+  }
+  if (failed.value) {
+    return 'failed'
+  }
+  if (order.value.status === 'expired' || expired.value) {
+    return 'expired'
+  }
+  return ''
 })
 
-const paid = computed(() => order.value.status === 'paid')
+// 结果态展示元数据（图标/标题/副文案/主题色）
+const resultMeta = computed(() => {
+  switch (resultState.value) {
+    case 'closed':
+      return { icon: 'lock', titleKey: 'cashier.closed', tipKey: 'cashier.closedTip', color: '#fa8c16' }
+    case 'failed':
+      return { icon: 'cross', titleKey: 'cashier.failed', tipKey: 'cashier.failedTip', color: '#ff4d4f' }
+    case 'expired':
+      return { icon: 'clock-o', titleKey: 'cashier.expired', tipKey: 'cashier.expiredTip', color: '#8c8c8c' }
+    default:
+      return { icon: 'warning-o', titleKey: 'cashier.loadFail', tipKey: 'cashier.loadFailTip', color: '#fa8c16' }
+  }
+})
 
 const countdown = computed(() => {
   const s = remainSeconds.value
@@ -39,6 +86,18 @@ const countdown = computed(() => {
   const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0')
   const sec = String(s % 60).padStart(2, '0')
   return { h, m, s: sec }
+})
+
+const { startPoll, stopPoll } = useGatewayOrderPoll({
+  onUpdate(latest) {
+    order.value = latest
+  },
+  onPaid(latest) {
+    order.value = latest
+    if (latest.returnUrl) {
+      window.location.href = latest.returnUrl
+    }
+  },
 })
 
 function methodName(item?: CashierItemPublic | null) {
@@ -54,50 +113,36 @@ function methodName(item?: CashierItemPublic | null) {
   return label === key ? icon : label
 }
 
-function iconClass(icon?: string) {
-  if (icon === 'wechat' || icon === 'wechat') {
-    return 'wechat'
+function startCountdown(expiredTime?: string) {
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+    countdownTimer = null
   }
-  if (icon === 'alipay') {
-    return 'alipay'
+  if (!expiredTime) {
+    remainSeconds.value = 0
+    return
   }
-  if (icon === 'union_pay') {
-    return 'union_pay'
-  }
-  return 'wechat'
+  const exp = new Date(expiredTime).getTime()
+  remainSeconds.value = Math.max(0, Math.floor((exp - Date.now()) / 1000))
+  countdownTimer = setInterval(() => {
+    if (remainSeconds.value > 0) {
+      remainSeconds.value--
+    }
+    else if (countdownTimer) {
+      clearInterval(countdownTimer)
+      countdownTimer = null
+    }
+  }, 1000)
 }
-
-onMounted(async () => {
-  await loadPage()
-})
-
-onUnmounted(() => {
-  if (timer) {
-    clearInterval(timer)
-  }
-  if (pollTimer) {
-    clearInterval(pollTimer)
-  }
-})
 
 async function loadPage() {
   loading.value = true
   loadError.value = ''
   try {
     order.value = await getGatewayOrder(orderNo)
-    if (order.value.expiredTime) {
-      const exp = new Date(order.value.expiredTime).getTime()
-      remainSeconds.value = Math.max(0, Math.floor((exp - Date.now()) / 1000))
-      timer = setInterval(() => {
-        if (remainSeconds.value > 0) {
-          remainSeconds.value--
-        }
-        else if (timer) {
-          clearInterval(timer)
-        }
-      }, 1000)
-    }
-    if (!paid.value) {
+    startCountdown(order.value.expiredTime)
+    // 仅可支付订单（非终态）请求支付项，避免对已关闭/失败/过期订单触发后端拦截异常
+    if (!isTerminal.value) {
       // WEB 收银台: cashierType=web, clientEnv 不传
       payMethods.value = await listCashierItems({
         orderNo,
@@ -116,10 +161,13 @@ async function loadPage() {
 }
 
 async function pay() {
-  if (paying.value || paid.value || !selectId.value) {
+  if (paying.value || paid.value || !selectId.value || expired.value) {
     return
   }
   paying.value = true
+  payError.value = ''
+  showQrcode.value = false
+  qrContent.value = ''
   try {
     const result = await cashierPay({
       orderNo,
@@ -127,53 +175,78 @@ async function pay() {
       cashierType: 'web',
       device: 'pc',
     })
-    if (result?.status === 'success') {
-      order.value.status = 'paid'
-      return
+    const action = resolvePayResult(result)
+    switch (action.type) {
+      case 'success':
+        order.value.status = 'paid'
+        if (order.value.returnUrl) {
+          window.location.href = order.value.returnUrl
+        }
+        break
+      case 'redirect':
+        redirectToPayUrl(action.url)
+        break
+      case 'qrcode':
+        qrContent.value = action.content
+        showQrcode.value = true
+        startPoll(orderNo)
+        break
+      case 'form':
+        submitPayForm(action.html)
+        startPoll(orderNo)
+        break
+      case 'jsapi':
+        payError.value = t('cashier.jsapiPending')
+        startPoll(orderNo)
+        break
+      case 'unsupported':
+        payError.value = t('cashier.payLaunched')
+        startPoll(orderNo)
+        break
+      case 'poll':
+      default:
+        startPoll(orderNo)
+        break
     }
-    if (result?.payBody) {
-      if (result.payBodyType === 'url') {
-        window.location.href = result.payBody
-        return
-      }
-      // 二维码类: 展示 payBody 文本(可后续接二维码组件)
-      payBody.value = result.payBody
-      showQrcode.value = true
-      startPoll()
-      return
-    }
-    startPoll()
   }
   catch (e: any) {
-    loadError.value = e?.message || t('cashier.payFail')
+    payError.value = e?.message || t('cashier.payFail')
   }
   finally {
     paying.value = false
   }
 }
 
-function startPoll() {
-  if (pollTimer) {
-    clearInterval(pollTimer)
+/**
+ * 关闭页面（微信/支付宝 App 内有效，浏览器降级 window.close）
+ */
+function closePage() {
+  try {
+    // 微信内置浏览器
+    (window as any).WeixinJSBridge?.call?.('closeWindow')
   }
-  pollTimer = setInterval(async () => {
-    try {
-      const latest = await getGatewayOrder(orderNo)
-      order.value = latest
-      if (latest.status === 'paid') {
-        if (pollTimer) {
-          clearInterval(pollTimer)
-        }
-        if (latest.returnUrl) {
-          window.location.href = latest.returnUrl
-        }
-      }
-    }
-    catch {
-      // ignore
-    }
-  }, 2000)
+  catch {}
+  try {
+    // 支付宝内置浏览器
+    (window as any).AlipayJSBridge?.call?.('closeWebview')
+  }
+  catch {}
+  try {
+    window.close()
+  }
+  catch {}
 }
+
+onMounted(() => {
+  loadPage()
+})
+
+onUnmounted(() => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+  }
+  stopPoll()
+})
 </script>
 
 <template>
@@ -182,8 +255,69 @@ function startPoll() {
       <div v-if="loading" class="pc-cashier__content">
         {{ t('cashier.paying') }}
       </div>
-      <div v-else-if="loadError" class="pc-cashier__content">
-        {{ loadError }}
+      <!-- 结果态：订单已关闭/支付失败/已过期/加载失败 -->
+      <div v-else-if="resultState" class="pc-cashier__result">
+        <div
+          class="pc-cashier__result-icon"
+          :style="{ color: resultMeta.color, background: `${resultMeta.color}1a` }"
+        >
+          <svg
+            class="pc-cashier__result-svg"
+            viewBox="0 0 48 48"
+            width="56"
+            height="56"
+            fill="none"
+            :stroke="resultMeta.color"
+            stroke-width="3.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <!-- 支付失败: 叉号 -->
+            <template v-if="resultState === 'failed'">
+              <path d="M14 14 L34 34 M34 14 L14 34" stroke-width="4" />
+            </template>
+            <!-- 已过期: 时钟 -->
+            <template v-else-if="resultState === 'expired'">
+              <circle cx="24" cy="24" r="17" />
+              <path d="M24 13 V24 L32 28" />
+            </template>
+            <!-- 订单已关闭: 锁 -->
+            <template v-else-if="resultState === 'closed'">
+              <rect x="10" y="22" width="28" height="18" rx="3" />
+              <path d="M15 22 V15 a9 9 0 0 1 18 0 V22" />
+            </template>
+            <!-- 加载失败: 警告三角 -->
+            <template v-else>
+              <path d="M24 6 L43 39 H5 Z" />
+              <path d="M24 19 V29" />
+              <circle cx="24" cy="35" r="1.5" :fill="resultMeta.color" stroke="none" />
+            </template>
+          </svg>
+        </div>
+        <div class="pc-cashier__result-title">
+          {{ t(resultMeta.titleKey) }}
+        </div>
+        <div class="pc-cashier__result-subtitle">
+          {{ resultState === 'loadError' ? (loadError || t(resultMeta.tipKey)) : t(resultMeta.tipKey) }}
+        </div>
+        <!-- 订单信息卡片 -->
+        <div v-if="order.orderNo" class="pc-cashier__result-order">
+          <div class="pc-cashier__result-row">
+            <span>{{ t('cashier.orderTitle') }}</span>
+            <span>{{ order.title || t('cashier.demoOrderTitle') }}</span>
+          </div>
+          <div class="pc-cashier__result-row">
+            <span>{{ t('cashier.orderNo') }}</span>
+            <span>{{ order.orderNo }}</span>
+          </div>
+          <div v-if="order.amount" class="pc-cashier__result-row">
+            <span>{{ t('cashier.payableAmount') }}</span>
+            <span class="pc-cashier__result-amount">￥{{ amountYuan }}</span>
+          </div>
+        </div>
+        <button class="pc-cashier__result-btn" @click="closePage">
+          {{ t('cashier.closePage') }}
+        </button>
       </div>
       <template v-else>
         <!-- 订单头部 -->
@@ -193,6 +327,9 @@ function startPoll() {
             <span class="pc-cashier__countdown-time">
               {{ countdown.h }}:{{ countdown.m }}:{{ countdown.s }}
             </span>
+          </div>
+          <div v-else-if="expired" class="pc-cashier__countdown">
+            <span class="pc-cashier__countdown-time">{{ t('cashier.expired') }}</span>
           </div>
           <div class="pc-cashier__title">
             {{ order.title || t('cashier.demoOrderTitle') }}
@@ -213,7 +350,10 @@ function startPoll() {
           <div v-if="paid" class="pc-cashier__method-name">
             {{ t('cashier.paid') }}
           </div>
-          <!-- 支付方式网格（支付前） -->
+          <div v-else-if="payError" class="pc-cashier__error">
+            {{ payError }}
+          </div>
+          <!-- 支付方式网格 -->
           <div v-else-if="!showQrcode" class="pc-cashier__grid">
             <div
               v-for="item in payMethods"
@@ -222,36 +362,27 @@ function startPoll() {
               :class="{ 'pc-cashier__method--active': item.id === selectId }"
               @click="selectId = item.id"
             >
-              <span class="pc-cashier__method-icon" :class="`pc-cashier__method-icon--${iconClass(item.icon)}`">
-                <svg v-if="iconClass(item.icon) === 'wechat'" viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
-                  <path fill="#fff" d="M690.1 377.4c5.9 0 11.8.2 17.6.5-24.4-128.7-158.3-227.1-322.3-227.1C205.2 150.8 64 271.4 64 420.2c0 81.1 43.6 146.4 116.6 197.4l-29.2 88.4 102.2-52.6c36.5 7.2 65.9 14.6 101.9 14.6 5.4 0 10.8-.2 16.2-.5-3.4-11.8-5.3-24.1-5.3-36.9 0-153.7 129.4-253.2 323.7-253.2zM544.9 267.6c21.5 0 35.7 14.2 35.7 35.7 0 21.3-14.2 35.8-35.7 35.8s-42.9-14.5-42.9-35.8c0-21.5 21.4-35.7 42.9-35.7zM269.3 338.3c-21.5 0-43.3-14.2-43.3-35.7 0-21.3 21.8-35.8 43.3-35.8 21.3 0 35.6 14.5 35.6 35.8 0 21.5-14.3 35.7-35.6 35.7z" />
-                </svg>
-                <svg v-else-if="iconClass(item.icon) === 'alipay'" viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
-                  <path fill="#fff" d="M843.1 608.6c-23.4-49.7-54.2-105.8-91.7-166.2-37.8-60.4-77.1-115.3-117.6-164.4-44.6-12.3-91.7-18.8-140.4-18.8-101.3 0-194.4 34.4-266.9 91.9-83.3 66-133.5 162.7-133.5 269.5 0 103.9 49.5 199.1 133.7 265.7 76.2 60.2 174.3 95.3 280.1 95.3 138.6 0 262.2-57.3 339-147.1-33.9-26-99-62.7-202.9-99.3-29.4 39.5-72.9 64.8-128.1 64.8-99.5 0-176.4-72.2-176.4-176.4 0-99.1 71.5-177 176.4-177 78.2 0 137.6 41.6 161.8 103.9 73.6 30.9 132.3 56.9 167.4 76.5l72.1 36.1z" />
-                </svg>
-                <svg v-else viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
-                  <path fill="#fff" d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm130.4 590.4c-39.1 27.8-86.8 43.6-138.4 43.6-130.4 0-236-105.6-236-236s105.6-236 236-236c45.6 0 88.2 13 124 35.4l-58.5 58.5c-19.4-9-40.9-14-63.5-14-85.2 0-154.4 69.2-154.4 154.4S384.8 544.3 470 544.3c52.6 0 98.9-26.4 126.4-66.6l70.6 70.6c-7.8 2.1-15.8 4-24.6 6.7z" />
-                </svg>
-              </span>
+              <PayMethodIcon :icon="item.icon" :size="22" />
               <span class="pc-cashier__method-name">{{ methodName(item) }}</span>
               <span v-if="item.recommend" class="pc-cashier__recommend">{{ t('cashier.recommend') }}</span>
             </div>
+            <div v-if="!payMethods.length" class="pc-cashier__empty">
+              {{ t('cashier.emptyItems') }}
+            </div>
           </div>
 
-          <!-- 二维码/支付参数展示 -->
+          <!-- 二维码支付 -->
           <div v-else class="pc-cashier__qrcode">
             <div class="pc-cashier__qrcode-box">
               <span class="pc-cashier__corner pc-cashier__corner--tl" />
               <span class="pc-cashier__corner pc-cashier__corner--tr" />
               <span class="pc-cashier__corner pc-cashier__corner--bl" />
               <span class="pc-cashier__corner pc-cashier__corner--br" />
-              <p class="pc-cashier__qrcode-sub" style="word-break: break-all; padding: 8px; font-size: 12px;">
-                {{ payBody }}
-              </p>
+              <QrCodeDisplay :content="qrContent" :size="180" />
             </div>
             <div class="pc-cashier__qrcode-tip">
               <p class="pc-cashier__qrcode-title">
-                {{ t('cashier.qrcodePayDemo') }}
+                {{ t('cashier.qrcodePay') }}
               </p>
               <p class="pc-cashier__qrcode-sub">
                 {{ t('cashier.qrcodeTip', { name: methodName(payMethods.find(i => i.id === selectId)) }) }}
@@ -260,11 +391,10 @@ function startPoll() {
           </div>
         </div>
 
-        <!-- 立即支付按钮（支付前） -->
         <button
           v-if="!showQrcode && !paid"
           class="pc-cashier__pay-btn"
-          :disabled="paying || !selectId"
+          :disabled="paying || !selectId || expired"
           @click="pay"
         >
           {{ paying ? t('cashier.paying') : t('cashier.payNow') }}
@@ -297,10 +427,10 @@ function startPoll() {
   position: relative;
   display: flex;
   flex-direction: column;
+  min-height: 420px;
 }
 
 .pc-cashier__header {
-  /* header 渐变带主色调，与统一主色 #5d9dfe 呼应 */
   background: linear-gradient(135deg, #eaf2fe 0%, #f5f9ff 100%);
   padding: 30px 40px;
   border-bottom: 1px solid #edf2f7;
@@ -377,6 +507,118 @@ function startPoll() {
   min-height: 240px;
 }
 
+.pc-cashier__error {
+  color: #ff4d4f;
+  font-size: 14px;
+  text-align: center;
+}
+
+.pc-cashier__result {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  text-align: center;
+  box-sizing: border-box;
+  animation: pc-cashier-result-up 0.5s ease-out;
+}
+
+.pc-cashier__result-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 28px;
+  animation: pc-cashier-result-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pc-cashier__result-svg {
+  display: block;
+}
+
+.pc-cashier__result-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.pc-cashier__result-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+.pc-cashier__result-order {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 28px;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.pc-cashier__result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.pc-cashier__result-row:last-child {
+  margin-bottom: 0;
+}
+
+.pc-cashier__result-row span:first-child {
+  color: #94a3b8;
+}
+
+.pc-cashier__result-row span:last-child {
+  color: #1e293b;
+  max-width: 60%;
+  text-align: right;
+  word-break: break-all;
+}
+
+.pc-cashier__result-amount {
+  color: #5d9dfe !important;
+  font-weight: 600;
+}
+
+.pc-cashier__result-btn {
+  margin-top: 32px;
+  width: 240px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #5d9dfe 0%, #4a87e0 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
+  transition: all 0.2s;
+}
+
+.pc-cashier__result-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(93, 157, 254, 0.4);
+}
+
+.pc-cashier__empty {
+  grid-column: 1 / -1;
+  color: #94a3b8;
+  text-align: center;
+  padding: 24px;
+}
+
 .pc-cashier__grid {
   width: 100%;
   display: grid;
@@ -409,33 +651,6 @@ function startPoll() {
   border-color: #5d9dfe;
   background: #eaf2fe;
   box-shadow: 0 4px 12px rgba(93, 157, 254, 0.18);
-}
-
-.pc-cashier__method-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.pc-cashier__method-icon svg {
-  display: block;
-}
-
-.pc-cashier__method-icon--wechat {
-  background: #07c160;
-}
-
-.pc-cashier__method-icon--alipay {
-  background: #1677ff;
-}
-
-.pc-cashier__method-icon--union_pay {
-  background: #e60012;
 }
 
 .pc-cashier__method-name {
@@ -472,9 +687,9 @@ function startPoll() {
   justify-content: center;
   box-shadow: 0 4px 12px rgba(93, 157, 254, 0.08);
   position: relative;
+  box-sizing: border-box;
 }
 
-/* 二维码区四角 L 型装饰角标 */
 .pc-cashier__corner {
   position: absolute;
   width: 16px;
@@ -514,11 +729,6 @@ function startPoll() {
   border-bottom-right-radius: 4px;
 }
 
-.pc-cashier__qrcode-svg {
-  width: 100%;
-  height: 100%;
-}
-
 .pc-cashier__qrcode-title {
   font-size: 18px;
   font-weight: 600;
@@ -549,10 +759,15 @@ function startPoll() {
   box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
 }
 
-.pc-cashier__pay-btn:hover {
+.pc-cashier__pay-btn:hover:not(:disabled) {
   background: #4a87e0;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(93, 157, 254, 0.4);
+}
+
+.pc-cashier__pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
@@ -569,6 +784,28 @@ function startPoll() {
     position: static;
     width: 100%;
     margin: 20px 0 0;
+  }
+}
+
+@keyframes pc-cashier-result-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pc-cashier-result-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 </style>

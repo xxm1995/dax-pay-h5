@@ -24,7 +24,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // 收银台（跨端：与 PC 端同 path 各指各 view）
+  // 收银台：入口 /cashier/:orderNo → 环境页 /cashier/:orderNo/:clientEnv
   {
     path: RoutePath.CASHIER,
     name: 'Cashier',
@@ -34,16 +34,86 @@ const routeModuleList: Array<RouteRecordRaw> = [
     },
     children: [
       {
+        // 入口：UA 探测后 replace 到环境页
         path: '',
-        name: 'CashierPage',
-        meta: {
-          keepAlive: true,
-        },
-        component: () => import('@/mobile/views/cashier/index.vue'),
+        name: 'CashierEntry',
+        component: () => import('@/mobile/views/cashier/entry.vue'),
+      },
+      {
+        // 环境页：clientEnv 白名单在页内校验（不缓存：收银台为一次性支付页，每次须重新探测与加载）
+        path: ':clientEnv',
+        name: 'CashierEnvPage',
+        component: () => import('@/mobile/views/cashier/CashierEnvPage.vue'),
       },
     ],
   },
-  // 聚合扫码支付（跨端）
+  // 聚合扫码：环境页须先于入口注册（避免 wechat 等被 :orderNo 吞掉）
+  {
+    path: RoutePath.AGGREGATE_WECHAT,
+    name: 'AggregateWechat',
+    component: Layout,
+    meta: { title: '聚合支付' },
+    children: [
+      {
+        path: '',
+        name: 'AggregateWechatPage',
+        component: () => import('@/mobile/views/aggregate/wechat/Index.vue'),
+      },
+    ],
+  },
+  {
+    path: RoutePath.AGGREGATE_ALIPAY,
+    name: 'AggregateAlipay',
+    component: Layout,
+    meta: { title: '聚合支付' },
+    children: [
+      {
+        path: '',
+        name: 'AggregateAlipayPage',
+        component: () => import('@/mobile/views/aggregate/alipay/Index.vue'),
+      },
+    ],
+  },
+  {
+    path: RoutePath.AGGREGATE_UNION,
+    name: 'AggregateUnion',
+    component: Layout,
+    meta: { title: '聚合支付' },
+    children: [
+      {
+        path: '',
+        name: 'AggregateUnionPage',
+        component: () => import('@/mobile/views/aggregate/union-pay/Index.vue'),
+      },
+    ],
+  },
+  {
+    path: RoutePath.AGGREGATE_DOUYIN,
+    name: 'AggregateDouyin',
+    component: Layout,
+    meta: { title: '聚合支付' },
+    children: [
+      {
+        path: '',
+        name: 'AggregateDouyinPage',
+        component: () => import('@/mobile/views/aggregate/douyin/Index.vue'),
+      },
+    ],
+  },
+  {
+    path: RoutePath.AGGREGATE_UNSUPPORTED,
+    name: 'AggregateUnsupported',
+    component: Layout,
+    meta: { title: '聚合支付' },
+    children: [
+      {
+        path: '',
+        name: 'AggregateUnsupportedPage',
+        component: () => import('@/mobile/views/aggregate/unsupported.vue'),
+      },
+    ],
+  },
+  // 聚合扫码入口（预下单落地 URL 契约 /aggregate/:orderNo）
   {
     path: RoutePath.AGGREGATE,
     name: 'Aggregate',
@@ -54,12 +124,44 @@ const routeModuleList: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        name: 'AggregatePage',
-        component: () => import('@/mobile/views/aggregate/index.vue'),
+        name: 'AggregateEntry',
+        component: () => import('@/mobile/views/aggregate/Entry.vue'),
       },
     ],
   },
-  // 码牌支付（移动独占：PC 端由注册表派生 device-only 存根）
+  // 码牌支付-微信端（静态段须在 /h/:code 之前注册）
+  {
+    path: RoutePath.CODE_PAY_WECHAT,
+    name: 'CodePayWechat',
+    component: Layout,
+    meta: {
+      title: '码牌支付',
+    },
+    children: [
+      {
+        path: '',
+        name: 'CodePayWechatPage',
+        component: () => import('@/mobile/views/code-pay/wechat/index.vue'),
+      },
+    ],
+  },
+  // 码牌支付-支付宝端
+  {
+    path: RoutePath.CODE_PAY_ALIPAY,
+    name: 'CodePayAlipay',
+    component: Layout,
+    meta: {
+      title: '码牌支付',
+    },
+    children: [
+      {
+        path: '',
+        name: 'CodePayAlipayPage',
+        component: () => import('@/mobile/views/code-pay/alipay/index.vue'),
+      },
+    ],
+  },
+  // 码牌支付入口分发（移动独占：PC 端由注册表派生 device-only 存根）
   {
     path: RoutePath.CODE_PAY,
     name: 'CodePay',

@@ -9,17 +9,33 @@
   "selectMethod": "请选择支付方式",
   "recommend": "推荐",
   "payNow": "立即支付",
-  "demoPayStarted": "演示：已发起 {name} 支付",
-  "qrcodePayDemo": "扫码支付（演示）",
+  "qrcodePay": "扫码支付",
   "qrcodeTip": "请使用 {name} 扫码完成支付",
   "method": {
     "wechat": "微信支付",
     "alipay": "支付宝",
-    "union_pay": "银联支付"
+    "union_pay": "银联支付",
+    "douyin": "抖音支付",
+    "aggregate_pay": "聚合支付",
+    "visa": "Visa",
+    "mastercard": "Mastercard"
   },
   "loadFail": "加载订单失败",
   "payFail": "支付发起失败",
   "paid": "支付成功",
   "paying": "支付中...",
-  "emptyItems": "暂无可用支付方式"
+  "emptyItems": "暂无可用支付方式",
+  "expired": "订单已过期",
+  "jsapiPending": "当前环境需完成授权后调起支付，功能即将上线",
+  "payLaunched": "支付已发起，请在钱包内完成支付",
+  "envRedirecting": "正在进入收银台...",
+  "authUrlFail": "获取授权链接失败",
+  "payCancel": "已取消支付",
+  "closed": "订单已关闭",
+  "failed": "支付失败",
+  "closedTip": "订单已关闭，无法继续支付",
+  "failedTip": "支付未成功，请重新发起",
+  "expiredTip": "订单超时未支付，已自动关闭",
+  "loadFailTip": "请确认订单链接是否正确",
+  "closePage": "关闭页面"
 }
