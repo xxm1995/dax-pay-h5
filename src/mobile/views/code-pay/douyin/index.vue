@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 /**
- * 码牌支付-支付宝端
+ * 码牌支付-抖音端（黑白主视觉）
  */
 import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -8,7 +8,7 @@ import { useRoute } from 'vue-router'
 import CodePayShell from '../shared/CodePayShell.vue'
 import { useCodePayPage } from '../shared/useCodePayPage'
 
-defineOptions({ name: 'CodePayAlipay' })
+defineOptions({ name: 'CodePayDouyin' })
 
 const { t } = useI18n()
 const route = useRoute()
@@ -30,7 +30,7 @@ const {
   onDelete,
   pay,
   closePage,
-} = useCodePayPage({ code, clientEnv: 'alipay' })
+} = useCodePayPage({ code, clientEnv: 'douyin' })
 
 onMounted(() => {
   init()
@@ -41,9 +41,9 @@ onMounted(() => {
   <div class="code-pay-page">
     <!-- 加载 / 授权中：品牌顶栏 + 上浮卡 -->
     <template v-if="loading || authRedirecting">
-      <div class="code-pay-page__brand code-pay-page__brand--alipay" />
+      <div class="code-pay-page__brand code-pay-page__brand--douyin" />
       <div class="code-pay-page__card">
-        <van-loading color="#1677ff" size="28px" />
+        <van-loading color="#161823" size="28px" />
         <!-- 正在授权 / 加载中 -->
         <p class="code-pay-page__tip">
           {{ authRedirecting ? t('codePay.authorizing') : t('codePay.loading') }}
@@ -53,7 +53,7 @@ onMounted(() => {
 
     <!-- 加载失败 -->
     <template v-else-if="loadError">
-      <div class="code-pay-page__brand code-pay-page__brand--alipay" />
+      <div class="code-pay-page__brand code-pay-page__brand--douyin" />
       <div class="code-pay-page__card">
         <div class="code-pay-page__error-icon">
           <van-icon name="warning-o" size="40" color="#fa8c16" />
@@ -77,8 +77,8 @@ onMounted(() => {
       :paying="paying"
       :paid="paid"
       :order-no="orderNo"
-      brand-color="#1677ff"
-      brand-dark="#0958d9"
+      brand-color="#161823"
+      brand-dark="#000000"
       @update:description="setDescription"
       @input="onInput"
       @delete="onDelete"
@@ -98,8 +98,9 @@ onMounted(() => {
   &__brand {
     height: 120px;
 
-    &--alipay {
-      background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+    // 抖音黑白主视觉（近黑 → 纯黑）
+    &--douyin {
+      background: linear-gradient(135deg, #161823 0%, #000 100%);
     }
   }
 

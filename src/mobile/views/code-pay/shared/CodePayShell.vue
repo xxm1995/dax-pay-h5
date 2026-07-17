@@ -13,6 +13,8 @@ defineOptions({ name: 'CodePayShell' })
 const props = withDefaults(defineProps<{
   /** 商户/码牌名称 */
   merchantName?: string
+  /** 商户简称(副标题「向{name}付款」) */
+  mchShortName?: string
   /** 展示金额(元字符串) */
   displayAmount: string
   /** 金额类型 */
@@ -31,6 +33,7 @@ const props = withDefaults(defineProps<{
   brandDark?: string
 }>(), {
   merchantName: '',
+  mchShortName: '',
   amountType: 'random',
   description: '',
   paying: false,
@@ -41,8 +44,8 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  /** 金额键盘输入 */
-  'input': [key: string]
+  /** 金额键盘输入（Vant 数字键可能为 number） */
+  'input': [key: string | number]
   /** 金额删除 */
   'delete': []
   /** 确认支付 */
@@ -59,6 +62,13 @@ const remarkDraft = ref('')
 
 /** 是否固定金额布局 */
 const isFixed = computed(() => props.amountType === 'fixed')
+
+/** 副标题：向{商户简称}付款 */
+const payToText = computed(() => {
+  const name = props.mchShortName || t('codePay.merchantDefault')
+  // 向{name}付款
+  return t('codePay.payToMerchant', { name })
+})
 
 /**
  * 打开备注弹窗
@@ -151,9 +161,9 @@ function onPay() {
             <div class="code-pay-shell__merchant-name">
               {{ merchantName || t('codePay.merchantDefault') }}
             </div>
-            <!-- 向商户付款 -->
+            <!-- 向{商户简称}付款 -->
             <div class="code-pay-shell__merchant-sub">
-              {{ t('codePay.payToMerchant') }}
+              {{ payToText }}
             </div>
           </div>
         </div>
@@ -216,7 +226,7 @@ function onPay() {
         :show="!paying"
         :z-index="100"
         @close="onPay"
-        @input="(k: string) => emit('input', k)"
+        @input="(k: string | number) => emit('input', k)"
         @delete="emit('delete')"
       />
 

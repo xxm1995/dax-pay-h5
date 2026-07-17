@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 /**
  * PC 码牌落地：引导手机钱包扫码（Web 居中白卡，对齐 PC 聚合 unsupported）
- * 码牌收款仅在微信/支付宝移动端完成，PC 只做扫码提示。
+ * 码牌收款在微信/支付宝/云闪付/抖音移动端完成，PC 只做扫码提示。
  */
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -14,7 +14,7 @@ defineOptions({ name: 'PcCodePay' })
 
 const { t } = useI18n()
 const route = useRoute()
-// 路由 /h/:code 或 /h/wechat|alipay/:code
+// 路由 /h/:code 或 /h/wechat|alipay|union-pay|douyin/:code
 const code = (route.params.code as string) || ''
 
 /** 四钱包图标 */

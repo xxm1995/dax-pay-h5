@@ -2,7 +2,8 @@
 /**
  * 码牌支付入口分发页
  *
- * 二维码恒为 /h/:code; 按 UA replace 到微信/支付宝端页, 其它环境提示用钱包扫码。
+ * 二维码恒为 /h/:code; 按 UA replace 到微信/支付宝/云闪付/抖音端页,
+ * 其它环境（browser 等）提示用钱包扫码。
  * 不支持页：四钱包图标 + 加粗标题 + 小号副文案（与聚合 unsupported 一致）。
  */
 import { onMounted, ref } from 'vue'
@@ -32,17 +33,22 @@ const walletIcons = [
   { src: douyinSvg, altKey: 'codePay.wallet.douyin' },
 ]
 
+/** clientEnv → 码牌分端路由 name */
+const ENV_ROUTE_NAME: Record<string, string> = {
+  wechat: 'CodePayWechat',
+  alipay: 'CodePayAlipay',
+  union_pay: 'CodePayUnion',
+  douyin: 'CodePayDouyin',
+}
+
 onMounted(() => {
   const env = detectClientEnv()
-  if (env === 'wechat') {
-    router.replace({ name: 'CodePayWechat', params: { code } })
+  const routeName = ENV_ROUTE_NAME[env]
+  if (routeName) {
+    router.replace({ name: routeName, params: { code } })
     return
   }
-  if (env === 'alipay') {
-    router.replace({ name: 'CodePayAlipay', params: { code } })
-    return
-  }
-  // 云闪付/抖音/浏览器: 提示用钱包扫码
+  // browser 等非钱包宿主: 提示用钱包扫码
   redirecting.value = false
   unsupported.value = true
 })

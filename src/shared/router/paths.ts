@@ -47,6 +47,10 @@ export const RoutePath = {
   CODE_PAY_WECHAT: '/h/wechat/:code',
   /** 码牌支付-支付宝端（Mobile 收款；PC 同入口扫码引导） */
   CODE_PAY_ALIPAY: '/h/alipay/:code',
+  /** 码牌支付-云闪付端（Mobile 收款；PC 同入口扫码引导） */
+  CODE_PAY_UNION: '/h/union-pay/:code',
+  /** 码牌支付-抖音端（Mobile 收款；PC 同入口扫码引导） */
+  CODE_PAY_DOUYIN: '/h/douyin/:code',
   /** 商户对账单（PC 独占） */
   MERCHANT_STATEMENT: '/merchant/statement',
   /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */

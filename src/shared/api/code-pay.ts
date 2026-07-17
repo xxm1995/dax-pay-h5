@@ -14,6 +14,8 @@ export interface CodePayInfo {
   code?: string
   /** 码牌名称 */
   name?: string
+  /** 商户简称(展示用; 后端简称空时已回退全称) */
+  mchShortName?: string
   /** 金额类型 random-自定义 / fixed-固定 */
   amountType?: AmountType
   /** 固定金额(分, amountType=fixed 时返回) */

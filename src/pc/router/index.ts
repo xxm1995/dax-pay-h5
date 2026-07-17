@@ -75,6 +75,18 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '码牌支付' },
   },
   {
+    path: RoutePath.CODE_PAY_UNION,
+    name: 'PcCodePayUnion',
+    component: () => import('@/pc/views/code-pay/Index.vue'),
+    meta: { title: '码牌支付' },
+  },
+  {
+    path: RoutePath.CODE_PAY_DOUYIN,
+    name: 'PcCodePayDouyin',
+    component: () => import('@/pc/views/code-pay/Index.vue'),
+    meta: { title: '码牌支付' },
+  },
+  {
     path: RoutePath.CODE_PAY,
     name: 'PcCodePay',
     component: () => import('@/pc/views/code-pay/Index.vue'),

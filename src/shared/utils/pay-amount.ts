@@ -3,6 +3,17 @@
  */
 
 /**
+ * 支付金额上限(分)，对齐后端 NormalPayParam @Max(9999999999)
+ * 即 99999999.99 元
+ */
+export const MAX_PAY_AMOUNT_FEN = 9_999_999_999
+
+/**
+ * 支付金额上限(元，展示/比较用)
+ */
+export const MAX_PAY_AMOUNT_YUAN = MAX_PAY_AMOUNT_FEN / 100
+
+/**
  * 分 → 元字符串（两位小数）
  * 后端 Long 全局序列化为字符串（防 JS 精度），故需兼容字符串入参
  */
@@ -27,4 +38,16 @@ export function yuanToFen(yuan: string): number {
     return 0
   }
   return Math.round(n * 100)
+}
+
+/**
+ * 元字符串是否超过支付上限（含中间输入态如 "100."，按数值比较）
+ */
+export function isAmountOverMax(yuan: string): boolean {
+  const n = Number(yuan)
+  if (!Number.isFinite(n)) {
+    return false
+  }
+  // 与分精度对齐：先转分再比，避免浮点误差
+  return Math.round(n * 100) > MAX_PAY_AMOUNT_FEN
 }

@@ -161,6 +161,38 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
+  // 码牌支付-云闪付端（静态段须在 /h/:code 之前注册）
+  {
+    path: RoutePath.CODE_PAY_UNION,
+    name: 'CodePayUnion',
+    component: Layout,
+    meta: {
+      title: '码牌支付',
+    },
+    children: [
+      {
+        path: '',
+        name: 'CodePayUnionPage',
+        component: () => import('@/mobile/views/code-pay/union-pay/index.vue'),
+      },
+    ],
+  },
+  // 码牌支付-抖音端
+  {
+    path: RoutePath.CODE_PAY_DOUYIN,
+    name: 'CodePayDouyin',
+    component: Layout,
+    meta: {
+      title: '码牌支付',
+    },
+    children: [
+      {
+        path: '',
+        name: 'CodePayDouyinPage',
+        component: () => import('@/mobile/views/code-pay/douyin/index.vue'),
+      },
+    ],
+  },
   // 码牌支付入口分发（跨端：PC 为扫码引导页）
   {
     path: RoutePath.CODE_PAY,

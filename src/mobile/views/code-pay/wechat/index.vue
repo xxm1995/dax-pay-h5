@@ -70,6 +70,7 @@ onMounted(() => {
     <CodePayShell
       v-else
       :merchant-name="info.name"
+      :mch-short-name="info.mchShortName"
       :display-amount="displayAmount"
       :amount-type="info.amountType"
       :description="description"

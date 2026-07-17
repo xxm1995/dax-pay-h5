@@ -13,7 +13,7 @@ import {
   getCodePayInfo,
 } from '@/shared/api/code-pay'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
-import { yuanToFen } from '@/shared/utils/pay-amount'
+import { isAmountOverMax, yuanToFen } from '@/shared/utils/pay-amount'
 import { clearPayOpenId, getPayOpenId } from '@/shared/utils/pay-openid'
 import {
   redirectToPayUrl,
@@ -25,7 +25,7 @@ export interface UseCodePayPageOptions {
   /** 码牌编码 */
   code: string
   /** 写死的客户端环境 */
-  clientEnv: 'wechat' | 'alipay'
+  clientEnv: 'wechat' | 'alipay' | 'union_pay' | 'douyin'
 }
 
 /**
@@ -107,32 +107,43 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
 
   /**
    * 金额键盘输入
+   * Vant NumberKeyboard 数字键 @input 传 number，须统一转 string，否则 amount 被污染后 indexOf 崩溃
    */
-  function onInput(key: string) {
+  function onInput(key: string | number) {
     if (paying.value || paid.value) {
       return
     }
-    if (key === '.' && amount.value.includes('.')) {
+    // 统一为字符串（Vant 数字键为 number）
+    const k = String(key)
+    // 保证 amount 始终是字符串
+    let current = String(amount.value)
+    if (k === '.' && current.includes('.')) {
       return
     }
     // 最多两位小数
-    const dot = amount.value.indexOf('.')
-    if (dot >= 0 && amount.value.length - dot > 2 && key !== '.') {
+    const dot = current.indexOf('.')
+    if (dot >= 0 && current.length - dot > 2 && k !== '.') {
       return
     }
-    if (amount.value === '0' && key !== '.') {
-      amount.value = key
+    if (current === '0' && k !== '.') {
+      current = k
     }
     else {
-      amount.value += key
+      current += k
     }
+    // 上限：对齐后端 amount @Max(9999999999 分)，超限则忽略本次按键
+    if (isAmountOverMax(current)) {
+      return
+    }
+    amount.value = current
   }
 
   function onDelete() {
     if (paying.value || paid.value) {
       return
     }
-    amount.value = amount.value.slice(0, -1) || '0'
+    // String 加固：防止历史脏值导致 slice 失败
+    amount.value = String(amount.value).slice(0, -1) || '0'
   }
 
   /**
@@ -204,9 +215,14 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     }
     let amountFen: number | undefined
     if (info.value.amountType === 'random') {
-      amountFen = yuanToFen(amount.value)
+      amountFen = yuanToFen(String(amount.value))
       if (!amountFen) {
         showNotify({ type: 'warning', message: t('codePay.amountZero') })
+        return
+      }
+      // 提交前再拦一层（与键盘上限一致）
+      if (isAmountOverMax(String(amount.value))) {
+        showNotify({ type: 'warning', message: t('codePay.amountOverMax') })
         return
       }
     }
