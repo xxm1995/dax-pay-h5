@@ -252,8 +252,10 @@ onUnmounted(() => {
 <template>
   <div class="pc-cashier">
     <div class="pc-cashier__box">
-      <div v-if="loading" class="pc-cashier__content">
-        {{ t('cashier.paying') }}
+      <!-- 加载态 -->
+      <div v-if="loading" class="pc-cashier__loading">
+        <div class="pc-cashier__spinner" />
+        <span>{{ t('cashier.paying') }}</span>
       </div>
       <!-- 结果态：订单已关闭/支付失败/已过期/加载失败 -->
       <div v-else-if="resultState" class="pc-cashier__result">
@@ -347,27 +349,33 @@ onUnmounted(() => {
 
         <!-- 内容区 -->
         <div class="pc-cashier__content">
-          <div v-if="paid" class="pc-cashier__method-name">
+          <div v-if="paid" class="pc-cashier__paid">
             {{ t('cashier.paid') }}
           </div>
           <div v-else-if="payError" class="pc-cashier__error">
             {{ payError }}
           </div>
-          <!-- 支付方式网格 -->
-          <div v-else-if="!showQrcode" class="pc-cashier__grid">
-            <div
-              v-for="item in payMethods"
-              :key="item.id"
-              class="pc-cashier__method"
-              :class="{ 'pc-cashier__method--active': item.id === selectId }"
-              @click="selectId = item.id"
-            >
-              <PayMethodIcon :icon="item.icon" :size="22" />
-              <span class="pc-cashier__method-name">{{ methodName(item) }}</span>
-              <span v-if="item.recommend" class="pc-cashier__recommend">{{ t('cashier.recommend') }}</span>
+          <!-- 支付方式选择 -->
+          <div v-else-if="!showQrcode" class="pc-cashier__methods">
+            <div class="pc-cashier__section-title">
+              {{ t('cashier.selectMethod') }}
             </div>
             <div v-if="!payMethods.length" class="pc-cashier__empty">
               {{ t('cashier.emptyItems') }}
+            </div>
+            <div v-else class="pc-cashier__grid">
+              <div
+                v-for="item in payMethods"
+                :key="item.id"
+                class="pc-cashier__method"
+                :class="{ 'pc-cashier__method--active': item.id === selectId }"
+                @click="selectId = item.id"
+              >
+                <!-- 横向卡片: 图标 + 名称 + 推荐；选中靠边框/底色 -->
+                <PayMethodIcon :icon="item.icon" :size="28" />
+                <span class="pc-cashier__method-name">{{ methodName(item) }}</span>
+                <span v-if="item.recommend" class="pc-cashier__recommend">{{ t('cashier.recommend') }}</span>
+              </div>
             </div>
           </div>
 
@@ -391,14 +399,20 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <button
-          v-if="!showQrcode && !paid"
-          class="pc-cashier__pay-btn"
-          :disabled="paying || !selectId || expired"
-          @click="pay"
-        >
-          {{ paying ? t('cashier.paying') : t('cashier.payNow') }}
-        </button>
+        <!-- 底部操作栏（流式布局，避免 absolute 压住支付项） -->
+        <div v-if="!showQrcode && !paid" class="pc-cashier__footer">
+          <div class="pc-cashier__footer-amount">
+            <span class="pc-cashier__footer-label">{{ t('cashier.payableAmount') }}</span>
+            <span class="pc-cashier__footer-value"><em>￥</em>{{ amountYuan }}</span>
+          </div>
+          <button
+            class="pc-cashier__pay-btn"
+            :disabled="paying || !selectId || expired"
+            @click="pay"
+          >
+            {{ paying ? t('cashier.paying') : t('cashier.payNow') }}
+          </button>
+        </div>
       </template>
     </div>
   </div>
@@ -418,99 +432,142 @@ onUnmounted(() => {
 }
 
 .pc-cashier__box {
-  width: 1000px;
+  width: 1100px;
   max-width: 100%;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
   overflow: hidden;
-  position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 420px;
+  min-height: 520px;
+}
+
+.pc-cashier__loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 320px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.pc-cashier__spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #5d9dfe;
+  border-radius: 50%;
+  animation: pc-cashier-spin 0.8s linear infinite;
 }
 
 .pc-cashier__header {
   background: linear-gradient(135deg, #eaf2fe 0%, #f5f9ff 100%);
-  padding: 30px 40px;
+  padding: 28px 40px 24px;
   border-bottom: 1px solid #edf2f7;
   position: relative;
 }
 
 .pc-cashier__countdown {
   position: absolute;
-  right: 30px;
-  top: 30px;
+  right: 32px;
+  top: 28px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .pc-cashier__countdown-label {
-  font-size: 14px;
+  font-size: 13px;
   color: #64748b;
 }
 
 .pc-cashier__countdown-time {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #ff4d4f;
   font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
 }
 
 .pc-cashier__title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: #1e293b;
+  padding-right: 180px;
+  line-height: 1.4;
 }
 
 .pc-cashier__price {
-  margin-top: 32px;
-  margin-bottom: 16px;
+  margin-top: 20px;
+  margin-bottom: 12px;
 }
 
 .pc-cashier__price-label {
-  font-size: 16px;
+  font-size: 14px;
   color: #64748b;
 }
 
 .pc-cashier__price p {
-  font-size: 48px;
+  font-size: 44px;
   color: #ff4d4f;
   font-weight: 800;
   line-height: 1;
-  margin: 8px 0 0;
+  margin: 6px 0 0;
+  letter-spacing: -1px;
 }
 
 .pc-cashier__price p span {
-  font-size: 24px;
-  margin-right: 4px;
+  font-size: 22px;
+  margin-right: 2px;
 }
 
 .pc-cashier__order-no {
-  font-size: 14px;
+  font-size: 13px;
   color: #94a3b8;
 }
 
 .pc-cashier__content {
   flex: 1;
   background: #fff;
-  padding: 40px;
+  padding: 28px 40px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
+  min-height: 200px;
+  box-sizing: border-box;
+}
+
+.pc-cashier__methods {
+  width: 100%;
+}
+
+.pc-cashier__section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.pc-cashier__paid {
+  font-size: 18px;
+  font-weight: 600;
+  color: #07c160;
+  text-align: center;
+  padding: 40px 0;
 }
 
 .pc-cashier__error {
   color: #ff4d4f;
   font-size: 14px;
   text-align: center;
+  padding: 24px 0;
 }
 
 .pc-cashier__result {
@@ -613,17 +670,18 @@ onUnmounted(() => {
 }
 
 .pc-cashier__empty {
-  grid-column: 1 / -1;
   color: #94a3b8;
   text-align: center;
-  padding: 24px;
+  padding: 32px 16px;
+  font-size: 14px;
 }
 
+/* 4 列横向卡片（与原布局一致） */
 .pc-cashier__grid {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .pc-cashier__method {
@@ -654,26 +712,34 @@ onUnmounted(() => {
 }
 
 .pc-cashier__method-name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .pc-cashier__recommend {
+  margin-left: auto;
   font-size: 12px;
   color: #f59e0b;
   background: #fffbeb;
   border: 1px solid #fef3c7;
   padding: 2px 8px;
   border-radius: 4px;
-  margin-left: auto;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .pc-cashier__qrcode {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 40px;
+  padding: 16px 0 24px;
+  width: 100%;
 }
 
 .pc-cashier__qrcode-box {
@@ -742,35 +808,91 @@ onUnmounted(() => {
   margin: 0;
 }
 
+/* 底部操作栏：流式布局，不压支付项 */
+.pc-cashier__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  padding: 16px 40px 28px;
+  border-top: 1px solid #f1f5f9;
+  background: #fff;
+}
+
+.pc-cashier__footer-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pc-cashier__footer-label {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.pc-cashier__footer-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ff4d4f;
+  line-height: 1;
+}
+
+.pc-cashier__footer-value em {
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 700;
+  margin-right: 1px;
+}
+
 .pc-cashier__pay-btn {
-  position: absolute;
-  right: 40px;
-  bottom: 40px;
   width: 200px;
-  height: 54px;
-  font-size: 18px;
+  height: 48px;
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: #5d9dfe;
+  background: linear-gradient(135deg, #5d9dfe 0%, #4a87e0 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
+  box-shadow: 0 4px 14px rgba(93, 157, 254, 0.32);
+  flex-shrink: 0;
 }
 
 .pc-cashier__pay-btn:hover:not(:disabled) {
-  background: #4a87e0;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(93, 157, 254, 0.4);
+  box-shadow: 0 6px 18px rgba(93, 157, 254, 0.4);
 }
 
 .pc-cashier__pay-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 @media (max-width: 768px) {
+  .pc-cashier__box {
+    border-radius: 12px;
+  }
+
+  .pc-cashier__header,
+  .pc-cashier__content,
+  .pc-cashier__footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .pc-cashier__title {
+    padding-right: 0;
+    margin-bottom: 8px;
+  }
+
+  .pc-cashier__countdown {
+    position: static;
+    margin-bottom: 12px;
+    width: fit-content;
+  }
+
   .pc-cashier__grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -780,10 +902,24 @@ onUnmounted(() => {
     gap: 20px;
   }
 
+  .pc-cashier__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .pc-cashier__footer-amount {
+    justify-content: space-between;
+  }
+
   .pc-cashier__pay-btn {
-    position: static;
     width: 100%;
-    margin: 20px 0 0;
+  }
+}
+
+@keyframes pc-cashier-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

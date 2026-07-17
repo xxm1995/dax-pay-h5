@@ -482,7 +482,8 @@ onUnmounted(() => {
             @click="selectId = item.id"
           >
             <div class="cashier__item-info">
-              <PayMethodIcon :icon="item.icon" />
+              <!-- 品牌 SVG 图标，略大于默认以提升可识别度 -->
+              <PayMethodIcon :icon="item.icon" :size="28" />
               <div class="cashier__pay-name">
                 {{ methodName(item) }}
                 <span v-if="item.recommend" class="cashier__recommend">{{ t('cashier.recommend') }}</span>
@@ -518,11 +519,16 @@ onUnmounted(() => {
 @border: #eee;
 
 .cashier {
-  min-height: 100vh;
+  // 三区布局: header 固定 / 中间滚动 / footer 贴底，矮屏不压按钮
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   background: @bg;
   display: flex;
   flex-direction: column;
-  padding-bottom: 80px;
+  overflow: hidden;
+  box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   &__error {
@@ -541,12 +547,15 @@ onUnmounted(() => {
 
   &__result {
     flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px 24px;
+    padding: 32px 24px calc(24px + env(safe-area-inset-bottom, 0px));
     text-align: center;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     animation: cashier-result-up 0.5s ease-out;
   }
 
@@ -608,16 +617,17 @@ onUnmounted(() => {
     }
   }
 
+  // 金额红：与 PC 一致，比品牌蓝更醒目
   &__result-amount {
-    color: @primary;
+    color: @danger;
     font-weight: 600;
   }
 
   &__result-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
+    // 流式底栏，不再 fixed，避免被内容遮挡
+    margin-top: 32px;
+    width: 100%;
+    max-width: 320px;
     height: 48px;
     background: linear-gradient(135deg, @primary 0%, @primary-dark 100%);
     color: #fff;
@@ -626,6 +636,7 @@ onUnmounted(() => {
     font-size: 16px;
     font-weight: 600;
     box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
+    flex-shrink: 0;
 
     &:active {
       opacity: 0.9;
@@ -634,6 +645,7 @@ onUnmounted(() => {
   }
 
   &__header {
+    flex-shrink: 0;
     background: linear-gradient(180deg, #f0f6ff 0%, #ffffff 100%);
     padding: 24px 20px 16px;
     display: flex;
@@ -642,10 +654,11 @@ onUnmounted(() => {
     box-shadow: 0 2px 10px rgb(0 0 0 / 5%);
   }
 
+  // 应付金额用红色，主按钮保持品牌蓝，信息层级更清晰
   &__price {
     display: flex;
     align-items: baseline;
-    color: @primary;
+    color: @danger;
     margin-bottom: 8px;
   }
 
@@ -658,15 +671,16 @@ onUnmounted(() => {
     font-size: 44px;
     font-weight: 800;
     letter-spacing: -1px;
-    text-shadow: 0 2px 8px rgba(93, 157, 254, 0.2);
+    text-shadow: 0 2px 8px rgba(255, 77, 79, 0.15);
   }
 
+  // 倒计时用橙：与金额红区分（红=应付 / 橙=时限 / 蓝=操作）
   &__countdown {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 20px;
-    background: #fff1f0;
+    background: #fff7e6;
     padding: 6px 16px;
     border-radius: 100px;
 
@@ -677,11 +691,11 @@ onUnmounted(() => {
 
   &__countdown-label {
     font-size: 12px;
-    color: @danger;
+    color: #fa8c16;
   }
 
   &__countdown-time {
-    color: @danger;
+    color: #fa8c16;
     font-weight: 700;
     font-size: 14px;
   }
@@ -707,8 +721,13 @@ onUnmounted(() => {
     }
   }
 
+  // 中间唯一滚动区：支付项再多也不压底栏
   &__body {
-    padding: 24px 20px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 20px 16px;
   }
 
   &__section-title {
@@ -769,6 +788,7 @@ onUnmounted(() => {
     border: 2px solid #d9d9d9;
     border-radius: 50%;
     transition: all 0.2s;
+    flex-shrink: 0;
 
     &--checked {
       border-color: @primary;
@@ -794,12 +814,11 @@ onUnmounted(() => {
     text-align: center;
   }
 
+  // 文档流底栏，不再 fixed，天然不被列表遮挡
   &__footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 12px 20px 20px;
+    flex-shrink: 0;
+    z-index: 10;
+    padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px));
     background: @card;
     box-shadow: 0 -2px 10px rgb(0 0 0 / 5%);
   }
