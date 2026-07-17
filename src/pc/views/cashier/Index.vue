@@ -306,11 +306,11 @@ onUnmounted(() => {
         <div v-if="order.orderNo" class="pc-cashier__result-order">
           <div class="pc-cashier__result-row">
             <span>{{ t('cashier.orderTitle') }}</span>
-            <span>{{ order.title || t('cashier.demoOrderTitle') }}</span>
+            <span :title="order.title || t('cashier.demoOrderTitle')">{{ order.title || t('cashier.demoOrderTitle') }}</span>
           </div>
           <div class="pc-cashier__result-row">
             <span>{{ t('cashier.orderNo') }}</span>
-            <span>{{ order.orderNo }}</span>
+            <span :title="order.orderNo">{{ order.orderNo }}</span>
           </div>
           <div v-if="order.amount" class="pc-cashier__result-row">
             <span>{{ t('cashier.payableAmount') }}</span>
@@ -333,7 +333,10 @@ onUnmounted(() => {
           <div v-else-if="expired" class="pc-cashier__countdown">
             <span class="pc-cashier__countdown-time">{{ t('cashier.expired') }}</span>
           </div>
-          <div class="pc-cashier__title">
+          <div
+            class="pc-cashier__title"
+            :title="order.title || t('cashier.demoOrderTitle')"
+          >
             {{ order.title || t('cashier.demoOrderTitle') }}
           </div>
           <div class="pc-cashier__price">
@@ -342,7 +345,7 @@ onUnmounted(() => {
               <span>￥</span>{{ amountYuan }}
             </p>
           </div>
-          <div class="pc-cashier__order-no">
+          <div class="pc-cashier__order-no" :title="order.orderNo">
             {{ t('cashier.orderNoLabel') }}{{ order.orderNo }}
           </div>
         </div>
@@ -503,6 +506,10 @@ onUnmounted(() => {
   color: #1e293b;
   padding-right: 180px;
   line-height: 1.4;
+  /* 长标题单行省略，避免折行 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pc-cashier__price {
@@ -532,6 +539,10 @@ onUnmounted(() => {
 .pc-cashier__order-no {
   font-size: 13px;
   color: #94a3b8;
+  /* 长订单号单行省略 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pc-cashier__content {
@@ -624,6 +635,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   font-size: 14px;
   margin-bottom: 12px;
 }
@@ -633,14 +645,18 @@ onUnmounted(() => {
 }
 
 .pc-cashier__result-row span:first-child {
+  flex-shrink: 0;
   color: #94a3b8;
 }
 
 .pc-cashier__result-row span:last-child {
+  flex: 1;
+  min-width: 0;
   color: #1e293b;
-  max-width: 60%;
   text-align: right;
-  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pc-cashier__result-amount {

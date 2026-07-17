@@ -401,11 +401,11 @@ onUnmounted(() => {
       <div v-if="order.orderNo" class="cashier__result-order">
         <div class="cashier__result-order-row">
           <span>{{ t('cashier.orderTitle') }}</span>
-          <span>{{ order.title || t('cashier.demoOrderTitle') }}</span>
+          <span :title="order.title || t('cashier.demoOrderTitle')">{{ order.title || t('cashier.demoOrderTitle') }}</span>
         </div>
         <div class="cashier__result-order-row">
           <span>{{ t('cashier.orderNo') }}</span>
-          <span>{{ order.orderNo }}</span>
+          <span :title="order.orderNo">{{ order.orderNo }}</span>
         </div>
         <div v-if="order.amount" class="cashier__result-order-row">
           <span>{{ t('cashier.payableAmount') }}</span>
@@ -436,11 +436,12 @@ onUnmounted(() => {
         <div class="cashier__detail">
           <div class="cashier__detail-row">
             <span>{{ t('cashier.orderTitle') }}</span>
-            <span>{{ order.title || t('cashier.demoOrderTitle') }}</span>
+            <!-- title 便于长文案悬停/长按看全量 -->
+            <span :title="order.title || t('cashier.demoOrderTitle')">{{ order.title || t('cashier.demoOrderTitle') }}</span>
           </div>
           <div class="cashier__detail-row">
             <span>{{ t('cashier.orderNo') }}</span>
-            <span>{{ order.orderNo }}</span>
+            <span :title="order.orderNo">{{ order.orderNo }}</span>
           </div>
         </div>
       </div>
@@ -598,6 +599,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     font-size: 13px;
     margin-bottom: 10px;
 
@@ -606,14 +608,18 @@ onUnmounted(() => {
     }
 
     span:first-child {
+      flex-shrink: 0;
       color: @text-sub;
     }
 
     span:last-child {
+      flex: 1;
+      min-width: 0;
       color: @text-main;
-      max-width: 60%;
       text-align: right;
-      word-break: break-all;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
@@ -708,16 +714,27 @@ onUnmounted(() => {
 
   &__detail-row {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 12px;
     font-size: 13px;
     margin-bottom: 6px;
 
+    // 左侧标签不收缩
     span:first-child {
+      flex-shrink: 0;
       color: @text-sub;
     }
 
+    // 右侧值单行省略，避免长订单号折行撑高头部
     span:last-child {
+      flex: 1;
+      min-width: 0;
       color: @text-main;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
