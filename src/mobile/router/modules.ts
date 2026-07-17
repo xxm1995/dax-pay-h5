@@ -161,7 +161,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // 码牌支付入口分发（移动独占：PC 端由注册表派生 device-only 存根）
+  // 码牌支付入口分发（跨端：PC 为扫码引导页）
   {
     path: RoutePath.CODE_PAY,
     name: 'CodePay',

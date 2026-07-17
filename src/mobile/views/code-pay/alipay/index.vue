@@ -23,11 +23,13 @@ const {
   setDescription,
   displayAmount,
   paid,
+  orderNo,
   authRedirecting,
   init,
   onInput,
   onDelete,
   pay,
+  closePage,
 } = useCodePayPage({ code, clientEnv: 'alipay' })
 
 onMounted(() => {
@@ -36,14 +38,35 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="code-pay-alipay">
-    <div v-if="loading || authRedirecting" class="code-pay-alipay__state">
-      <van-loading color="#1677ff" size="28px" />
-      <p>{{ authRedirecting ? t('codePay.authorizing') : t('codePay.loading') }}</p>
-    </div>
-    <div v-else-if="loadError" class="code-pay-alipay__state code-pay-alipay__error">
-      <p>{{ loadError }}</p>
-    </div>
+  <div class="code-pay-page">
+    <!-- 加载 / 授权中：品牌顶栏 + 上浮卡 -->
+    <template v-if="loading || authRedirecting">
+      <div class="code-pay-page__brand code-pay-page__brand--alipay" />
+      <div class="code-pay-page__card">
+        <van-loading color="#1677ff" size="28px" />
+        <!-- 正在授权 / 加载中 -->
+        <p class="code-pay-page__tip">
+          {{ authRedirecting ? t('codePay.authorizing') : t('codePay.loading') }}
+        </p>
+      </div>
+    </template>
+
+    <!-- 加载失败 -->
+    <template v-else-if="loadError">
+      <div class="code-pay-page__brand code-pay-page__brand--alipay" />
+      <div class="code-pay-page__card">
+        <div class="code-pay-page__error-icon">
+          <van-icon name="warning-o" size="40" color="#fa8c16" />
+        </div>
+        <p class="code-pay-page__error-title">
+          {{ t('codePay.loadFailTitle') }}
+        </p>
+        <p class="code-pay-page__error">
+          {{ loadError }}
+        </p>
+      </div>
+    </template>
+
     <CodePayShell
       v-else
       :merchant-name="info.name"
@@ -52,36 +75,75 @@ onMounted(() => {
       :description="description"
       :paying="paying"
       :paid="paid"
+      :order-no="orderNo"
       brand-color="#1677ff"
       brand-dark="#0958d9"
       @update:description="setDescription"
       @input="onInput"
       @delete="onDelete"
       @pay="pay"
+      @close="closePage"
     />
   </div>
 </template>
 
 <style scoped lang="less">
-.code-pay-alipay {
-  min-height: 100vh;
-  background: #f5f5f5;
+.code-pay-page {
+  min-height: 100%;
+  min-height: 100dvh;
+  background: #f5f7fa;
+  box-sizing: border-box;
 
-  &__state {
-    min-height: 100vh;
+  &__brand {
+    height: 120px;
+
+    &--alipay {
+      background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+    }
+  }
+
+  &__card {
+    margin: -48px 16px 0;
+    padding: 40px 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 12px;
-    color: #666;
+  }
+
+  &__tip {
+    margin: 0;
     font-size: 14px;
-    padding: 24px;
-    text-align: center;
+    color: #909399;
+  }
+
+  &__error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgb(250 140 22 / 10%);
+    margin-bottom: 4px;
+  }
+
+  &__error-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #303133;
   }
 
   &__error {
-    color: #ee0a24;
+    margin: 0;
+    font-size: 13px;
+    color: #909399;
+    line-height: 1.6;
   }
 }
 </style>

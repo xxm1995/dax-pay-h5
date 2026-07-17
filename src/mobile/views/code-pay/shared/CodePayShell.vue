@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 /**
- * 码牌收款共用 UI: 商户名 / 金额 / 备注 / 键盘或固定支付按钮
+ * 码牌收款共用 UI
+ *
+ * 视觉对齐聚合 EnvPage（上浮卡 + 灰阶 token）与收银结果态；
+ * 通道品牌色由端页注入（微信绿 / 支付宝蓝）。
  */
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 defineOptions({ name: 'CodePayShell' })
@@ -20,6 +23,8 @@ const props = withDefaults(defineProps<{
   paying?: boolean
   /** 已支付成功 */
   paid?: boolean
+  /** 支付成功后的订单号(可选展示) */
+  orderNo?: string
   /** 品牌色 */
   brandColor?: string
   /** 品牌加深色 */
@@ -30,6 +35,7 @@ const props = withDefaults(defineProps<{
   description: '',
   paying: false,
   paid: false,
+  orderNo: '',
   brandColor: '#5d9dfe',
   brandDark: '#4a87e0',
 })
@@ -43,16 +49,24 @@ const emit = defineEmits<{
   'pay': []
   /** 更新备注 */
   'update:description': [value: string]
+  /** 完成/关闭页面 */
+  'close': []
 }>()
 
 const { t } = useI18n()
 const showRemark = ref(false)
 const remarkDraft = ref('')
 
+/** 是否固定金额布局 */
+const isFixed = computed(() => props.amountType === 'fixed')
+
 /**
  * 打开备注弹窗
  */
 function openRemark() {
+  if (props.paid || props.paying) {
+    return
+  }
   remarkDraft.value = props.description || ''
   showRemark.value = true
 }
@@ -64,94 +78,180 @@ function saveRemark() {
   emit('update:description', remarkDraft.value)
   showRemark.value = false
 }
+
+/**
+ * 键盘确认 / 固定金额支付
+ */
+function onPay() {
+  if (props.paying || props.paid) {
+    return
+  }
+  emit('pay')
+}
 </script>
 
 <template>
-  <div class="code-pay-shell" :style="{ '--brand': brandColor, '--brand-dark': brandDark }">
-    <div class="code-pay-shell__brand" />
-
-    <div class="code-pay-shell__card enter-y">
-      <div class="code-pay-shell__merchant">
-        <div class="code-pay-shell__avatar">
-          <svg viewBox="0 0 1024 1024" width="24" height="24" aria-hidden="true">
-            <path fill="#fff" d="M832 320 704 320c0-106.048-85.952-192-192-192s-192 85.952-192 192L192 320c-35.36 0-64 28.64-64 64l0 384c0 70.688 57.312 128 128 128l512 0c70.688 0 128-57.312 128-128l0-384C896 348.64 867.36 320 832 320zM512 192c70.688 0 128 57.312 128 128L384 320C384 249.312 441.312 192 512 192zM832 768c0 35.36-28.64 64-64 64L256 832c-35.36 0-64-28.64-64-64l0-384 128 0 0 64c0 17.664 14.336 32 32 32s32-14.336 32-32l0-64 256 0 0 64c0 17.664 14.336 32 32 32s32-14.336 32-32l0-64 128 0L832 768z" />
-          </svg>
+  <div
+    class="code-pay-shell"
+    :class="{
+      'code-pay-shell--fixed': isFixed,
+      'code-pay-shell--paid': paid,
+    }"
+    :style="{ '--brand': brandColor, '--brand-dark': brandDark }"
+  >
+    <!-- 支付成功结果态：对标收银 cashier__result -->
+    <div v-if="paid" class="code-pay-shell__result">
+      <div class="code-pay-shell__result-icon">
+        <van-icon name="success" size="48" color="#07c160" />
+      </div>
+      <!-- 支付成功 -->
+      <div class="code-pay-shell__result-title">
+        {{ t('codePay.paySuccess') }}
+      </div>
+      <div class="code-pay-shell__result-amount">
+        <span class="code-pay-shell__result-currency">¥</span>{{ displayAmount }}
+      </div>
+      <div v-if="orderNo || merchantName" class="code-pay-shell__result-card">
+        <div v-if="merchantName" class="code-pay-shell__result-row">
+          <!-- 收款商户 -->
+          <span>{{ t('codePay.merchantDefault') }}</span>
+          <span :title="merchantName">{{ merchantName }}</span>
         </div>
-        {{ merchantName || t('codePay.merchantDefault') }}
+        <div v-if="orderNo" class="code-pay-shell__result-row">
+          <!-- 订单号 -->
+          <span>{{ t('codePay.orderNo') }}</span>
+          <span :title="orderNo">{{ orderNo }}</span>
+        </div>
       </div>
-      <div class="code-pay-shell__amount-label">
-        {{ t('codePay.amountLabel') }}
-      </div>
-      <div class="code-pay-shell__amount">
-        <span class="code-pay-shell__currency">¥</span>
-        <span
-          class="code-pay-shell__amount-value"
-          :class="{ 'code-pay-shell__amount-value--zero': displayAmount === '0' || displayAmount === '0.00' }"
-        >
-          {{ displayAmount }}
-        </span>
-      </div>
-    </div>
-
-    <div class="code-pay-shell__remark enter-y" @click="openRemark">
-      <span class="code-pay-shell__remark-label">{{ t('codePay.remark') }}</span>
-      <div class="code-pay-shell__remark-value">
-        <span v-if="!description" class="code-pay-shell__remark-placeholder">{{ t('codePay.addRemark') }}</span>
-        <span v-else>{{ description }}</span>
-      </div>
-      <svg class="code-pay-shell__remark-arrow" viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true">
-        <path fill="#ccc" d="M340.864 256 600.32 512 340.864 768c-13.312 12.864-12.64 34.624 0.448 48.448 13.056 13.408 34.144 14.016 47.424 0.448l283.52-274.976c6.4-6.24 9.984-14.592 9.984-23.488 0-8.896-3.584-17.248-9.984-23.488L388.736 220.096c-13.28-13.536-34.368-12.96-47.424 0.448C328.224 234.336 327.552 256.064 340.864 268.928z" />
-      </svg>
-    </div>
-
-    <van-dialog
-      v-model:show="showRemark"
-      :title="t('codePay.addRemark')"
-      show-cancel-button
-      :confirm-button-text="t('common.save')"
-      :cancel-button-text="t('common.cancel')"
-      :confirm-button-color="brandColor"
-      cancel-button-color="#999"
-      @confirm="saveRemark"
-    >
-      <van-field
-        v-model="remarkDraft"
-        rows="3"
-        autosize
-        type="textarea"
-        :maxlength="50"
-        :placeholder="t('codePay.remarkPlaceholder')"
-        show-word-limit
-        class="code-pay-shell__remark-field"
-      />
-    </van-dialog>
-
-    <van-number-keyboard
-      v-if="amountType === 'random'"
-      theme="custom"
-      extra-key="."
-      :close-button-text="t('codePay.confirmPay')"
-      :show="true"
-      @close="emit('pay')"
-      @input="(k: string) => emit('input', k)"
-      @delete="emit('delete')"
-    />
-    <div v-else class="code-pay-shell__fixed-pay">
-      <button
-        class="code-pay-shell__fixed-pay-btn"
-        :disabled="paying || paid"
-        @click="emit('pay')"
+      <!-- 完成/关闭 -->
+      <van-button
+        class="code-pay-shell__result-btn"
+        round
+        block
+        type="primary"
+        color="var(--brand)"
+        @click="emit('close')"
       >
-        {{ paid ? t('codePay.paySuccess') : `${t('codePay.confirmPay')} ¥${displayAmount}` }}
-      </button>
+        {{ t('codePay.closePage') }}
+      </van-button>
+    </div>
+
+    <template v-else>
+      <!-- 品牌顶栏（文档流，配合上浮卡） -->
+      <div class="code-pay-shell__brand" />
+
+      <div class="code-pay-shell__card enter-y">
+        <div class="code-pay-shell__merchant">
+          <div class="code-pay-shell__avatar">
+            <svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
+              <path fill="#fff" d="M832 320 704 320c0-106.048-85.952-192-192-192s-192 85.952-192 192L192 320c-35.36 0-64 28.64-64 64l0 384c0 70.688 57.312 128 128 128l512 0c70.688 0 128-57.312 128-128l0-384C896 348.64 867.36 320 832 320zM512 192c70.688 0 128 57.312 128 128L384 320C384 249.312 441.312 192 512 192zM832 768c0 35.36-28.64 64-64 64L256 832c-35.36 0-64-28.64-64-64l0-384 128 0 0 64c0 17.664 14.336 32 32 32s32-14.336 32-32l0-64 256 0 0 64c0 17.664 14.336 32 32 32s32-14.336 32-32l0-64 128 0L832 768z" />
+            </svg>
+          </div>
+          <div class="code-pay-shell__merchant-text">
+            <div class="code-pay-shell__merchant-name">
+              {{ merchantName || t('codePay.merchantDefault') }}
+            </div>
+            <!-- 向商户付款 -->
+            <div class="code-pay-shell__merchant-sub">
+              {{ t('codePay.payToMerchant') }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 付款金额标签：随机金额显示 -->
+        <div v-if="!isFixed" class="code-pay-shell__amount-label">
+          {{ t('codePay.amountLabel') }}
+        </div>
+        <div class="code-pay-shell__amount" :class="{ 'code-pay-shell__amount--fixed': isFixed }">
+          <span class="code-pay-shell__currency">¥</span>
+          <span
+            class="code-pay-shell__amount-value"
+            :class="{ 'code-pay-shell__amount-value--zero': displayAmount === '0' || displayAmount === '0.00' }"
+          >
+            {{ displayAmount }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 备注 -->
+      <div class="code-pay-shell__remark enter-y" @click="openRemark">
+        <span class="code-pay-shell__remark-label">{{ t('codePay.remark') }}</span>
+        <div class="code-pay-shell__remark-value">
+          <span v-if="!description" class="code-pay-shell__remark-placeholder">{{ t('codePay.addRemark') }}</span>
+          <span v-else>{{ description }}</span>
+        </div>
+        <svg class="code-pay-shell__remark-arrow" viewBox="0 0 1024 1024" width="16" height="16" aria-hidden="true">
+          <path fill="#c0c4cc" d="M340.864 256 600.32 512 340.864 768c-13.312 12.864-12.64 34.624 0.448 48.448 13.056 13.408 34.144 14.016 47.424 0.448l283.52-274.976c6.4-6.24 9.984-14.592 9.984-23.488 0-8.896-3.584-17.248-9.984-23.488L388.736 220.096c-13.28-13.536-34.368-12.96-47.424 0.448C328.224 234.336 327.552 256.064 340.864 268.928z" />
+        </svg>
+      </div>
+
+      <van-dialog
+        v-model:show="showRemark"
+        :title="t('codePay.addRemark')"
+        show-cancel-button
+        :confirm-button-text="t('common.save')"
+        :cancel-button-text="t('common.cancel')"
+        :confirm-button-color="brandColor"
+        cancel-button-color="#999"
+        @confirm="saveRemark"
+      >
+        <van-field
+          v-model="remarkDraft"
+          rows="3"
+          autosize
+          type="textarea"
+          :maxlength="50"
+          :placeholder="t('codePay.remarkPlaceholder')"
+          show-word-limit
+          class="code-pay-shell__remark-field"
+        />
+      </van-dialog>
+
+      <!-- 随机金额：数字键盘（支付中隐藏） -->
+      <van-number-keyboard
+        v-if="!isFixed"
+        theme="custom"
+        extra-key="."
+        :close-button-text="paying ? t('codePay.paying') : t('codePay.confirmPay')"
+        :show="!paying"
+        :z-index="100"
+        @close="onPay"
+        @input="(k: string) => emit('input', k)"
+        @delete="emit('delete')"
+      />
+
+      <!-- 固定金额：底栏支付按钮 -->
+      <div v-else class="code-pay-shell__fixed-pay">
+        <van-button
+          round
+          block
+          type="primary"
+          :color="brandColor"
+          :loading="paying"
+          :disabled="paying"
+          :loading-text="t('codePay.paying')"
+          @click="onPay"
+        >
+          {{ `${t('codePay.confirmPay')} ¥${displayAmount}` }}
+        </van-button>
+      </div>
+    </template>
+
+    <!-- 支付中遮罩（随机金额键盘场景；固定金额用按钮 loading） -->
+    <div v-if="paying && !isFixed" class="code-pay-shell__mask">
+      <van-loading :color="brandColor" size="28px" />
+      <!-- 处理中 -->
+      <p>{{ t('codePay.processing') }}</p>
     </div>
   </div>
 </template>
 
 <style scoped lang="less">
-@bg: #f5f5f5;
-@text-main: #333;
-@text-sub: #999;
+@bg: #f5f7fa;
+@text-main: #303133;
+@text-sub: #909399;
+@text-placeholder: #c0c4cc;
+@card-shadow: 0 4px 16px rgb(0 0 0 / 6%);
 
 :deep(.van-key--blue) {
   background: var(--brand, #5d9dfe);
@@ -159,74 +259,115 @@ function saveRemark() {
 }
 
 .code-pay-shell {
-  min-height: 100vh;
+  min-height: 100%;
+  min-height: 100dvh;
   background: @bg;
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-bottom: 280px;
+  box-sizing: border-box;
+  // 随机金额预留键盘高度 + 安全区
+  padding-bottom: calc(280px + env(safe-area-inset-bottom, 0px));
+
+  &--fixed {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+
+  &--paid {
+    padding-bottom: 0;
+  }
 
   &__brand {
-    height: 160px;
+    height: 120px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, var(--brand, #5d9dfe) 0%, var(--brand-dark, #4a87e0) 100%);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    border-radius: 0 0 24px 24px;
   }
 
   &__card {
     position: relative;
     z-index: 1;
+    margin: -48px 16px 0;
+    padding: 24px 20px;
     background: #fff;
     border-radius: 12px;
-    padding: 24px;
-    margin: 40px 16px 0;
-    box-shadow: 0 8px 24px rgba(93, 157, 254, 0.12);
+    box-shadow: @card-shadow;
   }
 
   &__merchant {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 24px;
-    font-size: 18px;
-    font-weight: 600;
-    color: @text-main;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  &--fixed &__merchant {
+    margin-bottom: 16px;
   }
 
   &__avatar {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--brand, #5d9dfe) 0%, var(--brand-dark, #4a87e0) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(93, 157, 254, 0.3);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+  }
+
+  &__merchant-text {
+    min-width: 0;
+    text-align: left;
+  }
+
+  &__merchant-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: @text-main;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+  }
+
+  &__merchant-sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: @text-sub;
   }
 
   &__amount-label {
     font-size: 14px;
     color: @text-main;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   &__amount {
     display: flex;
     align-items: baseline;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+
+    &--fixed {
+      justify-content: center;
+      border-bottom: none;
+      padding-bottom: 0;
+      padding-top: 8px;
+    }
   }
 
   &__currency {
     font-size: 28px;
     font-weight: 500;
-    margin-right: 8px;
+    margin-right: 6px;
     color: @text-main;
+  }
+
+  &__amount--fixed &__currency {
+    font-size: 32px;
   }
 
   &__amount-value {
@@ -236,26 +377,33 @@ function saveRemark() {
     flex: 1;
     line-height: 1.2;
     transition: color 0.2s ease;
+    word-break: break-all;
 
     &--zero {
-      color: #ccc;
+      color: @text-placeholder;
     }
+  }
+
+  &__amount--fixed &__amount-value {
+    flex: none;
+    font-size: 48px;
   }
 
   &__remark {
     background: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 16px;
-    margin: 16px;
+    margin: 12px 16px 0;
     display: flex;
     align-items: center;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 2%);
+    box-shadow: @card-shadow;
   }
 
   &__remark-label {
     font-size: 15px;
     color: @text-main;
-    width: 60px;
+    width: 48px;
+    flex-shrink: 0;
   }
 
   &__remark-value {
@@ -263,10 +411,15 @@ function saveRemark() {
     font-size: 15px;
     margin: 0 12px;
     text-align: right;
+    color: @text-main;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
   }
 
   &__remark-placeholder {
-    color: #ccc;
+    color: @text-placeholder;
   }
 
   &__remark-arrow {
@@ -282,30 +435,143 @@ function saveRemark() {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 16px;
+    z-index: 20;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
     background: #fff;
-    box-shadow: 0 -2px 10px rgb(0 0 0 / 5%);
+    box-shadow: 0 -2px 12px rgb(0 0 0 / 5%);
   }
 
-  &__fixed-pay-btn {
-    width: 100%;
-    height: 48px;
-    background: var(--brand, #5d9dfe);
-    color: #fff;
-    border: none;
-    border-radius: 100px;
-    font-size: 18px;
+  // 支付中遮罩
+  &__mask {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgb(255 255 255 / 80%);
+    color: @text-sub;
+    font-size: 14px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  // 成功结果态
+  &__result {
+    flex: 1;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+    animation: code-pay-result-up 0.45s ease-out;
+  }
+
+  &__result-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    background: rgb(7 193 96 / 10%);
+    animation: code-pay-result-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  &__result-title {
+    font-size: 22px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
+    color: @text-main;
+    margin-bottom: 12px;
+  }
 
-    &:active {
-      background: var(--brand-dark, #4a87e0);
-      opacity: 0.95;
+  &__result-amount {
+    font-size: 36px;
+    font-weight: 600;
+    color: @text-main;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+
+  &__result-currency {
+    font-size: 20px;
+    margin-right: 4px;
+    font-weight: 500;
+  }
+
+  &__result-card {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 28px;
+    padding: 16px 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: @card-shadow;
+    text-align: left;
+  }
+
+  &__result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
     }
 
-    &:disabled {
-      opacity: 0.6;
+    span:first-child {
+      flex-shrink: 0;
+      color: @text-sub;
     }
+
+    span:last-child {
+      flex: 1;
+      min-width: 0;
+      color: @text-main;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__result-btn {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@keyframes code-pay-result-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes code-pay-result-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 </style>

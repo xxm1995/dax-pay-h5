@@ -61,6 +61,25 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/auth/wechat/Index.vue'),
     meta: { title: '微信认证' },
   },
+  // 码牌支付：PC 仅展示扫码引导（静态段须在 /h/:code 之前）
+  {
+    path: RoutePath.CODE_PAY_WECHAT,
+    name: 'PcCodePayWechat',
+    component: () => import('@/pc/views/code-pay/Index.vue'),
+    meta: { title: '码牌支付' },
+  },
+  {
+    path: RoutePath.CODE_PAY_ALIPAY,
+    name: 'PcCodePayAlipay',
+    component: () => import('@/pc/views/code-pay/Index.vue'),
+    meta: { title: '码牌支付' },
+  },
+  {
+    path: RoutePath.CODE_PAY,
+    name: 'PcCodePay',
+    component: () => import('@/pc/views/code-pay/Index.vue'),
+    meta: { title: '码牌支付' },
+  },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页
   // 用 component 而非 redirect——vue-router 5 下 catch-all + redirect 在初始导航不触发

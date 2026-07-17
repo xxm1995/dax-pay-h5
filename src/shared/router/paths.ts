@@ -41,11 +41,11 @@ export const RoutePath = {
   AGGREGATE_DOUYIN: '/aggregate/douyin/:orderNo',
   /** 聚合-不支持的宿主环境提示（Mobile） */
   AGGREGATE_UNSUPPORTED: '/aggregate/unsupported',
-  /** 码牌支付入口分发（移动独占, path 与后端 getCodeLink /h/{code} 一致） */
+  /** 码牌支付入口（跨端：Mobile 分发/收款，PC 扫码引导；path 与后端 getCodeLink /h/{code} 一致） */
   CODE_PAY: '/h/:code',
-  /** 码牌支付-微信端（移动独占, 由分发页 replace 进入） */
+  /** 码牌支付-微信端（Mobile 收款；PC 同入口扫码引导） */
   CODE_PAY_WECHAT: '/h/wechat/:code',
-  /** 码牌支付-支付宝端（移动独占, 由分发页 replace 进入） */
+  /** 码牌支付-支付宝端（Mobile 收款；PC 同入口扫码引导） */
   CODE_PAY_ALIPAY: '/h/alipay/:code',
   /** 商户对账单（PC 独占） */
   MERCHANT_STATEMENT: '/merchant/statement',

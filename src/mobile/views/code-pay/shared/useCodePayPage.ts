@@ -3,7 +3,7 @@
  * 复用 gateway 同族工具: pay-openid / pay-result / jsapi / pay-amount
  */
 import type { CodePayInfo, CodePayResult } from '@/shared/api/code-pay'
-import { showNotify, showSuccessToast } from 'vant'
+import { showNotify } from 'vant'
 import { computed, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
@@ -59,6 +59,9 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     return s === 'success' || s === 'paid'
   })
 
+  /** 支付结果订单号(结果态展示) */
+  const orderNo = computed(() => payResult.value?.orderNo || '')
+
   onUnmounted(() => {
     stopPoll()
   })
@@ -78,6 +81,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     try {
       info.value = await getCodePayInfo(code, clientEnv)
       if (info.value.programType === 'mini_app') {
+        // 小程序码不可在 H5 支付
         loadError.value = t('codePay.miniAppOnly')
         return
       }
@@ -105,6 +109,9 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
    * 金额键盘输入
    */
   function onInput(key: string) {
+    if (paying.value || paid.value) {
+      return
+    }
     if (key === '.' && amount.value.includes('.')) {
       return
     }
@@ -122,7 +129,20 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
   }
 
   function onDelete() {
+    if (paying.value || paid.value) {
+      return
+    }
     amount.value = amount.value.slice(0, -1) || '0'
+  }
+
+  /**
+   * 标记支付成功(走结果页, 不再 toast 以免双反馈)
+   */
+  function markPaid(result?: CodePayResult | null) {
+    payResult.value = {
+      ...(result || payResult.value || {}),
+      status: 'success',
+    }
   }
 
   /**
@@ -133,7 +153,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     const action = resolvePayResult(result)
     switch (action.type) {
       case 'success':
-        showSuccessToast(t('codePay.paySuccess'))
+        markPaid(result)
         return
       case 'redirect':
         redirectToPayUrl(action.url, true)
@@ -144,8 +164,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
       case 'jsapi':
         try {
           await invokeJsapiByEnv(clientEnv, action.payload)
-          payResult.value = { ...result, status: 'success' }
-          showSuccessToast(t('codePay.paySuccess'))
+          markPaid(result)
         }
         catch (e: any) {
           if (e?.message === 'cancel') {
@@ -216,7 +235,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     }
   }
 
-  function startPoll(orderNo: string) {
+  function startPoll(orderNoVal: string) {
     stopPoll()
     let tries = 0
     pollTimer = setInterval(async () => {
@@ -227,11 +246,10 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
         return
       }
       try {
-        const st = await getCodeOrderStatus(orderNo)
+        const st = await getCodeOrderStatus(orderNoVal)
         if (st?.status === 'paid') {
           stopPoll()
-          payResult.value = { ...payResult.value, status: 'success' }
-          showSuccessToast(t('codePay.paySuccess'))
+          markPaid({ ...(payResult.value || {}), orderNo: orderNoVal, status: 'success' })
         }
         else if (st?.status === 'failed' || st?.status === 'closed' || st?.status === 'expired') {
           stopPoll()
@@ -258,6 +276,32 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     description.value = value
   }
 
+  /**
+   * 关闭宿主 WebView / 窗口(收银 closePage 同范式)
+   */
+  function closePage() {
+    try {
+      // 微信内置浏览器
+      ;(window as any).WeixinJSBridge?.call?.('closeWindow')
+    }
+    catch {
+      // ignore
+    }
+    try {
+      // 支付宝内置浏览器
+      ;(window as any).AlipayJSBridge?.call?.('closeWebview')
+    }
+    catch {
+      // ignore
+    }
+    try {
+      window.close()
+    }
+    catch {
+      // ignore
+    }
+  }
+
   return {
     loading,
     paying,
@@ -269,10 +313,12 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     setDescription,
     displayAmount,
     paid,
+    orderNo,
     authRedirecting,
     init,
     onInput,
     onDelete,
     pay,
+    closePage,
   }
 }
