@@ -68,6 +68,9 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
 
   /**
    * 初始化: 取 openId → 拉码牌 → 必要时 OAuth
+   *
+   * needOpenId 仅 true 时跳转授权；授权落地页 /auth/* 立即 code→openId，
+   * 回跳后本处读 sessionStorage。支付只带 openId，禁止支付时再换 code。
    */
   async function init() {
     loading.value = true
@@ -85,8 +88,9 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
         loadError.value = t('codePay.miniAppOnly')
         return
       }
-      // 需要 openId 且尚未拿到 → 跳转授权
-      if (info.value.needOpenId && !openId.value) {
+      // 仅 needOpenId===true 且尚未拿到 openId → 整段 OAuth（回跳即换 openId）
+      // false / null / 缺省: 不跳转，可直接收款
+      if (info.value.needOpenId === true && !openId.value) {
         authRedirecting.value = true
         const auth = await generateCodeAuthUrl({ code, clientEnv })
         if (auth?.authUrl) {
@@ -226,7 +230,8 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
         return
       }
     }
-    if (info.value.needOpenId && !openId.value) {
+    // 仅 JSAPI/MINI 类 method 要求 openId（与后端 PayMethodOpenIdSupport 一致）
+    if (info.value.needOpenId === true && !openId.value) {
       showNotify({ type: 'warning', message: t('codePay.needAuth') })
       return
     }
