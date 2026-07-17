@@ -13,5 +13,14 @@
   "payFail": "支付失败, 请重试",
   "payLaunched": "支付已拉起",
   "payPending": "订单已创建, 请完成支付",
-  "miniAppOnly": "该码牌为小程序码，请使用小程序扫码支付"
+  "miniAppOnly": "该码牌为小程序码，请使用小程序扫码支付",
+  "redirecting": "正在跳转…",
+  "unsupportedClient": "请使用微信或支付宝扫码",
+  "unsupportedClientHint": "当前环境不支持码牌收款，请使用微信、支付宝等钱包扫一扫打开本链接。",
+  "loading": "加载中…",
+  "authorizing": "正在授权…",
+  "authUrlFail": "获取授权链接失败，请稍后重试",
+  "needAuth": "请先完成授权后再支付",
+  "jsapiCancelOrFail": "支付未完成，请重试",
+  "pollTimeout": "支付结果确认超时，请稍后在账单中查看"
 }

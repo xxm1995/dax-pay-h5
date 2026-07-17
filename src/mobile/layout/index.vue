@@ -18,7 +18,8 @@ const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
   >
     <RouterView class="flex-1 overflow-x-hidden">
       <template #default="{ Component, route }">
-        <KeepAlive v-if="keepAliveComponents" :include="keepAliveComponents">
+        <!-- 空数组 [] 仍为 truthy，须用 length，否则永远走 KeepAlive 分支 -->
+        <KeepAlive v-if="keepAliveComponents.length" :include="keepAliveComponents">
           <component :is="Component" :key="route.fullPath" />
         </KeepAlive>
         <component :is="Component" v-else :key="route.fullPath" />

@@ -6,12 +6,36 @@
   "clientEnv": {
     "wechat": "微信",
     "alipay": "支付寶",
-    "union": "雲閃付"
+    "union": "雲閃付",
+    "douyin": "抖音"
   },
   "loadFail": "訂單載入失敗",
   "payFail": "發起支付失敗",
+  "authFail": "授權失敗，請重試",
+  "authorizing": "正在授權...",
   "paying": "支付中...",
   "retry": "重新支付",
+  "payNow": "立即支付",
   "paid": "支付成功",
-  "useAppPay": "請在支付App內完成支付"
+  "expired": "訂單已過期",
+  "closed": "訂單已關閉",
+  "failed": "支付失敗",
+  "useAppPay": "請在支付 App 內完成支付",
+  "scanQr": "請使用手機掃碼完成支付",
+  "unsupportedTitle": "請使用錢包掃碼",
+  "unsupportedDesc": "請使用微信、支付寶、雲閃付或抖音掃描二維碼完成支付",
+  "useMobileScan": "請使用手機掃碼支付",
+  "scanWithWallet": "請使用微信、支付寶、雲閃付或抖音掃一掃完成支付",
+  "remainingTime": "剩餘支付時間",
+  "expandDetail": "展開訂單詳情",
+  "collapseDetail": "收起訂單詳情",
+  "amount": "支付金額",
+  "orderTitle": "商品標題",
+  "description": "商品描述",
+  "bizOrderNo": "商戶訂單號",
+  "expiredTip": "訂單逾時未支付，已無法繼續支付",
+  "closedTip": "訂單已關閉，無法繼續支付",
+  "failedTip": "支付未成功，請重新發起",
+  "paidTip": "支付已完成，感謝使用",
+  "loadFailTip": "請確認支付連結是否正確或訂單是否存在"
 }

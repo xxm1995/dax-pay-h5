@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
 import douyinLogo from '@/shared/assets/icons/channel/douyin.svg'
+import { finishGatewayAuthAndRedirect } from '@/shared/utils/auth-return'
 
 defineOptions({ name: 'DouyinAuthPage' })
 
@@ -51,6 +52,10 @@ function init() {
   })
     .then((data) => {
       authResult.value = data ?? {}
+      // 网关收银等业务回跳
+      if (finishGatewayAuthAndRedirect(authResult.value)) {
+        return
+      }
       loading.value = false
     })
     .catch((err: Error) => {

@@ -26,6 +26,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/cashier/Index.vue'),
     meta: { title: '收银台' },
   },
+  // 聚合「非宿主」提示：须在 /aggregate/:orderNo 之前注册，避免 path 段 "unsupported" 被当成 orderNo 查单
+  {
+    path: RoutePath.AGGREGATE_UNSUPPORTED,
+    name: 'PcAggregateUnsupported',
+    component: () => import('@/pc/views/aggregate/Unsupported.vue'),
+    meta: { title: '聚合支付' },
+  },
   // 聚合扫码支付（跨端）
   {
     path: RoutePath.AGGREGATE,

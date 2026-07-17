@@ -33,7 +33,13 @@ export interface AggregatePayResult {
   orderNo?: string
   status?: string
   payBody?: string
+  /**
+   * 支付参数体类型（与后端 PayBodyTypeEnum 对齐）
+   * link | jsapi | from | identifier | qr_code | json
+   * 历史可能出现 url，前端按 link 兼容
+   */
   payBodyType?: string
+  tradeNo?: string
 }
 
 /** 收银台支付项(公开字段) */
@@ -57,16 +63,58 @@ export function getGatewayOrder(orderNo: string): Promise<GatewayOrderInfo> {
   })
 }
 
+/** 聚合扫码元数据（autoLaunch / needOpenId） */
+export interface AggregatePayMeta {
+  autoLaunch?: boolean
+  needOpenId?: boolean
+}
+
+/** 查询聚合扫码元数据 */
+export function getAggregateMeta(params: {
+  orderNo: string
+  clientEnv: string
+  runtime?: string
+}): Promise<AggregatePayMeta> {
+  return http.request<AggregatePayMeta>({
+    url: '/client/gateway/aggregate/meta',
+    method: RequestEnum.GET,
+    params,
+  }, {
+    isShowMessage: false,
+  })
+}
+
 /** 聚合扫码发起支付 */
 export function aggregatePay(data: {
   orderNo: string
   clientEnv: string
   openId?: string
   device?: string
+  runtime?: string
   clientIp?: string
 }): Promise<AggregatePayResult> {
   return http.request<AggregatePayResult>({
     url: '/client/gateway/aggregate/pay',
+    method: RequestEnum.POST,
+    data,
+  }, {
+    isShowMessage: false,
+  })
+}
+
+/** 网关 H5 生成 OAuth 授权链接 */
+export interface GatewayAuthUrlResult {
+  authUrl?: string
+  queryCode?: string
+}
+
+export function generateGatewayAuthUrl(data: {
+  orderNo: string
+  authType: string
+  returnPath: string
+}): Promise<GatewayAuthUrlResult> {
+  return http.request<GatewayAuthUrlResult>({
+    url: '/client/gateway/auth/generate-url',
     method: RequestEnum.POST,
     data,
   }, {

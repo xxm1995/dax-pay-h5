@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
 import wechatLogo from '@/shared/assets/icons/channel/wechat.svg'
+import { finishGatewayAuthAndRedirect } from '@/shared/utils/auth-return'
 
 defineOptions({ name: 'WechatAuthPage' })
 
@@ -50,6 +51,10 @@ function init() {
   })
     .then((data) => {
       authResult.value = data ?? {}
+      // 网关收银等业务回跳: 有 returnPath 则落盘 openId 并跳转, 不再停在展示页
+      if (finishGatewayAuthAndRedirect(authResult.value)) {
+        return
+      }
       loading.value = false
     })
     .catch((err: Error) => {

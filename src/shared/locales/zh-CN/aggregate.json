@@ -6,12 +6,36 @@
   "clientEnv": {
     "wechat": "微信",
     "alipay": "支付宝",
-    "union": "云闪付"
+    "union": "云闪付",
+    "douyin": "抖音"
   },
   "loadFail": "订单加载失败",
   "payFail": "发起支付失败",
+  "authFail": "授权失败，请重试",
+  "authorizing": "正在授权...",
   "paying": "支付中...",
   "retry": "重新支付",
+  "payNow": "立即支付",
   "paid": "支付成功",
-  "useAppPay": "请在支付App内完成支付"
+  "expired": "订单已过期",
+  "closed": "订单已关闭",
+  "failed": "支付失败",
+  "useAppPay": "请在支付App内完成支付",
+  "scanQr": "请使用手机扫码完成支付",
+  "unsupportedTitle": "请使用钱包扫码",
+  "unsupportedDesc": "请使用微信、支付宝、云闪付或抖音扫描二维码完成支付",
+  "useMobileScan": "请使用手机扫码支付",
+  "scanWithWallet": "请使用微信、支付宝、云闪付或抖音扫一扫完成支付",
+  "remainingTime": "剩余支付时间",
+  "expandDetail": "展开订单详情",
+  "collapseDetail": "收起订单详情",
+  "amount": "支付金额",
+  "orderTitle": "商品标题",
+  "description": "商品描述",
+  "bizOrderNo": "商户订单号",
+  "expiredTip": "订单超时未支付，已无法继续支付",
+  "closedTip": "订单已关闭，无法继续支付",
+  "failedTip": "支付未成功，请重新发起",
+  "paidTip": "支付已完成，感谢使用",
+  "loadFailTip": "请确认支付链接是否正确或订单是否存在"
 }

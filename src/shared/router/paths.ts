@@ -15,12 +15,38 @@
 export const RoutePath = {
   /** 首页（跨端） */
   HOME: '/',
-  /** 收银台（跨端：两端各实现，同 path 各指各 view） */
+  /**
+   * 收银台入口（跨端；预下单落地 URL 契约，不可改）
+   * Mobile：UA 探测后 replace 到 CASHIER_ENV
+   * PC：直接 WEB 收银页
+   */
   CASHIER: '/cashier/:orderNo',
-  /** 聚合扫码支付（跨端：两端各实现） */
+  /**
+   * 收银台环境页（Mobile H5；clientEnv=browser|wechat|alipay|union_pay|douyin）
+   * 与运营端 H5 配置分桶一一对应；OAuth returnPath 指向此路径
+   */
+  CASHIER_ENV: '/cashier/:orderNo/:clientEnv',
+  /**
+   * 聚合扫码入口（跨端；预下单落地 URL 契约，不可改）
+   * Mobile：UA 探测后 replace 到环境页；PC：单页处理
+   */
   AGGREGATE: '/aggregate/:orderNo',
-  /** 码牌支付 H5（移动独占, path 与后端 getCodeLink /h/{code} 一致） */
+  /** 聚合-微信环境页（Mobile） */
+  AGGREGATE_WECHAT: '/aggregate/wechat/:orderNo',
+  /** 聚合-支付宝环境页（Mobile） */
+  AGGREGATE_ALIPAY: '/aggregate/alipay/:orderNo',
+  /** 聚合-云闪付环境页（Mobile） */
+  AGGREGATE_UNION: '/aggregate/union-pay/:orderNo',
+  /** 聚合-抖音环境页（Mobile） */
+  AGGREGATE_DOUYIN: '/aggregate/douyin/:orderNo',
+  /** 聚合-不支持的宿主环境提示（Mobile） */
+  AGGREGATE_UNSUPPORTED: '/aggregate/unsupported',
+  /** 码牌支付入口分发（移动独占, path 与后端 getCodeLink /h/{code} 一致） */
   CODE_PAY: '/h/:code',
+  /** 码牌支付-微信端（移动独占, 由分发页 replace 进入） */
+  CODE_PAY_WECHAT: '/h/wechat/:code',
+  /** 码牌支付-支付宝端（移动独占, 由分发页 replace 进入） */
+  CODE_PAY_ALIPAY: '/h/alipay/:code',
   /** 商户对账单（PC 独占） */
   MERCHANT_STATEMENT: '/merchant/statement',
   /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */

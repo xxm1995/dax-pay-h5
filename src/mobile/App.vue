@@ -63,12 +63,14 @@ const getTransitionName = computed(() => {
 
 <template>
   <vanConfigProvider :theme="getDarkMode" :theme-vars="getThemeVars()" :locale="vantLocale">
-    <RouterView v-slot="{ Component }">
+    <RouterView v-slot="{ Component, route }">
       <div class="absolute bottom-0 top-0 w-full overflow-hidden">
         <transition :name="getTransitionName" mode="out-in" appear>
-          <KeepAlive v-if="keepAliveComponents" :include="keepAliveComponents">
-            <component :is="Component" />
+          <!-- 空数组 [] 在 JS 中仍为 truthy，须用 length；key 用顶层路由 name，避免子路由切换整页 remount 冲掉 KeepAlive -->
+          <KeepAlive v-if="keepAliveComponents.length" :include="keepAliveComponents">
+            <component :is="Component" :key="String(route.matched[0]?.name || route.fullPath)" />
           </KeepAlive>
+          <component :is="Component" v-else :key="String(route.matched[0]?.name || route.fullPath)" />
         </transition>
       </div>
     </RouterView>

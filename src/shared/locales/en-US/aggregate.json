@@ -6,12 +6,36 @@
   "clientEnv": {
     "wechat": "WeChat",
     "alipay": "Alipay",
-    "union": "UnionPay"
+    "union": "UnionPay",
+    "douyin": "Douyin"
   },
   "loadFail": "Failed to load order",
   "payFail": "Failed to start payment",
+  "authFail": "Authorization failed, please retry",
+  "authorizing": "Authorizing...",
   "paying": "Paying...",
   "retry": "Retry",
+  "payNow": "Pay now",
   "paid": "Paid",
-  "useAppPay": "Complete payment in the app"
+  "expired": "Order expired",
+  "closed": "Order closed",
+  "failed": "Payment failed",
+  "useAppPay": "Complete payment in the app",
+  "scanQr": "Scan the QR code to pay",
+  "unsupportedTitle": "Open in a wallet app",
+  "unsupportedDesc": "Please scan the QR code with WeChat, Alipay, UnionPay or Douyin",
+  "useMobileScan": "Please scan with your phone to pay",
+  "scanWithWallet": "Scan with WeChat, Alipay, UnionPay or Douyin to pay",
+  "remainingTime": "Time remaining",
+  "expandDetail": "Show order details",
+  "collapseDetail": "Hide order details",
+  "amount": "Amount",
+  "orderTitle": "Title",
+  "description": "Description",
+  "bizOrderNo": "Merchant order no.",
+  "expiredTip": "Payment timed out and can no longer be completed",
+  "closedTip": "This order is closed and cannot be paid",
+  "failedTip": "Payment failed. Please try again",
+  "paidTip": "Payment completed. Thank you",
+  "loadFailTip": "Please check the payment link or whether the order exists"
 }

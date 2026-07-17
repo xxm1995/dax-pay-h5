@@ -25,8 +25,12 @@ export interface ExclusiveRoute {
 
 // 设备独占业务页登记（新增时按上方示例添加）
 export const EXCLUSIVE_ROUTES: ExclusiveRoute[] = [
-  // 码牌支付：仅移动端实现
+  // 码牌支付入口分发：仅移动端实现
   { path: RoutePath.CODE_PAY, name: 'CodePay', device: 'mobile' },
+  // 码牌支付-微信端：仅移动端
+  { path: RoutePath.CODE_PAY_WECHAT, name: 'CodePayWechat', device: 'mobile' },
+  // 码牌支付-支付宝端：仅移动端
+  { path: RoutePath.CODE_PAY_ALIPAY, name: 'CodePayAlipay', device: 'mobile' },
   // 支付宝认证落地页：仅移动端实现（支付宝 OAuth 重定向回调）
   { path: RoutePath.AUTH_ALIPAY, name: 'AlipayAuth', device: 'mobile' },
   // 支付宝代运营授权落地页：仅移动端实现（支付宝授权回跳）
