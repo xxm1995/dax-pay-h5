@@ -13,6 +13,7 @@
   "merchantDefault": "Merchant",
   "payToMerchant": "Thanh toán cho {name}",
   "paySuccess": "Thanh toán thành công",
+  "paidTip": "Thanh toán hoàn tất. Cảm ơn bạn",
   "payFail": "Thanh toán thất bại, vui lòng thử lại",
   "payLaunched": "Đã mở thanh toán",
   "payPending": "Đơn đã tạo, vui lòng hoàn tất thanh toán",

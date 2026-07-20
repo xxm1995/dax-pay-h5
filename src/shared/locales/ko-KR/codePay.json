@@ -13,6 +13,7 @@
   "merchantDefault": "가맹점",
   "payToMerchant": "{name}에 결제",
   "paySuccess": "결제 성공",
+  "paidTip": "결제가 완료되었습니다. 감사합니다",
   "payFail": "결제 실패, 다시 시도하세요",
   "payLaunched": "결제가 시작되었습니다",
   "payPending": "주문이 생성되었습니다. 결제를 완료하세요",

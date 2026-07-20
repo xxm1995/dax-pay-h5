@@ -8,6 +8,7 @@
 import { computed, ref, unref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDesignSetting } from '@/shared/hooks/setting/useDesignSetting'
+import CodePayResultCard from './CodePayResultCard.vue'
 
 defineOptions({ name: 'CodePayShell' })
 
@@ -169,47 +170,21 @@ function onPay() {
       '--brand-action-text': effectiveActionText,
     }"
   >
-    <!-- 支付成功结果态：对标收银 cashier__result -->
-    <div v-if="paid" class="code-pay-shell__result">
-      <div class="code-pay-shell__result-icon">
-        <van-icon name="success" size="48" color="#07c160" />
-      </div>
-      <!-- 支付成功 -->
-      <div class="code-pay-shell__result-title">
-        {{ t('codePay.paySuccess') }}
-      </div>
-      <div class="code-pay-shell__result-amount">
-        <span class="code-pay-shell__result-currency">¥</span>{{ displayAmount }}
-      </div>
-      <div v-if="orderNo || merchantName" class="code-pay-shell__result-card">
-        <div v-if="merchantName" class="code-pay-shell__result-row">
-          <!-- 收款商户 -->
-          <span>{{ t('codePay.merchantDefault') }}</span>
-          <span :title="merchantName">{{ merchantName }}</span>
-        </div>
-        <div v-if="orderNo" class="code-pay-shell__result-row">
-          <!-- 订单号 -->
-          <span>{{ t('codePay.orderNo') }}</span>
-          <span :title="orderNo">{{ orderNo }}</span>
-        </div>
-      </div>
-      <!-- 完成/关闭 -->
-      <van-button
-        class="code-pay-shell__result-btn"
-        round
-        block
-        type="primary"
-        color="var(--brand-action)"
-        @click="emit('close')"
-      >
-        {{ t('codePay.closePage') }}
-      </van-button>
-    </div>
+    <!-- 品牌顶栏（paid 和非 paid 都渲染，作为结果卡/收款卡负 margin 叠放对象） -->
+    <div class="code-pay-shell__brand" />
+
+    <!-- 支付成功结果态：独立组件，对齐聚合上浮卡片风格 -->
+    <CodePayResultCard
+      v-if="paid"
+      :amount="displayAmount"
+      :merchant-name="merchantName"
+      :order-no="orderNo"
+      :brand-color="brandColor"
+      :brand-color-dark="brandColorNight || brandColor"
+      @close="emit('close')"
+    />
 
     <template v-else>
-      <!-- 品牌顶栏（文档流，配合上浮卡） -->
-      <div class="code-pay-shell__brand" />
-
       <div class="code-pay-shell__card enter-y">
         <div class="code-pay-shell__merchant">
           <div class="code-pay-shell__avatar">
@@ -521,120 +496,6 @@ function onPay() {
     p {
       margin: 0;
     }
-  }
-
-  // 成功结果态
-  &__result {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px calc(24px + env(safe-area-inset-bottom, 0px));
-    text-align: center;
-    animation: code-pay-result-up 0.45s ease-out;
-  }
-
-  &__result-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-    background: rgb(7 193 96 / 10%);
-    animation: code-pay-result-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  &__result-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--h5-text-primary);
-    margin-bottom: 12px;
-  }
-
-  &__result-amount {
-    font-size: 36px;
-    font-weight: 600;
-    color: var(--h5-text-primary);
-    line-height: 1.2;
-    margin-bottom: 24px;
-  }
-
-  &__result-currency {
-    font-size: 20px;
-    margin-right: 4px;
-    font-weight: 500;
-  }
-
-  &__result-card {
-    width: 100%;
-    max-width: 320px;
-    margin-bottom: 28px;
-    padding: 16px 20px;
-    background: var(--h5-bg-card);
-    border-radius: 12px;
-    box-shadow: var(--h5-shadow-card);
-    text-align: left;
-  }
-
-  &__result-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    margin-bottom: 10px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    span:first-child {
-      flex-shrink: 0;
-      color: var(--h5-text-secondary);
-    }
-
-    span:last-child {
-      flex: 1;
-      min-width: 0;
-      color: var(--h5-text-primary);
-      text-align: right;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
-  &__result-btn {
-    width: 100%;
-    max-width: 320px;
-  }
-}
-
-@keyframes code-pay-result-up {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes code-pay-result-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
   }
 }
 </style>

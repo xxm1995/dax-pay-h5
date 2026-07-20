@@ -13,6 +13,7 @@
   "merchantDefault": "Merchant",
   "payToMerchant": "Pay to {name}",
   "paySuccess": "Payment successful",
+  "paidTip": "Payment completed. Thank you",
   "payFail": "Payment failed, please retry",
   "payLaunched": "Payment launched",
   "payPending": "Order created, please complete payment",

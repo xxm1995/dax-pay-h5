@@ -13,6 +13,7 @@
   "merchantDefault": "加盟店",
   "payToMerchant": "{name} へ支払い",
   "paySuccess": "支払い成功",
+  "paidTip": "支払いが完了しました。ありがとうございます",
   "payFail": "支払いに失敗しました。再試行してください",
   "payLaunched": "支払いを開始しました",
   "payPending": "注文が作成されました。支払いを完了してください",

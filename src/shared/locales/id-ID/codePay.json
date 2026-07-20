@@ -13,6 +13,7 @@
   "merchantDefault": "Merchant",
   "payToMerchant": "Bayar ke {name}",
   "paySuccess": "Pembayaran berhasil",
+  "paidTip": "Pembayaran selesai. Terima kasih",
   "payFail": "Pembayaran gagal, coba lagi",
   "payLaunched": "Pembayaran diluncurkan",
   "payPending": "Pesanan dibuat, selesaikan pembayaran",

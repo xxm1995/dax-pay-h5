@@ -13,6 +13,7 @@
   "merchantDefault": "收款商戶",
   "payToMerchant": "向{name}付款",
   "paySuccess": "支付成功",
+  "paidTip": "支付已完成，感謝使用",
   "payFail": "支付失敗，請重試",
   "payLaunched": "支付已拉起",
   "payPending": "訂單已建立，請完成支付",
