@@ -43,6 +43,16 @@ export const RoutePath = {
   AGGREGATE_GROUP: '/aggregate',
   /** 聚合-不支持的宿主环境提示（Mobile + PC 注册用） */
   AGGREGATE_UNSUPPORTED: '/aggregate/unsupported',
+  /**
+   * 码牌支付父级分组（仅 Mobile 路由注册用）
+   * Mobile 把入口 + 各宿主环境页（wechat/alipay/union-pay/douyin）全部合并到此父级下作为
+   * 子路由，让 App.vue 顶层 transition key（matched[0].name）在 entry → 环境页跳转时保持不变
+   * （都是 CodePay），避免整页 remount 与 Entry 的 onBeforeMount router.replace 竞争导致白屏
+   * （曾发生在支付宝 webview：跨顶层 replace 与 <transition mode="out-in" appear> 的 enter 死锁）。
+   * URL 契约不变：/h/{code}、/h/{env}/{code}。
+   * PC 仍用各 CODE_PAY_*（/h/:code、/h/wechat/:code 等）作为单层顶层路由。
+   */
+  CODE_PAY_GROUP: '/h',
   /** 码牌支付入口（跨端：Mobile 分发/收款，PC 扫码引导；path 与后端 getCodeLink /h/{code} 一致） */
   CODE_PAY: '/h/:code',
   /** 码牌支付-微信端（Mobile 收款；PC 同入口扫码引导） */

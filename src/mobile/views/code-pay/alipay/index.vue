@@ -9,7 +9,7 @@ import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import CodePayShell from '../shared/CodePayShell.vue'
 import { useCodePayPage } from '../shared/useCodePayPage'
 
-defineOptions({ name: 'CodePayAlipay' })
+defineOptions({ name: 'CodePayAlipayPage' })
 
 // 支付宝品牌色
 const BRAND_COLOR = '#1677ff'

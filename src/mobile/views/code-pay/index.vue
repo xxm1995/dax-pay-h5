@@ -5,8 +5,12 @@
  * 二维码恒为 /h/:code; 按 UA replace 到微信/支付宝/云闪付/抖音端页,
  * 其它环境（browser 等）提示用钱包扫码。
  * 不支持页：四钱包图标 + 加粗标题 + 小号副文案（与聚合 unsupported 一致）。
+ *
+ * 注：跳转须用 onBeforeMount（不用 onMounted），与 App.vue <transition mode="out-in" appear>
+ * 的 enter 动画竞争（onMounted 跳转曾导致首屏白屏、刷新才正常，与聚合 unsupported 同源 bug）。
+ * 同时各环境页须与入口同属 CodePay 父级子路由（见 modules.ts），保证 matched[0].name 不变。
  */
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import alipaySvg from '@/shared/assets/icons/channel/alipay.svg'
@@ -15,7 +19,7 @@ import unionPaySvg from '@/shared/assets/icons/channel/union_pay.svg'
 import wechatSvg from '@/shared/assets/icons/channel/wechat.svg'
 import { detectClientEnv } from '@/shared/utils/client-env'
 
-defineOptions({ name: 'CodePayDispatch' })
+defineOptions({ name: 'CodePayEntry' })
 
 const { t } = useI18n()
 const route = useRoute()
@@ -33,15 +37,15 @@ const walletIcons = [
   { src: douyinSvg, altKey: 'codePay.wallet.douyin' },
 ]
 
-/** clientEnv → 码牌分端路由 name */
+/** clientEnv → 码牌分端路由 name（指向 CodePay 父级下的环境页子路由，不跨顶层以避免 transition 竞争） */
 const ENV_ROUTE_NAME: Record<string, string> = {
-  wechat: 'CodePayWechat',
-  alipay: 'CodePayAlipay',
-  union_pay: 'CodePayUnion',
-  douyin: 'CodePayDouyin',
+  wechat: 'CodePayWechatPage',
+  alipay: 'CodePayAlipayPage',
+  union_pay: 'CodePayUnionPage',
+  douyin: 'CodePayDouyinPage',
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   const env = detectClientEnv()
   const routeName = ENV_ROUTE_NAME[env]
   if (routeName) {

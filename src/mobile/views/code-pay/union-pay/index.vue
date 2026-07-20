@@ -9,7 +9,7 @@ import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import CodePayShell from '../shared/CodePayShell.vue'
 import { useCodePayPage } from '../shared/useCodePayPage'
 
-defineOptions({ name: 'CodePayUnion' })
+defineOptions({ name: 'CodePayUnionPage' })
 
 // 云闪付品牌红
 const BRAND_COLOR = '#e21836'

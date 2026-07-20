@@ -20,12 +20,12 @@ const AGGREGATE_ENV_ROUTE_NAME: Record<string, string> = {
   douyin: 'AggregateDouyinPage',
 }
 
-/** 码牌 clientEnv → 路由 name */
+/** 码牌 clientEnv → 路由 name（指向 CodePay 父级下的环境页子路由，避免跨顶层触发 transition remount） */
 const CODE_PAY_ENV_ROUTE_NAME: Record<string, string> = {
-  wechat: 'CodePayWechat',
-  alipay: 'CodePayAlipay',
-  union_pay: 'CodePayUnion',
-  douyin: 'CodePayDouyin',
+  wechat: 'CodePayWechatPage',
+  alipay: 'CodePayAlipayPage',
+  union_pay: 'CodePayUnionPage',
+  douyin: 'CodePayDouyinPage',
 }
 
 /**
@@ -59,8 +59,8 @@ function resolveEntryRedirect(to: RouteLocationNormalized): RouteLocationNormali
       }
     }
   }
-  // 码牌分发入口 → 各宿主端页（非钱包宿主留在 CodePayPage 显示扫码提示）
-  if (to.name === 'CodePayPage') {
+  // 码牌分发入口 → 各宿主端页（非钱包宿主留在 CodePayEntry 显示扫码提示）
+  if (to.name === 'CodePayEntry') {
     const code = to.params.code as string
     if (code) {
       const env = detectClientEnv()
@@ -68,7 +68,7 @@ function resolveEntryRedirect(to: RouteLocationNormalized): RouteLocationNormali
       if (routeName) {
         return { name: routeName, params: { code }, replace: true }
       }
-      // browser 等非钱包宿主：留在 CodePayPage（onMounted 显示"请用钱包扫码"）
+      // browser 等非钱包宿主：留在 CodePayEntry（onBeforeMount 显示"请用钱包扫码"）
     }
   }
   return null

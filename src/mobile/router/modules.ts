@@ -100,82 +100,49 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // 码牌支付-微信端（静态段须在 /h/:code 之前注册）
+  // 码牌支付：入口 + 各宿主环境页 统一在 CodePay 父级下作为子路由
+  // 让 App.vue 顶层 transition key（matched[0].name）在 entry → 环境页跳转时保持不变（都是 CodePay），
+  // 避免整页 remount 与 Entry 的 onBeforeMount router.replace 竞争导致白屏
+  // （曾发生在支付宝 webview：跨顶层 replace 与 <transition mode="out-in" appear> 的 enter 死锁，
+  //   与聚合 Aggregate 同源 bug，修复范式见 commits da82489 / 8138d93）
+  // 注意：静态段（wechat/alipay/union-pay/douyin）必须排在 :code 之前，否则会被当 code 吞掉
+  // URL 契约不变，仍是 /h/:code、/h/{env}/:code
   {
-    path: RoutePath.CODE_PAY_WECHAT,
-    name: 'CodePayWechat',
-    component: Layout,
-    meta: {
-      title: 'route.codePay', // 码牌支付
-    },
-    children: [
-      {
-        path: '',
-        name: 'CodePayWechatPage',
-        component: () => import('@/mobile/views/code-pay/wechat/index.vue'),
-      },
-    ],
-  },
-  // 码牌支付-支付宝端
-  {
-    path: RoutePath.CODE_PAY_ALIPAY,
-    name: 'CodePayAlipay',
-    component: Layout,
-    meta: {
-      title: 'route.codePay', // 码牌支付
-    },
-    children: [
-      {
-        path: '',
-        name: 'CodePayAlipayPage',
-        component: () => import('@/mobile/views/code-pay/alipay/index.vue'),
-      },
-    ],
-  },
-  // 码牌支付-云闪付端（静态段须在 /h/:code 之前注册）
-  {
-    path: RoutePath.CODE_PAY_UNION,
-    name: 'CodePayUnion',
-    component: Layout,
-    meta: {
-      title: 'route.codePay', // 码牌支付
-    },
-    children: [
-      {
-        path: '',
-        name: 'CodePayUnionPage',
-        component: () => import('@/mobile/views/code-pay/union-pay/index.vue'),
-      },
-    ],
-  },
-  // 码牌支付-抖音端
-  {
-    path: RoutePath.CODE_PAY_DOUYIN,
-    name: 'CodePayDouyin',
-    component: Layout,
-    meta: {
-      title: 'route.codePay', // 码牌支付
-    },
-    children: [
-      {
-        path: '',
-        name: 'CodePayDouyinPage',
-        component: () => import('@/mobile/views/code-pay/douyin/index.vue'),
-      },
-    ],
-  },
-  // 码牌支付入口分发（跨端：PC 为扫码引导页）
-  {
-    path: RoutePath.CODE_PAY,
+    path: RoutePath.CODE_PAY_GROUP,
     name: 'CodePay',
     component: Layout,
     meta: {
       title: 'route.codePay', // 码牌支付
     },
     children: [
+      // 微信环境页
       {
-        path: '',
-        name: 'CodePayPage',
+        path: 'wechat/:code',
+        name: 'CodePayWechatPage',
+        component: () => import('@/mobile/views/code-pay/wechat/index.vue'),
+      },
+      // 支付宝环境页
+      {
+        path: 'alipay/:code',
+        name: 'CodePayAlipayPage',
+        component: () => import('@/mobile/views/code-pay/alipay/index.vue'),
+      },
+      // 云闪付环境页
+      {
+        path: 'union-pay/:code',
+        name: 'CodePayUnionPage',
+        component: () => import('@/mobile/views/code-pay/union-pay/index.vue'),
+      },
+      // 抖音环境页
+      {
+        path: 'douyin/:code',
+        name: 'CodePayDouyinPage',
+        component: () => import('@/mobile/views/code-pay/douyin/index.vue'),
+      },
+      // 入口：UA 探测后 replace 到环境页（静态段已注册完毕，:code 兜底匹配编码）
+      {
+        path: ':code',
+        name: 'CodePayEntry',
         component: () => import('@/mobile/views/code-pay/index.vue'),
       },
     ],

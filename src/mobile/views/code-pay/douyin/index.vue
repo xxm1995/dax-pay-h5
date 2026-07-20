@@ -9,7 +9,7 @@ import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import CodePayShell from '../shared/CodePayShell.vue'
 import { useCodePayPage } from '../shared/useCodePayPage'
 
-defineOptions({ name: 'CodePayDouyin' })
+defineOptions({ name: 'CodePayDouyinPage' })
 
 // 抖音黑白主视觉
 const BRAND_COLOR = '#161823'

@@ -9,7 +9,7 @@ import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import CodePayShell from '../shared/CodePayShell.vue'
 import { useCodePayPage } from '../shared/useCodePayPage'
 
-defineOptions({ name: 'CodePayWechat' })
+defineOptions({ name: 'CodePayWechatPage' })
 
 // 微信品牌色
 const BRAND_COLOR = '#07c160'
