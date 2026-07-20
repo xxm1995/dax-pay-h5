@@ -19,6 +19,7 @@ import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
+import { useGatewayAuth } from '@/shared/pay/use-gateway-auth'
 import { detectClientEnv, isValidH5ClientEnv } from '@/shared/utils/client-env'
 import { cacheOrder, clearCachedOrder, getCachedOrder } from '@/shared/utils/order-cache'
 import { fenToYuan } from '@/shared/utils/pay-amount'
@@ -255,8 +256,30 @@ function selectedItemNeedsOpenId(): boolean {
   return clientEnvNeedsOpenId(clientEnvParam)
 }
 
+// OAuth 跳转编排(由 [useGatewayAuth] 统一处理, 收银台无需 authorizing ref)
+const gatewayAuth = useGatewayAuth({
+  generateAuthUrl: async () => {
+    const authType = clientEnvToAuthType(clientEnvParam)
+    if (!authType) {
+      return null
+    }
+    // returnPath 含 itemId + autoPay, 授权完成后自动继续支付
+    const returnPath
+      = `/cashier/${encodeURIComponent(orderNo)}/${clientEnvParam}`
+        + `?itemId=${encodeURIComponent(selectId.value)}&autoPay=1`
+    return generateGatewayAuthUrl({ orderNo, authType, returnPath })
+  },
+  // 抛错由 pay() 的 try/catch 接管, 与原实现行为一致
+  onError: (msg) => {
+    throw new Error(msg)
+  },
+  failKey: 'cashier.authUrlFail',
+})
+
 /**
  * 需要 openId 时跳转 OAuth；returnPath 带回环境页并 autoPay
+ *
+ * 外部签名保留 Promise<string | null>: null 表示已跳转 OAuth 或不支持(由 pay() 中止后续)
  */
 async function ensureOpenIdOrRedirect(): Promise<string | null> {
   if (!selectedItemNeedsOpenId()) {
@@ -268,19 +291,11 @@ async function ensureOpenIdOrRedirect(): Promise<string | null> {
   }
   const authType = clientEnvToAuthType(clientEnvParam)
   if (!authType) {
+    // 不支持的通道(如 union_pay/browser), 不跳转也不抛错
     return null
   }
-  // returnPath 含 itemId + autoPay, 授权完成后自动继续支付
-  const returnPath = `/cashier/${encodeURIComponent(orderNo)}/${clientEnvParam}?itemId=${encodeURIComponent(selectId.value)}&autoPay=1`
-  const auth = await generateGatewayAuthUrl({
-    orderNo,
-    authType,
-    returnPath,
-  })
-  if (!auth?.authUrl) {
-    throw new Error(t('cashier.authUrlFail'))
-  }
-  window.location.href = auth.authUrl
+  await gatewayAuth.ensureOpenId(true, undefined)
+  // 跳转已触发或失败(失败时 onError 已抛错, 不会走到这里)
   return null
 }
 

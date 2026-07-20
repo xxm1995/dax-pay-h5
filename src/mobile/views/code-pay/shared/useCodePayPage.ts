@@ -14,6 +14,7 @@ import {
 } from '@/shared/api/code-pay'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
+import { useGatewayAuth } from '@/shared/pay/use-gateway-auth'
 import { isAmountOverMax, yuanToFen } from '@/shared/utils/pay-amount'
 import { clearPayOpenId, getPayOpenId } from '@/shared/utils/pay-openid'
 import {
@@ -46,7 +47,18 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
   const openId = ref<string | undefined>()
   const amount = ref('0')
   const description = ref('')
-  const authRedirecting = ref(false)
+
+  // OAuth 跳转编排(码牌用 location.replace 避免返回键回到中转页)
+  const gatewayAuth = useGatewayAuth({
+    generateAuthUrl: () => generateCodeAuthUrl({ code, clientEnv }),
+    onError: (msg) => {
+      loadError.value = msg
+    },
+    failKey: 'codePay.authUrlFail',
+    redirect: 'replace',
+  })
+  // 模板依赖 authRedirecting 控制遮罩, 复用 composable 内部 ref 避免双重维护
+  const authRedirecting = gatewayAuth.authorizing
 
   let pollTimer: ReturnType<typeof setInterval> | null = null
 
@@ -99,16 +111,14 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
       // 仅 needOpenId===true 且尚未拿到 openId → 整段 OAuth（回跳即换 openId）
       // false / null / 缺省: 不跳转，可直接收款
       if (info.value.needOpenId === true && !openId.value) {
-        authRedirecting.value = true
-        const auth = await generateCodeAuthUrl({ code, clientEnv })
-        if (auth?.authUrl) {
-          window.location.replace(auth.authUrl)
+        const ok = await gatewayAuth.ensureOpenId(true, openId.value)
+        if (!ok) {
+          // 已跳转 OAuth 或失败(loadError 已由 onError 写入); 失败时显示错误卡
+          if (loadError.value) {
+            ready.value = true
+          }
           return
         }
-        loadError.value = t('codePay.authUrlFail')
-        authRedirecting.value = false
-        ready.value = true
-        return
       }
       // 正常态：可渲染码牌收款 UI
       ready.value = true

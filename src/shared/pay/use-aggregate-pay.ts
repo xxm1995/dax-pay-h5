@@ -19,6 +19,7 @@ import {
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
+import { useGatewayAuth } from '@/shared/pay/use-gateway-auth'
 import { buildAggregateEnvPath } from '@/shared/utils/client-env'
 import { cacheOrder, clearCachedOrder, getCachedOrder } from '@/shared/utils/order-cache'
 import { fenToYuan } from '@/shared/utils/pay-amount'
@@ -74,7 +75,6 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
   // 业务内容是否可渲染（与 loading 分离）：ready=false 期间由 InitLoadingMask 接管视觉
   const ready = ref(false)
   const paying = ref(false)
-  const authorizing = ref(false)
   // 跳转类支付结果标志: location.href 触发后页面卸载前 finally 不重置 paying, 避免闪现订单卡
   let redirecting = false
   const loadError = ref('')
@@ -151,43 +151,30 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     }, 1000)
   }
 
+  // OAuth 跳转编排(收敛建议由 [useGatewayAuth] 统一处理)
+  const gatewayAuth = useGatewayAuth({
+    generateAuthUrl: async () => {
+      const returnPath = buildAggregateEnvPath(orderNo, clientEnv)
+      // clientEnv='union-pay' 已在 ensureOpenId 中提前 return, 不会进入此分支
+      const authType = clientEnv === 'douyin' ? 'douyin' : clientEnv
+      return generateGatewayAuthUrl({ orderNo, authType, returnPath })
+    },
+    onError: msg => onError?.(msg),
+    failKey: 'aggregate.authFail',
+  })
+
+  // 模板依赖 authorizing 控制遮罩, 复用 composable 内部 ref 避免双重维护
+  const authorizing = gatewayAuth.authorizing
+
   /**
    * 需要 OAuth 时跳转授权
    */
   async function ensureOpenId(): Promise<boolean> {
-    if (!meta.value.needOpenId) {
-      return true
-    }
-    if (openId.value) {
-      return true
-    }
-    // 云闪付一期无平台 OAuth，跳过强制授权
+    // 云闪付一期无平台 OAuth, 跳过强制授权
     if (clientEnv === 'union_pay') {
       return true
     }
-    authorizing.value = true
-    try {
-      const returnPath = buildAggregateEnvPath(orderNo, clientEnv)
-      const authType = clientEnv === 'douyin' ? 'douyin' : clientEnv
-      const result = await generateGatewayAuthUrl({
-        orderNo,
-        authType,
-        returnPath,
-      })
-      if (!result?.authUrl) {
-        onError?.(t('aggregate.authFail'))
-        return false
-      }
-      window.location.href = result.authUrl
-      return false
-    }
-    catch (e: any) {
-      onError?.(e?.message || t('aggregate.authFail'))
-      return false
-    }
-    finally {
-      authorizing.value = false
-    }
+    return gatewayAuth.ensureOpenId(meta.value.needOpenId, openId.value)
   }
 
   /**
