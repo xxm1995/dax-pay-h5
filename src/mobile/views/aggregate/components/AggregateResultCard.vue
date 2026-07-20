@@ -1,0 +1,203 @@
+<script lang="ts">
+/**
+ * 聚合扫码 - 结果状态卡片类型定义
+ * 供 4 个聚合环境页（wechat/alipay/union-pay/douyin）的 terminalState computed 复用
+ */
+// 终态类型：成功 / 失败 / 关闭 / 过期 / 加载失败
+</script>
+
+<script lang="ts" setup>
+/**
+ * 聚合扫码 - 结果状态卡片
+ * 统一展示支付终态：成功 / 失败 / 关闭 / 过期 / 加载失败
+ * 图标 + 颜色 + 标题 + 副提示，与 PC 端视觉语言对齐（见 pc/views/aggregate/Index.vue resultMeta）
+ * 4 个聚合环境页共用，各页通过 brandColor 注入品牌色适配主题
+ */
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+export type AggregateResultState = 'paid' | 'failed' | 'closed' | 'expired' | 'loadError'
+
+defineOptions({ name: 'AggregateResultCard' })
+
+const props = defineProps<{
+  // 终态类型
+  state: AggregateResultState
+  // 成功态的品牌色（各环境页传入：微信#07c160 / 支付宝#1677ff / 云闪付#e60012 / 抖音#161823）
+  brandColor?: string
+  // 加载失败时的动态消息（覆盖默认标题文案）
+  message?: string
+  // 订单摘要项（可选）：异常终态时附属在副提示下方，展示订单关键信息（对齐 PC 端 summary）
+  summary?: Array<{ label: string, value: string }>
+}>()
+
+const { t } = useI18n()
+
+/** 图标类型 */
+type IconName = 'check' | 'cross' | 'lock' | 'clock' | 'warning'
+
+/** 状态元数据：颜色 / 图标 / 标题key / 副提示key */
+const meta = computed<{ color: string, icon: IconName, titleKey: string, tipKey: string }>(() => {
+  switch (props.state) {
+    case 'paid':
+      // 成功用各端品牌色
+      return { color: props.brandColor || '#07c160', icon: 'check', titleKey: 'aggregate.paid', tipKey: 'aggregate.paidTip' }
+    case 'failed':
+      return { color: '#ee0a24', icon: 'cross', titleKey: 'aggregate.failed', tipKey: 'aggregate.failedTip' }
+    case 'closed':
+      return { color: '#fa8c16', icon: 'lock', titleKey: 'aggregate.closed', tipKey: 'aggregate.closedTip' }
+    case 'expired':
+      return { color: '#969799', icon: 'clock', titleKey: 'aggregate.expired', tipKey: 'aggregate.expiredTip' }
+    case 'loadError':
+      return { color: '#fa8c16', icon: 'warning', titleKey: 'aggregate.loadFail', tipKey: 'aggregate.loadFailTip' }
+    // 兜底（理论上不会到达，保证 computed 始终有返回值）
+    default:
+      return { color: '#ee0a24', icon: 'cross', titleKey: 'aggregate.failed', tipKey: 'aggregate.failedTip' }
+  }
+})
+
+/** 标题：loadError 时优先使用后端返回的动态 message */
+const title = computed(() => {
+  if (props.state === 'loadError' && props.message) {
+    return props.message
+  }
+  return t(meta.value.titleKey)
+})
+</script>
+
+<template>
+  <div class="agg-result" :style="{ '--agg-result-color': meta.color }">
+    <!-- 状态图标：彩色圆底 + 白色 SVG -->
+    <div class="agg-result__icon">
+      <svg
+        viewBox="0 0 48 48"
+        width="28"
+        height="28"
+        fill="none"
+        stroke="#fff"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <!-- 成功：对勾 -->
+        <template v-if="meta.icon === 'check'">
+          <path d="M14 24 L21 31 L34 16" />
+        </template>
+        <!-- 失败：叉 -->
+        <template v-else-if="meta.icon === 'cross'">
+          <path d="M16 16 L32 32 M32 16 L16 32" />
+        </template>
+        <!-- 关闭：锁 -->
+        <template v-else-if="meta.icon === 'lock'">
+          <rect x="14" y="22" width="20" height="14" rx="2" stroke-width="3.5" />
+          <path d="M18 22 V16 a6 6 0 0 1 12 0 V22" stroke-width="3.5" />
+        </template>
+        <!-- 过期：时钟 -->
+        <template v-else-if="meta.icon === 'clock'">
+          <circle cx="24" cy="24" r="14" stroke-width="3.5" />
+          <path d="M24 15 V24 L30 27" stroke-width="3.5" />
+        </template>
+        <!-- 加载失败：警告三角 -->
+        <template v-else>
+          <path d="M24 8 L42 38 H6 Z" stroke-width="3.5" />
+          <path d="M24 19 V28" />
+          <circle cx="24" cy="34" r="1.6" fill="#fff" stroke="none" />
+        </template>
+      </svg>
+    </div>
+    <!-- 状态标题 -->
+    <p class="agg-result__title">
+      {{ title }}
+    </p>
+    <!-- 副提示 -->
+    <p class="agg-result__tip">
+      {{ t(meta.tipKey) }}
+    </p>
+    <!-- 订单摘要（异常终态时展示订单关键信息，对齐 PC 端 summary） -->
+    <div v-if="summary && summary.length" class="agg-result__summary">
+      <div v-for="(item, index) in summary" :key="index" class="agg-result__summary-row">
+        <span class="agg-result__summary-label">{{ item.label }}</span>
+        <span class="agg-result__summary-value">{{ item.value }}</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* 结果状态卡片：自包含样式，与 .agg__card 视觉一致（白底圆角阴影） */
+.agg-result {
+  margin: -32px 16px 16px;
+  padding: 24px 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* 彩色圆形图标底 */
+.agg-result__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--agg-result-color);
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+/* 状态标题 */
+.agg-result__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--agg-result-color);
+  line-height: 1.4;
+}
+
+/* 副提示文案 */
+.agg-result__tip {
+  margin: 0;
+  font-size: 13px;
+  color: #909399;
+  line-height: 1.6;
+}
+
+/* 订单摘要区：异常终态时附属在副提示下方，左右对齐的表格式信息（对齐 PC 端） */
+.agg-result__summary {
+  width: 100%;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.agg-result__summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 6px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.agg-result__summary-label {
+  color: #909399;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.agg-result__summary-value {
+  color: #303133;
+  text-align: right;
+  word-break: break-all;
+}
+</style>
