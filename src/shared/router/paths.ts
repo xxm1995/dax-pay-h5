@@ -31,6 +31,15 @@ export const RoutePath = {
    * Mobile：UA 探测后 replace 到环境页；PC：单页处理
    */
   AGGREGATE: '/aggregate/:orderNo',
+  /**
+   * 聚合扫码父级分组（仅 Mobile 路由注册用）
+   * Mobile 把入口 + unsupported 提示合并到此父级下作为子路由，让 App.vue
+   * 顶层 transition key（matched[0].name）在 entry → unsupported 跳转时保持
+   * 不变，避免整页 remount 与 onBeforeMount 内 router.replace 竞争导致白屏。
+   * URL 契约不变，仍是 /aggregate/:orderNo 与 /aggregate/unsupported。
+   * PC 仍用 AGGREGATE（/aggregate/:orderNo）作为单层路由。
+   */
+  AGGREGATE_GROUP: '/aggregate',
   /** 聚合-微信环境页（Mobile） */
   AGGREGATE_WECHAT: '/aggregate/wechat/:orderNo',
   /** 聚合-支付宝环境页（Mobile） */

@@ -10,7 +10,7 @@ import douyinSvg from '@/shared/assets/icons/channel/douyin.svg'
 import unionPaySvg from '@/shared/assets/icons/channel/union_pay.svg'
 import wechatSvg from '@/shared/assets/icons/channel/wechat.svg'
 
-defineOptions({ name: 'AggregateUnsupported' })
+defineOptions({ name: 'AggregateUnsupportedPage' })
 
 const { t } = useI18n()
 const route = useRoute()
