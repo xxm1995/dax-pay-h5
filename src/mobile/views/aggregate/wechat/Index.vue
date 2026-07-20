@@ -123,15 +123,18 @@ onMounted(() => {
       :tip-key="maskTipKey"
     />
 
-    <!-- 加载错误 -->
-    <AggregateResultCard v-else-if="loadError" state="loadError" :message="loadError" />
+    <!-- 加载错误：补 brand 色块作为结果卡负 margin 的叠放对象，与其他终态视觉一致 -->
+    <template v-else-if="loadError">
+      <div class="agg__brand" />
+      <AggregateResultCard state="loadError" :message="loadError" />
+    </template>
 
     <template v-else>
       <!-- 顶部品牌色装饰区（半透明圆点缀） -->
       <div class="agg__brand" />
 
-      <!-- 订单信息卡片（异常终态时隐藏，订单信息降级到结果卡摘要） -->
-      <div v-if="!abnormalTerminal" class="agg__card agg__card--main">
+      <!-- 订单信息卡片（终态时隐藏，订单信息降级到结果卡摘要） -->
+      <div v-if="!paid && !abnormalTerminal" class="agg__card agg__card--main">
         <div class="agg__title">
           {{ order.title || t('aggregate.defaultTitle') }}
         </div>
@@ -154,7 +157,7 @@ onMounted(() => {
       </div>
 
       <!-- 支付成功 -->
-      <AggregateResultCard v-if="paid" state="paid" :brand-color="BRAND_COLOR" />
+      <AggregateResultCard v-if="paid" state="paid" :brand-color="BRAND_COLOR" :summary="orderSummary" />
 
       <!-- 终态（非支付成功：失败/关闭/过期） -->
       <AggregateResultCard v-else-if="terminal" :state="terminalState" :summary="orderSummary" />

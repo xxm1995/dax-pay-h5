@@ -28,7 +28,7 @@ const props = defineProps<{
   brandColor?: string
   // 加载失败时的动态消息（覆盖默认标题文案）
   message?: string
-  // 订单摘要项（可选）：异常终态时附属在副提示下方，展示订单关键信息（对齐 PC 端 summary）
+  // 订单摘要项（可选）：终态时附属在副提示下方，展示订单关键信息（对齐 PC 端 summary）
   summary?: Array<{ label: string, value: string }>
 }>()
 
@@ -119,7 +119,7 @@ function handleClose() {
     <p class="agg-result__tip">
       {{ t(meta.tipKey) }}
     </p>
-    <!-- 订单摘要（异常终态时展示订单关键信息，对齐 PC 端 summary） -->
+    <!-- 订单摘要（终态时展示订单关键信息，对齐 PC 端 summary） -->
     <div v-if="summary && summary.length" class="agg-result__summary">
       <div v-for="(item, index) in summary" :key="index" class="agg-result__summary-row">
         <span class="agg-result__summary-label">{{ item.label }}</span>
@@ -185,7 +185,7 @@ function handleClose() {
   line-height: 1.6;
 }
 
-/* 订单摘要区：异常终态时附属在副提示下方，左右对齐的表格式信息（对齐 PC 端） */
+/* 订单摘要区：终态时附属在副提示下方，左右对齐的表格式信息（对齐 PC 端） */
 .agg-result__summary {
   width: 100%;
   margin-top: 16px;
