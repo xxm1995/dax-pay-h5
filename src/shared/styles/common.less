@@ -2,6 +2,10 @@ body,
 html {
   height: 100%;
   width: 100%;
+  // 阻断 body 滚动（防 iOS Safari 橡皮筋 / 整页空滚）
+  overflow: hidden;
+  // 阻断下拉刷新 / 边界回弹
+  overscroll-behavior: none;
 }
 
 #app,

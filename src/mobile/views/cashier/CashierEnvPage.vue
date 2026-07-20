@@ -547,10 +547,8 @@ onUnmounted(() => {
 
 .cashier {
   // 三区布局: header 固定 / 中间滚动 / footer 贴底，矮屏不压按钮
-  height: 100vh;
-  height: 100dvh;
-  max-height: 100vh;
-  max-height: 100dvh;
+  // 父级 RouterView flex-1 已分配全高，用 100% 严格锁定（避免 100vh/dvh 嵌套溢出）
+  height: 100%;
   background: var(--h5-bg-page);
   display: flex;
   flex-direction: column;

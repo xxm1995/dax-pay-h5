@@ -56,7 +56,8 @@ const titleText = computed(() => {
 
 <style scoped lang="less">
 .home {
-  min-height: 100vh;
+  // 父级 RouterView 的 flex-1 已分配全高，min-height: 100vh 会撑破 flex 容器
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--h5-bg-page);

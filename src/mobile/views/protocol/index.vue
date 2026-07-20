@@ -90,14 +90,22 @@ onMounted(load)
 
 <style scoped lang="less">
 .protocol-page {
-  min-height: 100vh;
+  // 父级 RouterView flex-1 已分配全高；用 height: 100% 严格锁定，配合 body overflow:hidden 不外溢
+  height: 100%;
   background: var(--h5-bg-card);
   // 留出固定导航栏高度
   padding-top: 46px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .protocol-body {
+  // 内部滚动容器：正文超长时自滚，不冒泡到 body
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 16px;
   // 长文阅读行高优化
   font-size: 15px;

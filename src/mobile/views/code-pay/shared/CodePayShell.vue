@@ -324,7 +324,6 @@ function onPay() {
 
 .code-pay-shell {
   min-height: 100%;
-  min-height: 100dvh;
   background: var(--h5-bg-page);
   display: flex;
   flex-direction: column;
@@ -527,7 +526,7 @@ function onPay() {
   // 成功结果态
   &__result {
     flex: 1;
-    min-height: 100dvh;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -101,7 +101,6 @@ onMounted(() => {
 <style scoped lang="less">
 .code-pay-dispatch {
   min-height: 100%;
-  min-height: 100dvh;
   padding-bottom: 40px;
   background: var(--h5-bg-page);
   box-sizing: border-box;
