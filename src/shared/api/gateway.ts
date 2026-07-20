@@ -52,6 +52,8 @@ export interface CashierItemPublic {
   sortNo?: number
   /** 该项是否需要先走 OAuth 获取 openId（后端按 method + clientEnv 综合判定） */
   needOpenId?: boolean
+  // 是否为订单已锁定的支付项（订单支付中且与已锁定的支付方式匹配）
+  locked?: boolean
 }
 
 /** 查询网关订单 */

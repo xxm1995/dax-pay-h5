@@ -55,6 +55,9 @@ const selectId = ref<string>('')
 const showQrcode = ref(false)
 const qrContent = ref('')
 
+// 订单已锁定的支付项ID（订单支付中后端会标记唯一匹配项）; 非空时禁用切换其他项
+const lockedItemId = computed(() => payMethods.value.find(i => i.locked)?.id || '')
+
 const remainSeconds = ref(0)
 let countdownTimer: ReturnType<typeof setInterval> | null = null
 
@@ -132,6 +135,16 @@ function methodName(item: CashierItemPublic) {
   const key = `cashier.method.${icon}`
   const label = t(key)
   return label === key ? icon : label
+}
+
+/**
+ * 选择支付项（订单已锁定支付方式时, 禁止切换到非锁定项）
+ */
+function selectPayMethod(itemId: string) {
+  if (lockedItemId.value && itemId !== lockedItemId.value) {
+    return
+  }
+  selectId.value = itemId
 }
 
 /**
@@ -217,14 +230,20 @@ async function loadPage() {
         cashierType: 'h5',
         clientEnv: clientEnvParam,
       })
-      // 授权回跳可带 itemId；否则推荐项/首项
-      const qItemId = route.query.itemId as string | undefined
-      if (qItemId && payMethods.value.some(i => i.id === qItemId)) {
-        selectId.value = qItemId
+      // 订单已锁定支付方式: 强制选中锁定项, 不接受授权回跳的 itemId 覆盖
+      if (lockedItemId.value) {
+        selectId.value = lockedItemId.value
       }
       else {
-        const recommend = payMethods.value.find(i => i.recommend)
-        selectId.value = (recommend || payMethods.value[0])?.id || ''
+        // 授权回跳可带 itemId；否则推荐项/首项
+        const qItemId = route.query.itemId as string | undefined
+        if (qItemId && payMethods.value.some(i => i.id === qItemId)) {
+          selectId.value = qItemId
+        }
+        else {
+          const recommend = payMethods.value.find(i => i.recommend)
+          selectId.value = (recommend || payMethods.value[0])?.id || ''
+        }
       }
     }
   }
@@ -510,8 +529,11 @@ onUnmounted(() => {
             v-for="item in payMethods"
             :key="item.id"
             class="cashier__item"
-            :class="{ 'cashier__item--active': item.id === selectId }"
-            @click="selectId = item.id"
+            :class="{
+              'cashier__item--active': item.id === selectId,
+              'cashier__item--disabled': lockedItemId && item.id !== lockedItemId,
+            }"
+            @click="selectPayMethod(item.id)"
           >
             <div class="cashier__item-info">
               <!-- 品牌 SVG 图标，略大于默认以提升可识别度 -->
@@ -797,6 +819,12 @@ onUnmounted(() => {
     &--active {
       border-color: @primary;
       background: var(--h5-bg-brand-soft);
+    }
+
+    // 订单已锁定支付方式: 非锁定项灰化不可选
+    &--disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
   }
 

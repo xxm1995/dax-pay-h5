@@ -35,6 +35,9 @@ const selectId = ref<string>('')
 const showQrcode = ref(false)
 const qrContent = ref('')
 
+// 订单已锁定的支付项ID（订单支付中后端会标记唯一匹配项）; 非空时禁用切换其他项
+const lockedItemId = computed(() => payMethods.value.find(i => i.locked)?.id || '')
+
 const remainSeconds = ref(0)
 let countdownTimer: ReturnType<typeof setInterval> | null = null
 
@@ -115,6 +118,16 @@ function methodName(item?: CashierItemPublic | null) {
   return label === key ? icon : label
 }
 
+/**
+ * 选择支付项（订单已锁定支付方式时, 禁止切换到非锁定项）
+ */
+function selectPayMethod(itemId: string) {
+  if (lockedItemId.value && itemId !== lockedItemId.value) {
+    return
+  }
+  selectId.value = itemId
+}
+
 function startCountdown(expiredTime?: string) {
   if (countdownTimer) {
     clearInterval(countdownTimer)
@@ -150,8 +163,14 @@ async function loadPage() {
         orderNo,
         cashierType: 'web',
       })
-      const recommend = payMethods.value.find(i => i.recommend)
-      selectId.value = (recommend || payMethods.value[0])?.id || ''
+      // 订单已锁定支付方式: 强制选中锁定项; 否则推荐项/首项
+      if (lockedItemId.value) {
+        selectId.value = lockedItemId.value
+      }
+      else {
+        const recommend = payMethods.value.find(i => i.recommend)
+        selectId.value = (recommend || payMethods.value[0])?.id || ''
+      }
     }
   }
   catch (e: any) {
@@ -357,8 +376,11 @@ onUnmounted(() => {
                 v-for="item in payMethods"
                 :key="item.id"
                 class="pc-cashier__method"
-                :class="{ 'pc-cashier__method--active': item.id === selectId }"
-                @click="selectId = item.id"
+                :class="{
+                  'pc-cashier__method--active': item.id === selectId,
+                  'pc-cashier__method--disabled': lockedItemId && item.id !== lockedItemId,
+                }"
+                @click="selectPayMethod(item.id)"
               >
                 <!-- 横向卡片: 图标 + 名称 + 推荐；选中靠边框/底色 -->
                 <PayMethodIcon :icon="item.icon" :size="28" />
@@ -711,6 +733,13 @@ onUnmounted(() => {
   border-color: var(--h5-brand-cashier);
   background: var(--h5-bg-brand-soft);
   box-shadow: 0 4px 12px rgba(93, 157, 254, 0.18);
+}
+
+/* 订单已锁定支付方式: 非锁定项灰化不可选 */
+.pc-cashier__method--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .pc-cashier__method-name {
