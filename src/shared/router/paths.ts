@@ -33,22 +33,15 @@ export const RoutePath = {
   AGGREGATE: '/aggregate/:orderNo',
   /**
    * 聚合扫码父级分组（仅 Mobile 路由注册用）
-   * Mobile 把入口 + unsupported 提示合并到此父级下作为子路由，让 App.vue
-   * 顶层 transition key（matched[0].name）在 entry → unsupported 跳转时保持
-   * 不变，避免整页 remount 与 onBeforeMount 内 router.replace 竞争导致白屏。
-   * URL 契约不变，仍是 /aggregate/:orderNo 与 /aggregate/unsupported。
+   * Mobile 把入口 + 非宿主提示 + 各宿主环境页（wechat/alipay/union-pay/douyin）全部
+   * 合并到此父级下作为子路由，让 App.vue 顶层 transition key（matched[0].name）在
+   * entry → 环境页跳转时保持不变（都是 Aggregate），避免整页 remount 与 Entry.vue 的
+   * onBeforeMount router.replace 竞争导致白屏（曾发生在支付宝 webview）。
+   * URL 契约不变：/aggregate/:orderNo、/aggregate/unsupported、/aggregate/{env}/:orderNo。
    * PC 仍用 AGGREGATE（/aggregate/:orderNo）作为单层路由。
    */
   AGGREGATE_GROUP: '/aggregate',
-  /** 聚合-微信环境页（Mobile） */
-  AGGREGATE_WECHAT: '/aggregate/wechat/:orderNo',
-  /** 聚合-支付宝环境页（Mobile） */
-  AGGREGATE_ALIPAY: '/aggregate/alipay/:orderNo',
-  /** 聚合-云闪付环境页（Mobile） */
-  AGGREGATE_UNION: '/aggregate/union-pay/:orderNo',
-  /** 聚合-抖音环境页（Mobile） */
-  AGGREGATE_DOUYIN: '/aggregate/douyin/:orderNo',
-  /** 聚合-不支持的宿主环境提示（Mobile） */
+  /** 聚合-不支持的宿主环境提示（Mobile + PC 注册用） */
   AGGREGATE_UNSUPPORTED: '/aggregate/unsupported',
   /** 码牌支付入口（跨端：Mobile 分发/收款，PC 扫码引导；path 与后端 getCodeLink /h/{code} 一致） */
   CODE_PAY: '/h/:code',

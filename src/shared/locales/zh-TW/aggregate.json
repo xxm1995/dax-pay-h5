@@ -1,5 +1,5 @@
 {
-  "defaultTitle": "聚合支付",
+  "defaultTitle": "訂單支付",
   "orderNo": "訂單號",
   "countdown": "剩餘時間",
   "clientEnvLabel": "支付環境",

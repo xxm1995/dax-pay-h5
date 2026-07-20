@@ -12,12 +12,12 @@ defineOptions({ name: 'AggregateEntry' })
 const route = useRoute()
 const router = useRouter()
 
-/** clientEnv → 路由 name */
+/** clientEnv → 路由 name（指向 Aggregate 父级下的环境页子路由，不跨顶层以避免 transition 竞争） */
 const ENV_ROUTE_NAME: Record<string, string> = {
-  wechat: 'AggregateWechat',
-  alipay: 'AggregateAlipay',
-  union_pay: 'AggregateUnion',
-  douyin: 'AggregateDouyin',
+  wechat: 'AggregateWechatPage',
+  alipay: 'AggregateAlipayPage',
+  union_pay: 'AggregateUnionPage',
+  douyin: 'AggregateDouyinPage',
 }
 
 // onBeforeMount 探测并 replace：挂载前跳走，避免与 App.vue <transition mode="out-in" appear> 的 enter 动画

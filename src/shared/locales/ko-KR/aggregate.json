@@ -1,5 +1,5 @@
 {
-  "defaultTitle": "통합 결제",
+  "defaultTitle": "주문 결제",
   "orderNo": "주문번호",
   "countdown": "남은 시간",
   "clientEnvLabel": "결제 환경",

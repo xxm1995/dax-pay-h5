@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 /**
  * 聚合扫码：非微信/支付宝/云闪付/抖音宿主提示
- * 结构对齐 EnvPage（品牌条 + 上浮卡）；四钱包仅图标、无标签，减少与描述重复
+ * 结构对齐各环境页（品牌条 + 上浮卡）；四钱包仅图标、无标签，减少与描述重复
  */
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'

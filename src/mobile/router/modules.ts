@@ -47,78 +47,48 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // 聚合扫码：环境页须先于入口注册（避免 wechat 等被 :orderNo 吞掉）
-  {
-    path: RoutePath.AGGREGATE_WECHAT,
-    name: 'AggregateWechat',
-    component: Layout,
-    meta: { title: '聚合支付' },
-    children: [
-      {
-        path: '',
-        name: 'AggregateWechatPage',
-        component: () => import('@/mobile/views/aggregate/wechat/Index.vue'),
-      },
-    ],
-  },
-  {
-    path: RoutePath.AGGREGATE_ALIPAY,
-    name: 'AggregateAlipay',
-    component: Layout,
-    meta: { title: '聚合支付' },
-    children: [
-      {
-        path: '',
-        name: 'AggregateAlipayPage',
-        component: () => import('@/mobile/views/aggregate/alipay/Index.vue'),
-      },
-    ],
-  },
-  {
-    path: RoutePath.AGGREGATE_UNION,
-    name: 'AggregateUnion',
-    component: Layout,
-    meta: { title: '聚合支付' },
-    children: [
-      {
-        path: '',
-        name: 'AggregateUnionPage',
-        component: () => import('@/mobile/views/aggregate/union-pay/Index.vue'),
-      },
-    ],
-  },
-  {
-    path: RoutePath.AGGREGATE_DOUYIN,
-    name: 'AggregateDouyin',
-    component: Layout,
-    meta: { title: '聚合支付' },
-    children: [
-      {
-        path: '',
-        name: 'AggregateDouyinPage',
-        component: () => import('@/mobile/views/aggregate/douyin/Index.vue'),
-      },
-    ],
-  },
-  // 聚合扫码：入口 + 非宿主提示 统一在 Aggregate 父级下，避免跨顶层路由跳转
-  // 触发 App.vue <transition mode="out-in"> 整页 remount Layout 与 Entry.vue 的
-  // onBeforeMount router.replace 竞争（曾导致 /aggregate/unsupported 首次白屏、刷新才正常）
-  // 注：环境页 wechat/alipay/union-pay/douyin 仍为独立顶层路由（仅宿主内访问，无此问题）
+  // 聚合扫码：入口 + 非宿主提示 + 各宿主环境页 统一在 Aggregate 父级下作为子路由
+  // 让 App.vue 顶层 transition key（matched[0].name）在 entry → 环境页跳转时保持不变（都是 Aggregate），
+  // 避免整页 remount 与 Entry.vue 的 onBeforeMount router.replace 竞争导致白屏
+  // （曾发生在支付宝 webview：onBeforeMount 跨顶层 replace 与 <transition mode="out-in" appear> 的 enter 死锁）
+  // 注意：静态段（unsupported/alipay/wechat/union-pay/douyin）必须排在 :orderNo 之前，否则会被当订单号吞掉
+  // URL 契约不变，仍是 /aggregate/:orderNo、/aggregate/unsupported、/aggregate/{env}/:orderNo
   {
     path: RoutePath.AGGREGATE_GROUP,
     name: 'Aggregate',
     component: Layout,
-    meta: {
-      title: '聚合支付',
-    },
     children: [
-      // 非宿主提示：静态 path 段，须在 :orderNo 之前注册，避免 'unsupported' 被当 orderNo 吞掉
+      // 非宿主提示：静态 path 段
       {
         path: 'unsupported',
         name: 'AggregateUnsupportedPage',
         component: () => import('@/mobile/views/aggregate/unsupported.vue'),
       },
-      // 入口：UA 探测后 replace 到环境页
+      // 微信环境页
+      {
+        path: 'wechat/:orderNo',
+        name: 'AggregateWechatPage',
+        component: () => import('@/mobile/views/aggregate/wechat/Index.vue'),
+      },
+      // 支付宝环境页
+      {
+        path: 'alipay/:orderNo',
+        name: 'AggregateAlipayPage',
+        component: () => import('@/mobile/views/aggregate/alipay/Index.vue'),
+      },
+      // 云闪付环境页
+      {
+        path: 'union-pay/:orderNo',
+        name: 'AggregateUnionPage',
+        component: () => import('@/mobile/views/aggregate/union-pay/Index.vue'),
+      },
+      // 抖音环境页
+      {
+        path: 'douyin/:orderNo',
+        name: 'AggregateDouyinPage',
+        component: () => import('@/mobile/views/aggregate/douyin/Index.vue'),
+      },
+      // 入口：UA 探测后 replace 到环境页（静态段已注册完毕，:orderNo 兜底匹配订单号）
       {
         path: ':orderNo',
         name: 'AggregateEntry',
