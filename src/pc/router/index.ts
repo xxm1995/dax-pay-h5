@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
+import { createPcRouterGuards } from '@/pc/router/router-guards'
 import { otherDeviceExclusives } from '@/shared/router/exclusive'
 import { RoutePath } from '@/shared/router/paths'
 
@@ -31,12 +32,14 @@ const routes: RouteRecordRaw[] = [
     path: RoutePath.AGGREGATE_UNSUPPORTED,
     name: 'PcAggregateUnsupported',
     component: () => import('@/pc/views/aggregate/Unsupported.vue'),
+    meta: { title: '收银台' },
   },
   // 聚合扫码支付（跨端）
   {
     path: RoutePath.AGGREGATE,
     name: 'PcAggregate',
     component: () => import('@/pc/views/aggregate/Index.vue'),
+    meta: { title: '收银台' },
   },
   // 商户对账单（PC 独占：移动端由注册表派生 device-only 存根）
   {
@@ -108,6 +111,8 @@ const pcRouter = createRouter({
 
 export function setupPCRouter(app: App) {
   app.use(pcRouter)
+  // 挂载守卫：依据路由 meta.title 切换浏览器标题
+  createPcRouterGuards(pcRouter)
 }
 
 export { pcRouter }

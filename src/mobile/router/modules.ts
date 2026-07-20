@@ -57,6 +57,10 @@ const routeModuleList: Array<RouteRecordRaw> = [
     path: RoutePath.AGGREGATE_GROUP,
     name: 'Aggregate',
     component: Layout,
+    // 父级声明 title，子路由（unsupported / 各环境页 / entry）由 vue-router 的 to.meta 合并自动继承
+    meta: {
+      title: '收银台',
+    },
     children: [
       // 非宿主提示：静态 path 段
       {
