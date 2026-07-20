@@ -29,21 +29,16 @@ interface ChannelConfig {
   codeField: 'code' | 'auth_code'
   /** 品牌色(loading 圈色 + 调试卡片 value 色) */
   brandColor: string
-  /** i18n 命名空间(对应 auth.json 中的 wechat/alipay/douyin 组) */
+  /** i18n 命名空间(对应 auth.json 中的 wechat/alipay/douyin 组, 仅取差异 key) */
   i18nNs: string
-  /**
-   * 标识字段名(用于调试卡片 label i18n key 拼接)
-   * wechat/douyin 用 openId, alipay 用 userId(C 方案 i18n 重组后统一为 identifierLabel)
-   */
-  identifierKey: 'openId' | 'userId'
 }
 
 const props = defineProps<{ channel: AuthChannel }>()
 
 const CHANNEL_CONFIG: Record<AuthChannel, ChannelConfig> = {
-  wechat: { codeField: 'code', brandColor: '#07c160', i18nNs: 'wechat', identifierKey: 'openId' },
-  alipay: { codeField: 'auth_code', brandColor: '#1677ff', i18nNs: 'alipay', identifierKey: 'userId' },
-  douyin: { codeField: 'code', brandColor: '#161823', i18nNs: 'douyin', identifierKey: 'openId' },
+  wechat: { codeField: 'code', brandColor: '#07c160', i18nNs: 'wechat' },
+  alipay: { codeField: 'auth_code', brandColor: '#1677ff', i18nNs: 'alipay' },
+  douyin: { codeField: 'code', brandColor: '#161823', i18nNs: 'douyin' },
 }
 
 const cfg = computed(() => CHANNEL_CONFIG[props.channel])
@@ -90,7 +85,7 @@ function markFailed(msg: string) {
  */
 function init() {
   if (!authToken || !code) {
-    markFailed(t(`auth.${cfg.value.i18nNs}.codeMissing`))
+    markFailed(t('auth.common.codeMissing'))
     return
   }
   authAndGet({
@@ -110,10 +105,10 @@ function init() {
         return
       }
       // 真正失败: 既无 returnPath 也无标识
-      markFailed(t(`auth.${cfg.value.i18nNs}.authFail`))
+      markFailed(t('auth.common.authFail'))
     })
     .catch((err: Error) => {
-      markFailed(err?.message || t(`auth.${cfg.value.i18nNs}.authFail`))
+      markFailed(err?.message || t('auth.common.authFail'))
     })
 }
 
@@ -142,10 +137,10 @@ async function copyIdentifier() {
       document.execCommand('copy')
       document.body.removeChild(textarea)
     }
-    showSuccessToast(t(`auth.${cfg.value.i18nNs}.copySuccess`))
+    showSuccessToast(t('auth.common.copySuccess'))
   }
   catch {
-    showFailToast(t(`auth.${cfg.value.i18nNs}.copyFail`))
+    showFailToast(t('auth.common.copyFail'))
   }
 }
 </script>
@@ -168,18 +163,18 @@ async function copyIdentifier() {
         </svg>
       </div>
       <h3 class="result-title">
-        {{ t(`auth.${cfg.i18nNs}.successTitle`) }}
+        {{ t('auth.common.successTitle') }}
       </h3>
       <div class="identifier-card" @click="copyIdentifier">
-        <span class="card-label">{{ t(`auth.${cfg.i18nNs}.${cfg.identifierKey}`) }}</span>
+        <span class="card-label">{{ t(`auth.${cfg.i18nNs}.identifierLabel`) }}</span>
         <div class="card-value" :style="{ color: cfg.brandColor }">
           {{ identifierValue }}
         </div>
-        <span class="copy-hint">{{ t(`auth.${cfg.i18nNs}.copy`) }}</span>
+        <span class="copy-hint">{{ t('auth.common.copy') }}</span>
       </div>
       <div class="action-buttons">
         <van-button plain round block class="close-btn" @click="closeWebview">
-          {{ t(`auth.${cfg.i18nNs}.close`) }}
+          {{ t('auth.common.close') }}
         </van-button>
       </div>
     </div>
@@ -193,14 +188,14 @@ async function copyIdentifier() {
         </svg>
       </div>
       <h3 class="result-title">
-        {{ t(`auth.${cfg.i18nNs}.failTitle`) }}
+        {{ t('auth.common.failTitle') }}
       </h3>
       <p class="fail-msg">
         {{ failMsg }}
       </p>
       <div class="action-buttons">
         <van-button plain round block class="close-btn" @click="closeWebview">
-          {{ t(`auth.${cfg.i18nNs}.close`) }}
+          {{ t('auth.common.close') }}
         </van-button>
       </div>
     </div>

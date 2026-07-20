@@ -44,7 +44,7 @@ function markFailed(msg: string) {
  */
 function init() {
   if (!authToken || !code) {
-    markFailed(t('auth.wechat.codeMissing'))
+    markFailed(t('auth.common.codeMissing'))
     return
   }
   authAndGet({
@@ -57,10 +57,10 @@ function init() {
       if (finishGatewayAuthAndRedirect(data ?? {})) {
         return
       }
-      markFailed(t('auth.wechat.authFail'))
+      markFailed(t('auth.common.authFail'))
     })
     .catch((err: Error) => {
-      markFailed(err?.message || t('auth.wechat.authFail'))
+      markFailed(err?.message || t('auth.common.authFail'))
     })
 }
 
@@ -96,13 +96,13 @@ function handleBack() {
         <path fill="#fff" d="M705.5 625.7l-41.8 41.8L512 515.8 360.3 667.5l-41.8-41.8L470.2 474 318.5 322.3l41.8-41.8L512 432.2l151.7-151.7 41.8 41.8L553.8 474l151.7 151.7z" />
       </svg>
       <h3 class="pc-wechat-auth__result-title">
-        {{ t('auth.wechat.failTitle') }}
+        {{ t('auth.common.failTitle') }}
       </h3>
       <p class="pc-wechat-auth__fail-msg">
         {{ failMsg }}
       </p>
       <button class="pc-wechat-auth__btn pc-wechat-auth__btn--ghost" type="button" @click="handleBack">
-        {{ t('auth.wechat.close') }}
+        {{ t('auth.common.close') }}
       </button>
     </div>
   </div>
