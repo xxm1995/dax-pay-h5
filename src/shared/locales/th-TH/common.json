@@ -7,5 +7,6 @@
   "loading": "กำลังโหลด...",
   "tip": "สังเกต",
   "operationSuccess": "ปฏิบัติการสำเร็จ!",
-  "operationFailed": "การดำเนินการล้มเหลว!"
+  "operationFailed": "การดำเนินการล้มเหลว!",
+  "processing": "กำลังประมวลผล..."
 }

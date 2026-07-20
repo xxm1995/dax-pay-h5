@@ -7,5 +7,6 @@
   "loading": "Memuat...",
   "tip": "Melihat",
   "operationSuccess": "Operasi berhasil!",
-  "operationFailed": "Operasi gagal!"
+  "operationFailed": "Operasi gagal!",
+  "processing": "Memproses..."
 }

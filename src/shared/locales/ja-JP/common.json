@@ -7,5 +7,6 @@
   "loading": "読み込み中...",
   "tip": "知らせ",
   "operationSuccess": "作戦成功！",
-  "operationFailed": "操作は失敗しました!"
+  "operationFailed": "操作は失敗しました!",
+  "processing": "処理中..."
 }

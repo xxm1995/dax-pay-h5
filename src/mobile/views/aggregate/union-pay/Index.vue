@@ -8,6 +8,7 @@ import { showNotify, showSuccessToast } from 'vant'
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useAggregatePay } from '@/shared/pay/use-aggregate-pay'
 import AggregateResultCard from '../components/AggregateResultCard.vue'
@@ -22,7 +23,7 @@ const route = useRoute()
 const orderNo = route.params.orderNo as string
 
 const {
-  loading,
+  ready,
   paying,
   authorizing,
   loadError,
@@ -52,6 +53,19 @@ const {
   onError(message) {
     showNotify({ type: 'danger', message })
   },
+})
+
+/**
+ * InitLoadingMask 阶段文案
+ */
+const maskTipKey = computed(() => {
+  if (authorizing.value) {
+    return 'aggregate.authorizing'
+  }
+  if (paying.value) {
+    return 'aggregate.paying'
+  }
+  return ''
 })
 
 /** 终态（非成功）的状态映射，供 AggregateResultCard 渲染 */
@@ -99,21 +113,20 @@ onMounted(() => {
 
 <template>
   <div class="agg agg--union">
-    <!-- 顶部品牌色装饰区（半透明圆点缀） -->
-    <div class="agg__brand" />
-
-    <!-- 加载/授权中 -->
-    <div v-if="loading || authorizing" class="agg__card agg__card--loading">
-      <van-loading color="var(--agg-brand)" size="24px" />
-      <p v-if="authorizing" class="agg__tip">
-        {{ t('aggregate.authorizing') }}
-      </p>
-    </div>
+    <!-- 初始化/授权/支付中：统一全屏遮罩 -->
+    <InitLoadingMask
+      v-if="!ready || authorizing || paying"
+      :brand-color="BRAND_COLOR"
+      :tip-key="maskTipKey"
+    />
 
     <!-- 加载错误 -->
     <AggregateResultCard v-else-if="loadError" state="loadError" :message="loadError" />
 
     <template v-else>
+      <!-- 顶部品牌色装饰区（半透明圆点缀） -->
+      <div class="agg__brand" />
+
       <!-- 订单信息卡片（异常终态时隐藏，订单信息降级到结果卡摘要） -->
       <div v-if="!abnormalTerminal" class="agg__card agg__card--main">
         <div class="agg__title">

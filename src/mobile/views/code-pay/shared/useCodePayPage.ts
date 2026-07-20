@@ -37,6 +37,8 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
   const { code, clientEnv } = options
 
   const loading = ref(true)
+  // 业务内容是否可渲染（与 loading 分离）：ready=false 期间由 InitLoadingMask 接管视觉
+  const ready = ref(false)
   const paying = ref(false)
   const loadError = ref('')
   const info = ref<CodePayInfo>({})
@@ -72,9 +74,13 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
    *
    * needOpenId 仅 true 时跳转授权；授权落地页 /auth/* 立即 code→openId，
    * 回跳后本处读 sessionStorage。支付只带 openId，禁止支付时再换 code。
+   *
+   * ready 控制：跳转 OAuth / 错误态以外的完成场景才 ready=true，
+   * 让 InitLoadingMask 持续覆盖到 OAuth 跳转 / 错误结果卡出现
    */
   async function init() {
     loading.value = true
+    ready.value = false
     loadError.value = ''
     // 授权回跳后 openId 已由 auth-return 写入(key=code+clientEnv)
     const stored = getPayOpenId(code, clientEnv)
@@ -87,6 +93,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
       if (info.value.programType === 'mini_app') {
         // 小程序码不可在 H5 支付
         loadError.value = t('codePay.miniAppOnly')
+        ready.value = true
         return
       }
       // 仅 needOpenId===true 且尚未拿到 openId → 整段 OAuth（回跳即换 openId）
@@ -100,10 +107,15 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
         }
         loadError.value = t('codePay.authUrlFail')
         authRedirecting.value = false
+        ready.value = true
+        return
       }
+      // 正常态：可渲染码牌收款 UI
+      ready.value = true
     }
     catch (e: any) {
       loadError.value = e?.message || t('codePay.loadFail')
+      ready.value = true
     }
     finally {
       loading.value = false
@@ -307,6 +319,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
 
   return {
     loading,
+    ready,
     paying,
     loadError,
     info,

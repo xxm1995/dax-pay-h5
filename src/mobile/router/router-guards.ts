@@ -1,12 +1,78 @@
-import type { Router } from 'vue-router'
+import type { RouteLocationNormalized, Router } from 'vue-router'
 import NProgress from 'nprogress'
 import { watch } from 'vue'
 import { isNavigationFailure } from 'vue-router'
 import i18n, { t } from '@/shared/locales'
 import { useRouteStoreWithOut } from '@/shared/store/modules/route'
+import {
+  detectAggregateClientEnv,
+  detectClientEnv,
+} from '@/shared/utils/client-env'
 import 'nprogress/nprogress.css'
 
 NProgress.configure({ parent: '#app' })
+
+/** 聚合 clientEnv → 路由 name（指向 Aggregate 父级下的环境页子路由） */
+const AGGREGATE_ENV_ROUTE_NAME: Record<string, string> = {
+  wechat: 'AggregateWechatPage',
+  alipay: 'AggregateAlipayPage',
+  union_pay: 'AggregateUnionPage',
+  douyin: 'AggregateDouyinPage',
+}
+
+/** 码牌 clientEnv → 路由 name */
+const CODE_PAY_ENV_ROUTE_NAME: Record<string, string> = {
+  wechat: 'CodePayWechat',
+  alipay: 'CodePayAlipay',
+  union_pay: 'CodePayUnion',
+  douyin: 'CodePayDouyin',
+}
+
+/**
+ * entry 探测：在导航阶段直接 replace 到目标环境页，
+ * 避免 entry 组件 mount/unmount 带来的额外视觉切换（消除"闪一下"）
+ *
+ * 与 entry.vue 的 onBeforeMount replace 形成兜底：守卫拦截成功则 entry 组件不会挂载；
+ * 守卫若因故未拦到（return true），entry.vue 仍会兜底执行同样的探测逻辑
+ */
+function resolveEntryRedirect(to: RouteLocationNormalized): RouteLocationNormalized | Record<string, unknown> | null {
+  // 收银台入口 → 环境页（detectClientEnv 总有返回值，含 browser）
+  if (to.name === 'CashierEntry') {
+    const orderNo = to.params.orderNo as string
+    if (orderNo) {
+      const clientEnv = detectClientEnv()
+      return { name: 'CashierEnvPage', params: { orderNo, clientEnv }, replace: true }
+    }
+  }
+  // 聚合入口 → 各宿主环境页 / 非宿主提示页
+  if (to.name === 'AggregateEntry') {
+    const orderNo = to.params.orderNo as string
+    if (orderNo) {
+      const clientEnv = detectAggregateClientEnv()
+      if (!clientEnv) {
+        // 非宿主：提示页
+        return { name: 'AggregateUnsupportedPage', query: { orderNo }, replace: true }
+      }
+      const routeName = AGGREGATE_ENV_ROUTE_NAME[clientEnv]
+      if (routeName) {
+        return { name: routeName, params: { orderNo }, replace: true }
+      }
+    }
+  }
+  // 码牌分发入口 → 各宿主端页（非钱包宿主留在 CodePayPage 显示扫码提示）
+  if (to.name === 'CodePayPage') {
+    const code = to.params.code as string
+    if (code) {
+      const env = detectClientEnv()
+      const routeName = CODE_PAY_ENV_ROUTE_NAME[env]
+      if (routeName) {
+        return { name: routeName, params: { code }, replace: true }
+      }
+      // browser 等非钱包宿主：留在 CodePayPage（onMounted 显示"请用钱包扫码"）
+    }
+  }
+  return null
+}
 
 /** 根据路由 meta.title（i18n key）设置浏览器标题 */
 function applyRouteDocumentTitle(router: Router) {
@@ -18,8 +84,13 @@ function applyRouteDocumentTitle(router: Router) {
 }
 
 export function createRouterGuards(router: Router) {
-  router.beforeEach(() => {
+  router.beforeEach((to) => {
     NProgress.start()
+    // entry 探测：拦截入口路由，导航阶段直接 replace 到环境页
+    const redirect = resolveEntryRedirect(to)
+    if (redirect) {
+      return redirect
+    }
     // 鉴权逻辑已移除：当前为开放式访问，待业务需要时在此补充登录/权限校验
     return true
   })

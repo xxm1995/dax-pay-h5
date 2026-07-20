@@ -7,5 +7,6 @@
   "loading": "Đang tải...",
   "tip": "Để ý",
   "operationSuccess": "Hoạt động đã thành công!",
-  "operationFailed": "Hoạt động không thành công!"
+  "operationFailed": "Hoạt động không thành công!",
+  "processing": "Đang xử lý..."
 }

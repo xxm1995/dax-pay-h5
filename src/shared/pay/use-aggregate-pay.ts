@@ -2,6 +2,11 @@ import type { AggregatePayMeta, AggregatePayResult, GatewayOrderInfo } from '@/s
 /**
  * 聚合扫码环境页共用编排
  * loadOrder → meta → OAuth → doPay → handlePayResult
+ *
+ * ready 状态机（与 loading 分离，消除「订单卡闪现后进入支付」的视觉跳跃）：
+ *  - ready=false：业务内容不渲染，由 InitLoadingMask 接管视觉
+ *  - ready=true：可渲染订单卡 + 支付按钮
+ *  - 跳 OAuth / autoLaunch 自动支付场景始终保持 ready=false，让遮罩连续到下一阶段
  */
 import type { AggregateClientEnv } from '@/shared/utils/client-env'
 import { computed, onUnmounted, ref } from 'vue'
@@ -15,6 +20,7 @@ import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
 import { buildAggregateEnvPath } from '@/shared/utils/client-env'
+import { cacheOrder, clearCachedOrder, getCachedOrder } from '@/shared/utils/order-cache'
 import { fenToYuan } from '@/shared/utils/pay-amount'
 import { getPayOpenId } from '@/shared/utils/pay-openid'
 import {
@@ -65,6 +71,8 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
   } = options
 
   const loading = ref(true)
+  // 业务内容是否可渲染（与 loading 分离）：ready=false 期间由 InitLoadingMask 接管视觉
+  const ready = ref(false)
   const paying = ref(false)
   const authorizing = ref(false)
   // 跳转类支付结果标志: location.href 触发后页面卸载前 finally 不重置 paying, 避免闪现订单卡
@@ -191,6 +199,8 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     switch (action.type) {
       case 'success':
         order.value.status = 'paid'
+        // 支付成功后订单状态已变，清除缓存避免回显未付态
+        clearCachedOrder(orderNo)
         onPaid?.()
         redirectIfNeeded()
         break
@@ -276,15 +286,31 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
 
   /**
    * 加载订单 + meta，按 autoLaunch 决定是否自动支付
+   *
+   * ready 状态控制：
+   *  - 终态订单（已支付/失败/关闭/过期）→ ready=true（展示结果卡）
+   *  - 需要 OAuth 跳转 → ready=false（保持遮罩连续到回调页 + 回跳）
+   *  - autoLaunch=true → ready=false（遮罩直接进入 paying 阶段）
+   *  - 其余可交互场景 → ready=true（渲染订单卡 + 立即支付按钮）
    */
   async function bootstrap() {
     loading.value = true
+    ready.value = false
     loadError.value = ''
     openId.value = getPayOpenId(orderNo, clientEnv)
+    // OAuth 回跳后先从 sessionStorage 缓存恢复订单，减少白屏时间
+    const cached = getCachedOrder<GatewayOrderInfo>(orderNo)
+    if (cached) {
+      order.value = cached
+    }
     try {
       order.value = await getGatewayOrder(orderNo)
+      // 写入缓存，OAuth 跳转回跳时可快速恢复
+      cacheOrder(orderNo, order.value)
       startCountdown(order.value.expiredTime)
+      // 终态订单：显示结果卡
       if (paid.value || terminal.value) {
+        ready.value = true
         return
       }
       meta.value = await getAggregateMeta({
@@ -293,16 +319,23 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
         runtime: 'h5',
       })
       if (meta.value.needOpenId && !openId.value) {
+        // 需要 OAuth：保持 ready=false，InitLoadingMask 持续显示直到跳转
         await ensureOpenId()
         return
       }
       // 仅配置显式 autoLaunch=true 时自动拉起
       if (meta.value.autoLaunch === true) {
+        // autoLaunch：保持 ready=false，由 paying 接管遮罩，避免订单卡闪现
         await doPay()
+        return
       }
+      // 可交互：渲染订单卡 + 立即支付按钮
+      ready.value = true
     }
     catch (e: any) {
       loadError.value = e?.message || t('aggregate.loadFail')
+      // 加载失败也要 ready，让结果卡（loadError）显示
+      ready.value = true
     }
     finally {
       loading.value = false
@@ -318,6 +351,7 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
 
   return {
     loading,
+    ready,
     paying,
     authorizing,
     loadError,

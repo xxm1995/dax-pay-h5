@@ -7,5 +7,6 @@
   "loading": "Loading...",
   "tip": "Notice",
   "operationSuccess": "Operation succeeded!",
-  "operationFailed": "Operation failed!"
+  "operationFailed": "Operation failed!",
+  "processing": "Processing..."
 }

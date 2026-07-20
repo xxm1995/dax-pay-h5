@@ -2,20 +2,24 @@
 /**
  * 码牌支付-支付宝端
  */
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import CodePayShell from '../shared/CodePayShell.vue'
 import { useCodePayPage } from '../shared/useCodePayPage'
 
 defineOptions({ name: 'CodePayAlipay' })
+
+// 支付宝品牌色
+const BRAND_COLOR = '#1677ff'
 
 const { t } = useI18n()
 const route = useRoute()
 const code = route.params.code as string
 
 const {
-  loading,
+  ready,
   paying,
   loadError,
   info,
@@ -32,6 +36,19 @@ const {
   closePage,
 } = useCodePayPage({ code, clientEnv: 'alipay' })
 
+/**
+ * InitLoadingMask 阶段文案
+ */
+const maskTipKey = computed(() => {
+  if (authRedirecting.value) {
+    return 'codePay.authorizing'
+  }
+  if (paying.value) {
+    return 'codePay.paying'
+  }
+  return 'codePay.loading'
+})
+
 onMounted(() => {
   init()
 })
@@ -39,17 +56,12 @@ onMounted(() => {
 
 <template>
   <div class="code-pay-page">
-    <!-- 加载 / 授权中：品牌顶栏 + 上浮卡 -->
-    <template v-if="loading || authRedirecting">
-      <div class="code-pay-page__brand code-pay-page__brand--alipay" />
-      <div class="code-pay-page__card">
-        <van-loading color="#1677ff" size="28px" />
-        <!-- 正在授权 / 加载中 -->
-        <p class="code-pay-page__tip">
-          {{ authRedirecting ? t('codePay.authorizing') : t('codePay.loading') }}
-        </p>
-      </div>
-    </template>
+    <!-- 初始化/授权/支付中：统一全屏遮罩 -->
+    <InitLoadingMask
+      v-if="!ready || authRedirecting || paying"
+      :brand-color="BRAND_COLOR"
+      :tip-key="maskTipKey"
+    />
 
     <!-- 加载失败 -->
     <template v-else-if="loadError">

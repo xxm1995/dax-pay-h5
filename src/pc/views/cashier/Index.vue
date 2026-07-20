@@ -7,6 +7,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gateway'
+import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
@@ -240,11 +241,8 @@ onUnmounted(() => {
 <template>
   <div class="pc-cashier">
     <div class="pc-cashier__box">
-      <!-- 加载态 -->
-      <div v-if="loading" class="pc-cashier__loading">
-        <div class="pc-cashier__spinner" />
-        <span>{{ t('cashier.paying') }}</span>
-      </div>
+      <!-- 加载态：统一全屏遮罩（替代原卡片内 spinner） -->
+      <InitLoadingMask v-if="loading" />
       <!-- 结果态：订单已关闭/支付失败/已过期/加载失败 -->
       <div v-else-if="resultState" class="pc-cashier__result">
         <div

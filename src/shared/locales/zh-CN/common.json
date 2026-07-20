@@ -7,5 +7,6 @@
   "loading": "加载中...",
   "tip": "提示",
   "operationSuccess": "操作成功！",
-  "operationFailed": "操作失败！"
+  "operationFailed": "操作失败！",
+  "processing": "正在处理..."
 }

@@ -14,11 +14,13 @@ import {
   getGatewayOrder,
   listCashierItems,
 } from '@/shared/api/gateway'
+import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { detectClientEnv, isValidH5ClientEnv } from '@/shared/utils/client-env'
+import { cacheOrder, clearCachedOrder, getCachedOrder } from '@/shared/utils/order-cache'
 import { fenToYuan } from '@/shared/utils/pay-amount'
 import { invokeJsapiByEnv } from '@/shared/utils/pay-jsapi'
 import {
@@ -42,6 +44,8 @@ const orderNo = route.params.orderNo as string
 const clientEnvParam = route.params.clientEnv as string
 
 const loading = ref(true)
+// 业务内容是否可渲染（与 loading 分离）：ready=false 期间由 InitLoadingMask 接管视觉
+const ready = ref(false)
 const paying = ref(false)
 const loadError = ref('')
 const order = ref<GatewayOrderInfo>({})
@@ -183,15 +187,26 @@ function guardClientEnv(): boolean {
 
 /**
  * 加载订单 + 支付项；支持授权回跳 autoPay
+ *
+ * ready 控制：autoPay 触发时保持 ready=false 让遮罩持续到 pay() 结束，
+ * 避免订单卡闪现后立刻进入支付态
  */
 async function loadPage() {
   if (!guardClientEnv()) {
     return
   }
   loading.value = true
+  ready.value = false
   loadError.value = ''
+  // OAuth 回跳后先从 sessionStorage 缓存恢复订单，减少白屏时间
+  const cached = getCachedOrder<GatewayOrderInfo>(orderNo)
+  if (cached) {
+    order.value = cached
+  }
   try {
     order.value = await getGatewayOrder(orderNo)
+    // 写入缓存，OAuth 跳转回跳时可快速恢复
+    cacheOrder(orderNo, order.value)
     startCountdown(order.value.expiredTime)
     // 仅可支付订单（非终态）请求支付项，避免对已关闭/失败/过期订单触发后端拦截异常
     if (!isTerminal.value) {
@@ -218,10 +233,12 @@ async function loadPage() {
   finally {
     loading.value = false
   }
-  // 授权成功回跳后自动继续支付
+  // 授权成功回跳后自动继续支付：保持 ready=false 让遮罩持续到支付发起
   if (!isTerminal.value && !loadError.value && route.query.autoPay === '1' && selectId.value) {
     await pay()
   }
+  // 支付未触发或已结束（未跳走）：渲染业务内容
+  ready.value = true
 }
 
 /**
@@ -324,6 +341,8 @@ async function pay() {
     switch (action.type) {
       case 'success':
         order.value.status = 'paid'
+        // 支付成功后订单状态已变，清除缓存避免回显未付态
+        clearCachedOrder(orderNo)
         showSuccessToast(t('cashier.paid'))
         redirectIfNeeded()
         break
@@ -374,9 +393,11 @@ onUnmounted(() => {
 
 <template>
   <div class="cashier">
-    <div v-if="loading" class="cashier__header enter-y">
-      <van-loading color="#5d9dfe" size="24px" />
-    </div>
+    <!-- 初始化/支付中：统一全屏遮罩，避免业务内容闪现（含 OAuth 回跳 autoPay 自动支付） -->
+    <InitLoadingMask
+      v-if="!ready || paying"
+      :tip-key="paying ? 'cashier.paying' : ''"
+    />
 
     <!-- 结果态：订单已关闭/支付失败/已过期/加载失败 -->
     <div v-else-if="resultState" class="cashier__result">
