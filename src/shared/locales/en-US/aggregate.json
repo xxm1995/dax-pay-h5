@@ -38,5 +38,7 @@
   "failedTip": "Payment failed. Please try again",
   "paidTip": "Payment completed. Thank you",
   "loadFailTip": "Please check the payment link or whether the order exists",
-  "closePage": "Close"
+  "closePage": "Close",
+  "backToMerchant": "Return to merchant",
+  "autoRedirectTip": "Auto-return to merchant in {n}s"
 }

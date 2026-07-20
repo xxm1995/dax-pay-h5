@@ -36,6 +36,8 @@ export interface UseAggregatePayOptions {
   /** mobile | pc */
   device?: string
   onPaid?: () => void
+  /** 用户主动取消支付（JSAPI 桥返回 cancel）：仅提示，不轮询不报错 */
+  onCancel?: () => void
   onError?: (message: string) => void
   /** i18n 文案回调 */
   t: (key: string) => string
@@ -66,6 +68,7 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     clientEnv,
     device = 'mobile',
     onPaid,
+    onCancel,
     onError,
     t,
     closeOnPaidWithoutReturn = false,
@@ -108,24 +111,23 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     onPaid(latest) {
       order.value = latest
       onPaid?.()
-      redirectIfNeeded()
+      // 不再立即 redirectIfNeeded()：模板切到成功卡片后，由卡片倒计时或用户点击触发跳转
     },
   })
 
+  /**
+   * 跳转到商户 returnUrl 或关闭 webview
+   * 同步执行（不再 setTimeout），由成功卡片倒计时归零或用户点击按钮触发
+   */
   function redirectIfNeeded() {
     if (order.value.returnUrl) {
-      // 有商户回跳地址：延迟跳转，让 toast 先显示
-      setTimeout(() => {
-        window.location.href = order.value.returnUrl!
-      }, 1200)
+      // 有商户回跳地址：立即跳转
+      window.location.href = order.value.returnUrl!
       return
     }
-    // 无 returnUrl 且开启自动关闭：延迟关闭 webview 回到宿主钱包
-    // 比 returnUrl 跳转稍晚，让成功 toast 显示完
+    // 无 returnUrl 且开启自动关闭：关闭 webview 回到宿主钱包
     if (closeOnPaidWithoutReturn) {
-      setTimeout(() => {
-        closeWebview()
-      }, 1500)
+      closeWebview()
     }
   }
 
@@ -189,7 +191,7 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
         // 支付成功后订单状态已变，清除缓存避免回显未付态
         clearCachedOrder(orderNo)
         onPaid?.()
-        redirectIfNeeded()
+        // 不立即 redirectIfNeeded()：模板切到成功卡片，由卡片倒计时或按钮触发跳转
         break
       case 'redirect':
         // 跳转类结果: 保持 paying, 避免 finally 重置导致跳转前闪现订单卡
@@ -217,13 +219,26 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
       case 'jsapi':
         try {
           await invokeJsapiByEnv(clientEnv, action.payload)
-          startPoll(orderNo)
+          // JSAPI 桥成功 → 立即标记已支付，模板切到整页成功卡片（与收银台/码牌语义一致）
+          order.value.status = 'paid'
+          clearCachedOrder(orderNo)
+          onPaid?.()
+          // 不启动轮询，不立即跳转：让用户看到成功页面，由卡片倒计时或按钮触发跳转
         }
         catch (e: any) {
-          if (e?.message !== 'cancel') {
-            onError?.(e?.message || t('aggregate.payFail'))
+          if (e?.message === 'cancel') {
+            // 用户取消支付：仅提示，不轮询不报错
+            onCancel?.()
           }
-          startPoll(orderNo)
+          else if (/not implemented for/i.test(e?.message || '')) {
+            // 当前环境（云闪付/抖音一期）无 JSAPI 桥：兜底轮询，让后端真实状态裁决
+            startPoll(orderNo)
+          }
+          else {
+            // 其它失败：报错 + 兜底轮询，避免桥误报让用户误以为已支付
+            onError?.(e?.message || t('aggregate.payFail'))
+            startPoll(orderNo)
+          }
         }
         break
       case 'unsupported':

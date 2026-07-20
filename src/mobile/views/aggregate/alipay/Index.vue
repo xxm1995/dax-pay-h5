@@ -4,7 +4,7 @@
  * 蓝色主题（#1677ff），支付完成无 returnUrl 时自动关闭 webview 回到支付宝钱包
  */
 import type { AggregateResultState } from '../components/AggregateResultCard.vue'
-import { showNotify, showSuccessToast } from 'vant'
+import { showNotify } from 'vant'
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -40,6 +40,7 @@ const {
   remainSeconds,
   bootstrap,
   doPay,
+  redirectIfNeeded,
 } = useAggregatePay({
   orderNo,
   clientEnv: 'alipay',
@@ -47,8 +48,10 @@ const {
   // 支付完成无 returnUrl 时关闭 webview 回到支付宝钱包
   closeOnPaidWithoutReturn: true,
   t,
-  onPaid() {
-    showSuccessToast(t('aggregate.paid'))
+  // 支付成功不再显示 toast（与成功卡片同时显示会双反馈）
+  // 用户取消 JSAPI 支付时仅提示（复用 cashier.payCancel 文案）
+  onCancel() {
+    showNotify({ type: 'warning', message: t('cashier.payCancel') })
   },
   onError(message) {
     showNotify({ type: 'danger', message })
@@ -154,7 +157,14 @@ onMounted(() => {
       </div>
 
       <!-- 支付成功 -->
-      <AggregateResultCard v-if="paid" state="paid" :brand-color="BRAND_COLOR" :summary="orderSummary" />
+      <AggregateResultCard
+        v-if="paid"
+        state="paid"
+        :brand-color="BRAND_COLOR"
+        :summary="orderSummary"
+        :return-url="order.returnUrl"
+        @redirect="redirectIfNeeded"
+      />
 
       <!-- 终态（非支付成功：失败/关闭/过期） -->
       <AggregateResultCard v-else-if="terminal" :state="terminalState" :summary="orderSummary" />
