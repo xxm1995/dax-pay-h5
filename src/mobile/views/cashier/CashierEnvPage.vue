@@ -244,10 +244,24 @@ async function loadPage() {
 }
 
 /**
+ * 当前选中支付项是否需要 openId
+ *
+ * 优先读后端返回的 item.needOpenId（基于 method + clientEnv + openId 黑名单综合判定）;
+ * 旧后端无此字段时降级到 clientEnv 硬编码（wechat/alipay/douyin → true）。
+ */
+function selectedItemNeedsOpenId(): boolean {
+  const selected = payMethods.value.find(i => i.id === selectId.value)
+  if (selected?.needOpenId !== undefined) {
+    return !!selected.needOpenId
+  }
+  return clientEnvNeedsOpenId(clientEnvParam)
+}
+
+/**
  * 需要 openId 时跳转 OAuth；returnPath 带回环境页并 autoPay
  */
 async function ensureOpenIdOrRedirect(): Promise<string | null> {
-  if (!clientEnvNeedsOpenId(clientEnvParam)) {
+  if (!selectedItemNeedsOpenId()) {
     return getPayOpenId(orderNo, clientEnvParam) || null
   }
   const existing = getPayOpenId(orderNo, clientEnvParam)
@@ -307,9 +321,9 @@ async function pay() {
   showQrcode.value = false
   qrContent.value = ''
   try {
-    // 微信/支付宝/抖音环境优先补齐 openId(跳转授权时本函数会中断)
+    // 选中项需要 openId 时(微信/支付宝/抖音环境或后端标记 needOpenId)跳转授权
     let openId: string | undefined
-    if (clientEnvNeedsOpenId(clientEnvParam)) {
+    if (selectedItemNeedsOpenId()) {
       const id = await ensureOpenIdOrRedirect()
       if (id == null) {
         // 已跳转 OAuth 或无需继续

@@ -50,6 +50,8 @@ export interface CashierItemPublic {
   icon?: string
   recommend?: boolean
   sortNo?: number
+  /** 该项是否需要先走 OAuth 获取 openId（后端按 method + clientEnv 综合判定） */
+  needOpenId?: boolean
 }
 
 /** 查询网关订单 */
