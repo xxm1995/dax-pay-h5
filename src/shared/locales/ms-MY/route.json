@@ -1,0 +1,12 @@
+{
+  "home": "Laman Utama",
+  "cashier": "Kaunter",
+  "codePay": "Pembayaran Kod QR",
+  "protocol": "Perjanjian",
+  "alipayAuth": "Pengesahan Alipay",
+  "alipayIsvAuth": "Keizinan ejen Alipay",
+  "wechatAuth": "Pengesahan WeChat",
+  "douyinAuth": "Pengesahan Douyin",
+  "merchantStatement": "Penyata Peniaga",
+  "errorPage": "Halaman tidak dijumpai"
+}

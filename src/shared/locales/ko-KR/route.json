@@ -1,0 +1,12 @@
+{
+  "home": "홈",
+  "cashier": "계산대",
+  "codePay": "QR 코드 결제",
+  "protocol": "합의",
+  "alipayAuth": "Alipay 인증",
+  "alipayIsvAuth": "Alipay 대리점 승인",
+  "wechatAuth": "WeChat 인증",
+  "douyinAuth": "Douyin 인증",
+  "merchantStatement": "판매자 명세서",
+  "errorPage": "페이지를 찾을 수 없음"
+}

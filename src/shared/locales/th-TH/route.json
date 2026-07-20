@@ -1,0 +1,12 @@
+{
+  "home": "หน้าแรก",
+  "cashier": "แคชเชียร์",
+  "codePay": "ชำระเงินด้วยคิวอาร์โค้ด",
+  "protocol": "ข้อตกลง",
+  "alipayAuth": "การยืนยันตัวตน Alipay",
+  "alipayIsvAuth": "การอนุญาตตัวแทน Alipay",
+  "wechatAuth": "การยืนยันตัวตน WeChat",
+  "douyinAuth": "การยืนยันตัวตน Douyin",
+  "merchantStatement": "คำชี้แจงของผู้ขาย",
+  "errorPage": "ไม่พบหน้า"
+}

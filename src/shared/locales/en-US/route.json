@@ -1,0 +1,12 @@
+{
+  "home": "Home",
+  "cashier": "Cashier",
+  "codePay": "QR Code Payment",
+  "protocol": "Agreement",
+  "alipayAuth": "Alipay Auth",
+  "alipayIsvAuth": "Alipay Agent Authorization",
+  "wechatAuth": "WeChat Auth",
+  "douyinAuth": "Douyin Auth",
+  "merchantStatement": "Merchant Statement",
+  "errorPage": "Page Not Found"
+}

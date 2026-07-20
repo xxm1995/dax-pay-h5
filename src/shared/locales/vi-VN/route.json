@@ -1,0 +1,12 @@
+{
+  "home": "Trang chủ",
+  "cashier": "Thu ngân",
+  "codePay": "Thanh toán mã QR",
+  "protocol": "Hiệp định",
+  "alipayAuth": "Xác thực Alipay",
+  "alipayIsvAuth": "Ủy quyền đại lý Alipay",
+  "wechatAuth": "Xác thực WeChat",
+  "douyinAuth": "Xác thực Douyin",
+  "merchantStatement": "Tuyên bố của người bán",
+  "errorPage": "Không tìm thấy trang"
+}

@@ -8,7 +8,7 @@ export const ErrorPageRoute: RouteRecordRaw = {
   name: 'ErrorPage',
   component: Layout,
   meta: {
-    title: 'ErrorPage',
+    title: 'route.errorPage', // 页面不存在
     hideBreadcrumb: true,
   },
   children: [
@@ -17,7 +17,7 @@ export const ErrorPageRoute: RouteRecordRaw = {
       name: 'ErrorPageSon',
       component: () => import('@/mobile/views/exception/404.vue'),
       meta: {
-        title: 'ErrorPage',
+        title: 'route.errorPage', // 页面不存在
         hideBreadcrumb: true,
       },
     },

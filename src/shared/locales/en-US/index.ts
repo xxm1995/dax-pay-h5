@@ -8,6 +8,7 @@ import home from './home.json'
 import http from './http.json'
 import isvAuth from './isv-auth.json'
 import protocol from './protocol.json'
+import route from './route.json'
 import statement from './statement.json'
 
 export default {
@@ -18,6 +19,7 @@ export default {
   cashier,
   codePay,
   protocol,
+  route,
   statement,
   home,
   error,

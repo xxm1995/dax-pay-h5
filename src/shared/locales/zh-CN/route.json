@@ -1,0 +1,12 @@
+{
+  "home": "首页",
+  "cashier": "收银台",
+  "codePay": "码牌支付",
+  "protocol": "协议",
+  "alipayAuth": "支付宝认证",
+  "alipayIsvAuth": "支付宝代运营授权",
+  "wechatAuth": "微信认证",
+  "douyinAuth": "抖音认证",
+  "merchantStatement": "商户对账单",
+  "errorPage": "页面不存在"
+}

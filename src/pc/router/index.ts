@@ -25,73 +25,73 @@ const routes: RouteRecordRaw[] = [
     path: RoutePath.CASHIER,
     name: 'PcCashier',
     component: () => import('@/pc/views/cashier/Index.vue'),
-    meta: { title: '收银台' },
+    meta: { title: 'route.cashier' }, // 收银台
   },
   // 聚合「非宿主」提示：须在 /aggregate/:orderNo 之前注册，避免 path 段 "unsupported" 被当成 orderNo 查单
   {
     path: RoutePath.AGGREGATE_UNSUPPORTED,
     name: 'PcAggregateUnsupported',
     component: () => import('@/pc/views/aggregate/Unsupported.vue'),
-    meta: { title: '收银台' },
+    meta: { title: 'route.cashier' }, // 收银台
   },
   // 聚合扫码支付（跨端）
   {
     path: RoutePath.AGGREGATE,
     name: 'PcAggregate',
     component: () => import('@/pc/views/aggregate/Index.vue'),
-    meta: { title: '收银台' },
+    meta: { title: 'route.cashier' }, // 收银台
   },
   // 商户对账单（PC 独占：移动端由注册表派生 device-only 存根）
   {
     path: RoutePath.MERCHANT_STATEMENT,
     name: 'MerchantStatement',
     component: () => import('@/pc/views/statement/Index.vue'),
-    meta: { title: '商户对账单' },
+    meta: { title: 'route.merchantStatement' }, // 商户对账单
   },
   // 协议展示页（跨端：与移动端同 path 各指各 view，链接可独立分享）
   {
     path: RoutePath.PROTOCOL,
     name: 'PcProtocol',
     component: () => import('@/pc/views/protocol/Index.vue'),
-    meta: { title: '协议' },
+    meta: { title: 'route.protocol' }, // 协议
   },
   // 微信认证落地页（跨端：与移动端同 path 各指各 view，PC 微信内置浏览器可访问）
   {
     path: RoutePath.AUTH_WECHAT,
     name: 'PcWechatAuth',
     component: () => import('@/pc/views/auth/wechat/Index.vue'),
-    meta: { title: '微信认证' },
+    meta: { title: 'route.wechatAuth' }, // 微信认证
   },
   // 码牌支付：PC 仅展示扫码引导（静态段须在 /h/:code 之前）
   {
     path: RoutePath.CODE_PAY_WECHAT,
     name: 'PcCodePayWechat',
     component: () => import('@/pc/views/code-pay/Index.vue'),
-    meta: { title: '码牌支付' },
+    meta: { title: 'route.codePay' }, // 码牌支付
   },
   {
     path: RoutePath.CODE_PAY_ALIPAY,
     name: 'PcCodePayAlipay',
     component: () => import('@/pc/views/code-pay/Index.vue'),
-    meta: { title: '码牌支付' },
+    meta: { title: 'route.codePay' }, // 码牌支付
   },
   {
     path: RoutePath.CODE_PAY_UNION,
     name: 'PcCodePayUnion',
     component: () => import('@/pc/views/code-pay/Index.vue'),
-    meta: { title: '码牌支付' },
+    meta: { title: 'route.codePay' }, // 码牌支付
   },
   {
     path: RoutePath.CODE_PAY_DOUYIN,
     name: 'PcCodePayDouyin',
     component: () => import('@/pc/views/code-pay/Index.vue'),
-    meta: { title: '码牌支付' },
+    meta: { title: 'route.codePay' }, // 码牌支付
   },
   {
     path: RoutePath.CODE_PAY,
     name: 'PcCodePay',
     component: () => import('@/pc/views/code-pay/Index.vue'),
-    meta: { title: '码牌支付' },
+    meta: { title: 'route.codePay' }, // 码牌支付
   },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页

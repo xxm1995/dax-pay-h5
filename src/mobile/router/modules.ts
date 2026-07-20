@@ -11,7 +11,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'Home',
     component: Layout,
     meta: {
-      title: '首页',
+      title: 'route.home', // 首页
     },
     children: [
       {
@@ -30,7 +30,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'Cashier',
     component: Layout,
     meta: {
-      title: '收银台',
+      title: 'route.cashier', // 收银台
     },
     children: [
       {
@@ -59,7 +59,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     component: Layout,
     // 父级声明 title，子路由（unsupported / 各环境页 / entry）由 vue-router 的 to.meta 合并自动继承
     meta: {
-      title: '收银台',
+      title: 'route.cashier', // 收银台
     },
     children: [
       // 非宿主提示：静态 path 段
@@ -106,7 +106,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'CodePayWechat',
     component: Layout,
     meta: {
-      title: '码牌支付',
+      title: 'route.codePay', // 码牌支付
     },
     children: [
       {
@@ -122,7 +122,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'CodePayAlipay',
     component: Layout,
     meta: {
-      title: '码牌支付',
+      title: 'route.codePay', // 码牌支付
     },
     children: [
       {
@@ -138,7 +138,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'CodePayUnion',
     component: Layout,
     meta: {
-      title: '码牌支付',
+      title: 'route.codePay', // 码牌支付
     },
     children: [
       {
@@ -154,7 +154,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'CodePayDouyin',
     component: Layout,
     meta: {
-      title: '码牌支付',
+      title: 'route.codePay', // 码牌支付
     },
     children: [
       {
@@ -170,7 +170,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'CodePay',
     component: Layout,
     meta: {
-      title: '码牌支付',
+      title: 'route.codePay', // 码牌支付
     },
     children: [
       {
@@ -186,7 +186,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'Protocol',
     component: Layout,
     meta: {
-      title: '协议',
+      title: 'route.protocol', // 协议
     },
     children: [
       {
@@ -202,7 +202,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'AlipayAuth',
     component: () => import('@/mobile/views/auth/alipay/index.vue'),
     meta: {
-      title: '支付宝认证',
+      title: 'route.alipayAuth', // 支付宝认证
     },
   },
   // 支付宝代运营授权落地页（移动独占：授权回跳换 app_auth_token）
@@ -211,7 +211,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'AlipayIsvAuth',
     component: () => import('@/mobile/views/isv-auth/alipay/index.vue'),
     meta: {
-      title: '支付宝代运营授权',
+      title: 'route.alipayIsvAuth', // 支付宝代运营授权
     },
   },
   // 微信认证落地页（跨端：与 PC 端同 path 各指各 view，微信公众号 OAuth 重定向回调取 code）
@@ -220,7 +220,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'WechatAuth',
     component: () => import('@/mobile/views/auth/wechat/index.vue'),
     meta: {
-      title: '微信认证',
+      title: 'route.wechatAuth', // 微信认证
     },
   },
   // 抖音认证落地页（移动独占：抖音 silent_auth 重定向回调取 code）
@@ -229,7 +229,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
     name: 'DouyinAuth',
     component: () => import('@/mobile/views/auth/douyin/index.vue'),
     meta: {
-      title: '抖音认证',
+      title: 'route.douyinAuth', // 抖音认证
     },
   },
 ]

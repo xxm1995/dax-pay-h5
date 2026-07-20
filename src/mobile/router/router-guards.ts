@@ -1,10 +1,21 @@
 import type { Router } from 'vue-router'
 import NProgress from 'nprogress'
+import { watch } from 'vue'
 import { isNavigationFailure } from 'vue-router'
+import i18n, { t } from '@/shared/locales'
 import { useRouteStoreWithOut } from '@/shared/store/modules/route'
 import 'nprogress/nprogress.css'
 
 NProgress.configure({ parent: '#app' })
+
+/** 根据路由 meta.title（i18n key）设置浏览器标题 */
+function applyRouteDocumentTitle(router: Router) {
+  const key = router.currentRoute.value.meta?.title as string | undefined
+  if (key) {
+    // 路由页标题
+    document.title = t(key)
+  }
+}
 
 export function createRouterGuards(router: Router) {
   router.beforeEach(() => {
@@ -15,8 +26,11 @@ export function createRouterGuards(router: Router) {
 
   // 进入某个路由之后触发的钩子
   router.afterEach((to, _, failure) => {
-    // 设置每个页面的 title
-    document.title = (to?.meta?.title as string) || document.title
+    // 设置每个页面的 title（meta.title 存 i18n key）
+    const titleKey = to?.meta?.title as string | undefined
+    if (titleKey) {
+      document.title = t(titleKey)
+    }
 
     if (isNavigationFailure(failure)) {
       console.warn('failed navigation', failure)
@@ -48,6 +62,14 @@ export function createRouterGuards(router: Router) {
     routeStore.setKeepAliveComponents(keepAliveComponents)
     NProgress.done()
   })
+
+  // 切换语言时刷新当前页 document.title
+  watch(
+    () => i18n.global.locale.value,
+    () => {
+      applyRouteDocumentTitle(router)
+    },
+  )
 
   router.onError((error) => {
     console.error(error, '路由错误')
