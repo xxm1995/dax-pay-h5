@@ -269,10 +269,11 @@ onUnmounted(() => {
           </svg>
         </div>
         <h1 class="pc-aggregate__result-title">
-          {{ resultState === 'loadError' ? (loadError || t(resultMeta.titleKey)) : t(resultMeta.titleKey) }}
+          {{ t(resultMeta.titleKey) }}
         </h1>
-        <p class="pc-aggregate__result-tip">
-          {{ resultState === 'loadError' && loadError ? t(resultMeta.tipKey) : t(resultMeta.tipKey) }}
+        <!-- loadError 态显示后端返回的具体原因，无消息时不渲染 -->
+        <p v-if="resultState !== 'loadError' || loadError" class="pc-aggregate__result-tip">
+          {{ resultState === 'loadError' ? loadError : t(resultMeta.tipKey) }}
         </p>
 
         <!-- 订单摘要：标题 / 商户单号 / 平台单号 / 金额 -->

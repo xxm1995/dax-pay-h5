@@ -72,12 +72,15 @@ const meta = computed<{ color: string, icon: IconName, titleKey: string, tipKey:
   }
 })
 
-/** 标题：loadError 时优先使用后端返回的动态 message */
-const title = computed(() => {
-  if (props.state === 'loadError' && props.message) {
-    return props.message
+/** 标题：始终使用固定文案（主标题写死，与码牌/收银台风格统一） */
+const title = computed(() => t(meta.value.titleKey))
+
+/** 副提示：loadError 态显示后端返回的具体原因（无消息则不渲染副标题）；其他态用固定 tipKey */
+const tip = computed(() => {
+  if (props.state === 'loadError') {
+    return props.message || ''
   }
-  return t(meta.value.titleKey)
+  return t(meta.value.tipKey)
 })
 
 /** 是否为带 returnUrl 的成功态（显示倒计时 + 返回商户按钮） */
@@ -161,9 +164,9 @@ function handleClose() {
     <p class="agg-result__title">
       {{ title }}
     </p>
-    <!-- 副提示 -->
-    <p class="agg-result__tip">
-      {{ t(meta.tipKey) }}
+    <!-- 副提示：loadError 态显示后端返回的具体原因，无消息时不渲染 -->
+    <p v-if="tip" class="agg-result__tip">
+      {{ tip }}
     </p>
     <!-- 订单摘要（终态时展示订单关键信息，对齐 PC 端 summary） -->
     <div v-if="summary && summary.length" class="agg-result__summary">
