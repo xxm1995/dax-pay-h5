@@ -37,5 +37,9 @@
   "failedTip": "支払いが完了しませんでした。もう一度お試しください",
   "expiredTip": "支払い期限を過ぎたため注文は期限切れとなりました",
   "loadFailTip": "注文リンクが正しいかご確認ください",
-  "closePage": "ページを閉じる"
+  "closePage": "ページを閉じる",
+  "paidTip": "支払いが完了しました。ありがとうございます",
+  "autoRedirectTip": "{n} 秒後に自動的に店舗に戻ります",
+  "backToMerchant": "店舗に戻る",
+  "payTime": "支払い日時"
 }

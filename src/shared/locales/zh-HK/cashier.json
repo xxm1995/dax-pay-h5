@@ -37,5 +37,9 @@
   "failedTip": "支付未成功，請重新發起",
   "expiredTip": "訂單逾時未支付，已自動關閉",
   "loadFailTip": "請確認訂單連結是否正確",
-  "closePage": "關閉頁面"
+  "closePage": "關閉頁面",
+  "paidTip": "支付已完成,感謝使用",
+  "autoRedirectTip": "{n} 秒後自動返回商戶",
+  "backToMerchant": "返回商戶",
+  "payTime": "支付時間"
 }

@@ -3,7 +3,7 @@
  * PC WEB 收银台（cashierType=web，不按 clientEnv 分桶）
  */
 import type { CashierItemPublic, GatewayOrderInfo } from '@/shared/api/gateway'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gateway'
@@ -12,6 +12,7 @@ import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
+import { formatDateTime } from '@/shared/utils/datetime'
 import { fenToYuan } from '@/shared/utils/pay-amount'
 import {
   redirectToPayUrl,
@@ -52,12 +53,16 @@ const isTerminal = computed(() =>
   paid.value || closed.value || failed.value || order.value.status === 'expired' || expired.value,
 )
 
-// 结果态类型（关单/失败/过期/加载失败），非空时渲染结果卡片
-type ResultState = 'closed' | 'failed' | 'expired' | 'loadError'
+// 结果态类型（成功/关单/失败/过期/加载失败），非空时渲染结果卡片
+type ResultState = 'paid' | 'closed' | 'failed' | 'expired' | 'loadError'
 const resultState = computed<ResultState | ''>(() => {
   // 订单加载失败优先（订单不存在/网络异常）
   if (loadError.value) {
     return 'loadError'
+  }
+  // 支付成功(优先于其他终态,展示完整成功卡片)
+  if (paid.value) {
+    return 'paid'
   }
   if (closed.value) {
     return 'closed'
@@ -74,14 +79,17 @@ const resultState = computed<ResultState | ''>(() => {
 // 结果态展示元数据（图标/标题/副文案/主题色）
 const resultMeta = computed(() => {
   switch (resultState.value) {
+    case 'paid':
+      // 支付成功: 微信绿(与 H5/码牌/聚合一致)
+      return { icon: 'check', titleKey: 'cashier.paid', tipKey: 'cashier.paidTip', color: '#07c160' }
     case 'closed':
       return { icon: 'lock', titleKey: 'cashier.closed', tipKey: 'cashier.closedTip', color: '#fa8c16' }
     case 'failed':
       return { icon: 'cross', titleKey: 'cashier.failed', tipKey: 'cashier.failedTip', color: '#ff4d4f' }
     case 'expired':
-      return { icon: 'clock-o', titleKey: 'cashier.expired', tipKey: 'cashier.expiredTip', color: '#8c8c8c' }
+      return { icon: 'clock', titleKey: 'cashier.expired', tipKey: 'cashier.expiredTip', color: '#8c8c8c' }
     default:
-      return { icon: 'warning-o', titleKey: 'cashier.loadFail', tipKey: 'cashier.loadFailTip', color: '#fa8c16' }
+      return { icon: 'warning', titleKey: 'cashier.loadFail', tipKey: 'cashier.loadFailTip', color: '#fa8c16' }
   }
 })
 
@@ -98,11 +106,60 @@ const { startPoll, stopPoll } = useGatewayOrderPoll({
     order.value = latest
   },
   onPaid(latest) {
+    // 轮询检测到已支付: 仅更新订单,成功卡片由 resultState 渲染、倒计时跳转由 watch 触发
     order.value = latest
-    if (latest.returnUrl) {
-      window.location.href = latest.returnUrl
-    }
   },
+})
+
+/**
+ * 支付成功后跳转商户 returnUrl - 倒计时方案
+ *
+ * 进入 paid 终态后,若有 returnUrl,展示 3 秒倒计时,归零自动 location.href;
+ * 用户也可点「返回商户」按钮立即跳转。替代原 onPaid 内的立即跳转,
+ * 让用户能看清成功卡片再跳。
+ */
+const REDIRECT_COUNTDOWN_SECONDS = 3
+const redirectCountdown = ref(0)
+let redirectTimer: ReturnType<typeof setInterval> | null = null
+
+function clearRedirectTimer() {
+  if (redirectTimer) {
+    clearInterval(redirectTimer)
+    redirectTimer = null
+  }
+}
+
+function startRedirectCountdown() {
+  if (!order.value.returnUrl || redirectTimer) {
+    return
+  }
+  redirectCountdown.value = REDIRECT_COUNTDOWN_SECONDS
+  redirectTimer = setInterval(() => {
+    redirectCountdown.value--
+    if (redirectCountdown.value <= 0) {
+      clearRedirectTimer()
+      if (order.value.returnUrl) {
+        window.location.href = order.value.returnUrl
+      }
+    }
+  }, 1000)
+}
+
+/**
+ * 用户点击「返回商户」立即跳转(不等倒计时)
+ */
+function redirectNow() {
+  clearRedirectTimer()
+  if (order.value.returnUrl) {
+    window.location.href = order.value.returnUrl
+  }
+}
+
+// 进入 paid 终态时启动倒计时跳转(由 status 变化驱动,所有触发 paid 的路径统一在此处理)
+watch(resultState, (state) => {
+  if (state === 'paid') {
+    startRedirectCountdown()
+  }
 })
 
 function methodName(item?: CashierItemPublic | null) {
@@ -200,9 +257,7 @@ async function pay() {
     switch (action.type) {
       case 'success':
         order.value.status = 'paid'
-        if (order.value.returnUrl) {
-          window.location.href = order.value.returnUrl
-        }
+        // 成功卡片由 resultState 渲染、倒计时跳转由 watch 触发
         break
       case 'redirect':
         redirectToPayUrl(action.url)
@@ -253,6 +308,7 @@ onUnmounted(() => {
   if (countdownTimer) {
     clearInterval(countdownTimer)
   }
+  clearRedirectTimer()
   stopPoll()
 })
 </script>
@@ -262,11 +318,15 @@ onUnmounted(() => {
     <div class="pc-cashier__box">
       <!-- 加载态：统一全屏遮罩（替代原卡片内 spinner） -->
       <InitLoadingMask v-if="loading" />
-      <!-- 结果态：订单已关闭/支付失败/已过期/加载失败 -->
+      <!-- 结果态: 支付成功/订单已关闭/支付失败/已过期/加载失败 -->
       <div v-else-if="resultState" class="pc-cashier__result">
+        <!-- 成功态: 实心彩色圆底 + 白色对勾(对齐 H5/AggregateResultCard);其他态: 半透明底 + 彩色 SVG -->
         <div
           class="pc-cashier__result-icon"
-          :style="{ color: resultMeta.color, background: `${resultMeta.color}1a` }"
+          :style="{
+            color: resultMeta.color,
+            background: resultState === 'paid' ? resultMeta.color : `${resultMeta.color}1a`,
+          }"
         >
           <svg
             class="pc-cashier__result-svg"
@@ -274,13 +334,17 @@ onUnmounted(() => {
             width="56"
             height="56"
             fill="none"
-            :stroke="resultMeta.color"
-            stroke-width="3.5"
+            :stroke="resultState === 'paid' ? '#fff' : resultMeta.color"
+            :stroke-width="resultState === 'paid' ? 4 : 3.5"
             stroke-linecap="round"
             stroke-linejoin="round"
           >
+            <!-- 支付成功: 对勾 -->
+            <template v-if="resultState === 'paid'">
+              <path d="M14 24 L21 31 L34 16" />
+            </template>
             <!-- 支付失败: 叉号 -->
-            <template v-if="resultState === 'failed'">
+            <template v-else-if="resultState === 'failed'">
               <path d="M14 14 L34 34 M34 14 L14 34" stroke-width="4" />
             </template>
             <!-- 已过期: 时钟 -->
@@ -321,8 +385,23 @@ onUnmounted(() => {
             <span>{{ t('cashier.payableAmount') }}</span>
             <span class="pc-cashier__result-amount">￥{{ amountYuan }}</span>
           </div>
+          <!-- 成功态额外展示支付时间 -->
+          <div v-if="resultState === 'paid' && order.payTime" class="pc-cashier__result-row">
+            <span>{{ t('cashier.payTime') }}</span>
+            <span :title="order.payTime">{{ formatDateTime(order.payTime) }}</span>
+          </div>
         </div>
-        <button class="pc-cashier__result-btn" @click="closePage">
+        <!-- 成功态且有 returnUrl: 倒计时提示 + 返回商户按钮 -->
+        <template v-if="resultState === 'paid' && order.returnUrl">
+          <p v-if="redirectCountdown > 0" class="pc-cashier__result-countdown">
+            {{ t('cashier.autoRedirectTip', { n: redirectCountdown }) }}
+          </p>
+          <button class="pc-cashier__result-btn" @click="redirectNow">
+            {{ t('cashier.backToMerchant') }}
+          </button>
+        </template>
+        <!-- 其他情况: 关闭页面按钮 -->
+        <button v-else class="pc-cashier__result-btn" @click="closePage">
           {{ t('cashier.closePage') }}
         </button>
       </div>
@@ -357,10 +436,7 @@ onUnmounted(() => {
 
         <!-- 内容区 -->
         <div class="pc-cashier__content">
-          <div v-if="paid" class="pc-cashier__paid">
-            {{ t('cashier.paid') }}
-          </div>
-          <div v-else-if="payError" class="pc-cashier__error">
+          <div v-if="payError" class="pc-cashier__error">
             {{ payError }}
           </div>
           <!-- 支付方式选择 -->
@@ -574,14 +650,6 @@ onUnmounted(() => {
   margin-bottom: 16px;
 }
 
-.pc-cashier__paid {
-  font-size: 18px;
-  font-weight: 600;
-  color: #07c160;
-  text-align: center;
-  padding: 40px 0;
-}
-
 .pc-cashier__error {
   color: #ff4d4f;
   font-size: 14px;
@@ -670,6 +738,15 @@ onUnmounted(() => {
 .pc-cashier__result-amount {
   color: var(--h5-brand-cashier) !important;
   font-weight: 600;
+}
+
+/* 自动跳转倒计时提示(仅成功态 + 有 returnUrl) */
+.pc-cashier__result-countdown {
+  margin: 20px 0 0;
+  font-size: 13px;
+  color: var(--h5-text-secondary);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
 }
 
 .pc-cashier__result-btn {

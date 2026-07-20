@@ -37,5 +37,9 @@
   "failedTip": "결제가 완료되지 않았습니다. 다시 시도해 주세요",
   "expiredTip": "시간 내에 결제하지 않아 주문이 만료되었습니다",
   "loadFailTip": "주문 링크가 올바른지 확인해 주세요",
-  "closePage": "페이지 닫기"
+  "closePage": "페이지 닫기",
+  "paidTip": "결제가 완료되었습니다. 감사합니다",
+  "autoRedirectTip": "{n}초 후 자동으로 가맹점으로 돌아갑니다",
+  "backToMerchant": "가맹점으로 돌아가기",
+  "payTime": "결제 시간"
 }

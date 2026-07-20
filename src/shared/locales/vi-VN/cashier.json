@@ -37,5 +37,9 @@
   "failedTip": "Thanh toán không thành công. Vui lòng thử lại.",
   "expiredTip": "Đơn hàng quá hạn thanh toán và đã hết hạn.",
   "loadFailTip": "Vui lòng kiểm tra lại đường dẫn đơn hàng.",
-  "closePage": "Đóng"
+  "closePage": "Đóng",
+  "paidTip": "Thanh toán hoàn tất. Cảm ơn bạn",
+  "autoRedirectTip": "Tự động quay lại merchant sau {n} giây",
+  "backToMerchant": "Quay lại merchant",
+  "payTime": "Thời gian thanh toán"
 }

@@ -37,5 +37,9 @@
   "failedTip": "Payment was unsuccessful. Please try again.",
   "expiredTip": "The order was not paid in time and has expired.",
   "loadFailTip": "Please check that the order link is correct.",
-  "closePage": "Close"
+  "closePage": "Close",
+  "paidTip": "Payment completed. Thank you",
+  "autoRedirectTip": "Auto-return to merchant in {n}s",
+  "backToMerchant": "Return to merchant",
+  "payTime": "Payment time"
 }

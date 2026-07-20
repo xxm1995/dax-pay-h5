@@ -37,5 +37,9 @@
   "failedTip": "Pembayaran tidak berhasil. Silakan coba lagi.",
   "expiredTip": "Pesanan tidak dibayar tepat waktu dan telah kedaluwarsa.",
   "loadFailTip": "Pastikan tautan pesanan sudah benar.",
-  "closePage": "Tutup"
+  "closePage": "Tutup",
+  "paidTip": "Pembayaran selesai. Terima kasih",
+  "autoRedirectTip": "Kembali ke merchant otomatis dalam {n} detik",
+  "backToMerchant": "Kembali ke merchant",
+  "payTime": "Waktu pembayaran"
 }
