@@ -12,6 +12,7 @@ import {
   getGatewayOrder,
 } from '@/shared/api/gateway'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
+import { closeWebview } from '@/shared/pay/close-webview'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
 import { buildAggregateEnvPath } from '@/shared/utils/client-env'
 import { fenToYuan } from '@/shared/utils/pay-amount'
@@ -31,6 +32,12 @@ export interface UseAggregatePayOptions {
   onError?: (message: string) => void
   /** i18n 文案回调 */
   t: (key: string) => string
+  /**
+   * 支付成功且无商户 returnUrl 时，自动关闭 webview 回到宿主钱包
+   * 聚合扫码场景建议开启（用户没有业务回跳地址，付完应回到支付宝/微信钱包）
+   * 与 returnUrl 跳转互斥：有 returnUrl 走跳转，无 returnUrl 且开关开启才关闭
+   */
+  closeOnPaidWithoutReturn?: boolean
 }
 
 /**
@@ -54,11 +61,14 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     onPaid,
     onError,
     t,
+    closeOnPaidWithoutReturn = false,
   } = options
 
   const loading = ref(true)
   const paying = ref(false)
   const authorizing = ref(false)
+  // 跳转类支付结果标志: location.href 触发后页面卸载前 finally 不重置 paying, 避免闪现订单卡
+  let redirecting = false
   const loadError = ref('')
   const order = ref<GatewayOrderInfo>({})
   const meta = ref<AggregatePayMeta>({})
@@ -96,9 +106,18 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
 
   function redirectIfNeeded() {
     if (order.value.returnUrl) {
+      // 有商户回跳地址：延迟跳转，让 toast 先显示
       setTimeout(() => {
         window.location.href = order.value.returnUrl!
       }, 1200)
+      return
+    }
+    // 无 returnUrl 且开启自动关闭：延迟关闭 webview 回到宿主钱包
+    // 比 returnUrl 跳转稍晚，让成功 toast 显示完
+    if (closeOnPaidWithoutReturn) {
+      setTimeout(() => {
+        closeWebview()
+      }, 1500)
     }
   }
 
@@ -176,14 +195,25 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
         redirectIfNeeded()
         break
       case 'redirect':
+        // 跳转类结果: 保持 paying, 避免 finally 重置导致跳转前闪现订单卡
+        redirecting = true
         redirectToPayUrl(action.url)
         break
       case 'qrcode':
+        // 支付宝客户端内: precreate 返回的 qrCode 是可拉起的 URL, 直接跳转而非显示二维码
+        if (clientEnv === 'alipay' && /^https?:\/\//i.test(action.content)) {
+          redirecting = true
+          redirectToPayUrl(action.content)
+          startPoll(orderNo)
+          break
+        }
         qrContent.value = action.content
         showQrcode.value = true
         startPoll(orderNo)
         break
       case 'form':
+        // 表单提交会导航离开本页, 同属跳转类
+        redirecting = true
         submitPayForm(action.html)
         startPoll(orderNo)
         break
@@ -220,6 +250,7 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
       return
     }
     paying.value = true
+    redirecting = false
     showQrcode.value = false
     qrContent.value = ''
     try {
@@ -236,7 +267,10 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
       onError?.(e?.message || t('aggregate.payFail'))
     }
     finally {
-      paying.value = false
+      // 跳转类结果保持 paying=true, 让 loading 稳定显示到页面卸载
+      if (!redirecting) {
+        paying.value = false
+      }
     }
   }
 
