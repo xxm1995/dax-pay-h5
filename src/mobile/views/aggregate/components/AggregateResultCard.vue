@@ -11,10 +11,11 @@
  * 聚合扫码 - 结果状态卡片
  * 统一展示支付终态：成功 / 失败 / 关闭 / 过期 / 加载失败
  * 图标 + 颜色 + 标题 + 副提示，与 PC 端视觉语言对齐（见 pc/views/aggregate/Index.vue resultMeta）
- * 4 个聚合环境页共用，各页通过 brandColor 注入品牌色适配主题
+ * 4 个聚合环境页共用；成功色优先继承父级 --agg-brand（深色已压亮）
  */
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { closeWebview } from '@/shared/pay/close-webview'
 
 export type AggregateResultState = 'paid' | 'failed' | 'closed' | 'expired' | 'loadError'
 
@@ -23,7 +24,7 @@ defineOptions({ name: 'AggregateResultCard' })
 const props = defineProps<{
   // 终态类型
   state: AggregateResultState
-  // 成功态的品牌色（各环境页传入：微信#07c160 / 支付宝#1677ff / 云闪付#e60012 / 抖音#161823）
+  // 成功态品牌色兜底（优先 CSS var(--agg-brand)）
   brandColor?: string
   // 加载失败时的动态消息（覆盖默认标题文案）
   message?: string
@@ -40,8 +41,8 @@ type IconName = 'check' | 'cross' | 'lock' | 'clock' | 'warning'
 const meta = computed<{ color: string, icon: IconName, titleKey: string, tipKey: string }>(() => {
   switch (props.state) {
     case 'paid':
-      // 成功用各端品牌色
-      return { color: props.brandColor || '#07c160', icon: 'check', titleKey: 'aggregate.paid', tipKey: 'aggregate.paidTip' }
+      // 成功：继承父级 --agg-brand（深色已压亮），无则微信绿兜底
+      return { color: 'var(--agg-brand, #07c160)', icon: 'check', titleKey: 'aggregate.paid', tipKey: 'aggregate.paidTip' }
     case 'failed':
       return { color: '#ee0a24', icon: 'cross', titleKey: 'aggregate.failed', tipKey: 'aggregate.failedTip' }
     case 'closed':
@@ -63,6 +64,11 @@ const title = computed(() => {
   }
   return t(meta.value.titleKey)
 })
+
+/** 关闭宿主 WebView / 窗口 */
+function handleClose() {
+  closeWebview()
+}
 </script>
 
 <template>
@@ -120,6 +126,16 @@ const title = computed(() => {
         <span class="agg-result__summary-value">{{ item.value }}</span>
       </div>
     </div>
+    <!-- 关闭页面：实心品牌色，对齐收银结果关闭按钮可见度 -->
+    <van-button
+      class="agg-result__close"
+      round
+      block
+      type="primary"
+      @click="handleClose"
+    >
+      {{ t('aggregate.closePage') }}
+    </van-button>
   </div>
 </template>
 
@@ -128,9 +144,9 @@ const title = computed(() => {
 .agg-result {
   margin: -32px 16px 16px;
   padding: 24px 20px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+  box-shadow: var(--h5-shadow-card);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -165,7 +181,7 @@ const title = computed(() => {
 .agg-result__tip {
   margin: 0;
   font-size: 13px;
-  color: #909399;
+  color: var(--h5-text-secondary);
   line-height: 1.6;
 }
 
@@ -174,7 +190,7 @@ const title = computed(() => {
   width: 100%;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--h5-border);
   text-align: left;
   box-sizing: border-box;
 }
@@ -190,14 +206,26 @@ const title = computed(() => {
 }
 
 .agg-result__summary-label {
-  color: #909399;
+  color: var(--h5-text-secondary);
   flex-shrink: 0;
   min-width: 72px;
 }
 
 .agg-result__summary-value {
-  color: #303133;
+  color: var(--h5-text-primary);
   text-align: right;
   word-break: break-all;
+}
+
+/* 关闭：实心操作色（优先 --agg-action，兼容仅有 --agg-brand 的通道） */
+.agg-result__close {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 280px;
+  --van-button-primary-background: var(--agg-action, var(--agg-brand, var(--h5-brand-cashier)));
+  --van-button-primary-border-color: var(--agg-action, var(--agg-brand, var(--h5-brand-cashier)));
+  --van-button-primary-color: var(--agg-action-text, #fff);
+  color: var(--agg-action-text, #fff);
+  font-weight: 600;
 }
 </style>

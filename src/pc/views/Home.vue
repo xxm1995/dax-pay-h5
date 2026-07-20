@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import WebsiteFooter from '@/shared/components/WebsiteFooter.vue'
+import { useDesignSetting } from '@/shared/hooks/setting/useDesignSetting'
 import {
   getLogoUrl,
   getSystemName,
@@ -11,6 +12,7 @@ import {
 defineOptions({ name: 'PcHome' })
 
 const { t } = useI18n()
+const { getDarkMode } = useDesignSetting()
 
 // 由 vite define 注入的项目信息（与移动端首页一致）
 const { pkg, lastBuildTime } = __APP_INFO__
@@ -18,6 +20,8 @@ const version = pkg.version
 
 const logoUrl = computed(() => {
   void websiteConfig.value
+  // 依赖深色模式，切换系统主题时刷新 logoDark
+  void getDarkMode.value
   return getLogoUrl()
 })
 
@@ -53,7 +57,7 @@ const titleText = computed(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f7f8fa;
+  background: var(--h5-bg-page);
 }
 
 .pc-home__body {
@@ -79,7 +83,7 @@ const titleText = computed(() => {
   text-align: center;
   font-size: 28px;
   font-weight: 900;
-  color: #303133;
+  color: var(--h5-text-primary);
 }
 
 .pc-home__footer {
@@ -90,7 +94,7 @@ const titleText = computed(() => {
   text-align: center;
   font-size: 12px;
   line-height: 1.6;
-  color: rgb(0 0 0 / 45%);
+  color: var(--h5-text-secondary);
 }
 
 .pc-home__footer p {

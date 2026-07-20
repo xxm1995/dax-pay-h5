@@ -148,7 +148,7 @@ onMounted(() => {
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: var(--h5-bg-page);
 
   .loading-box,
   .result-box {
@@ -158,7 +158,7 @@ onMounted(() => {
     width: 100%;
     max-width: 340px;
     padding: 40px 24px;
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 16px;
     box-shadow: 0 4px 12px rgb(0 0 0 / 5%);
   }
@@ -178,13 +178,13 @@ onMounted(() => {
     .loading-text {
       margin-top: 12px;
       font-size: 14px;
-      color: #666;
+      color: var(--h5-text-secondary);
     }
 
     .footer-tip {
       margin-top: 32px;
       font-size: 12px;
-      color: #999;
+      color: var(--h5-text-secondary);
     }
   }
 
@@ -198,13 +198,13 @@ onMounted(() => {
       margin: 0 0 24px;
       font-size: 20px;
       font-weight: 600;
-      color: #333;
+      color: var(--h5-text-primary);
     }
 
     .fail-msg {
       margin: 0 0 24px;
       font-size: 14px;
-      color: #666;
+      color: var(--h5-text-secondary);
       text-align: center;
       word-break: break-all;
     }
@@ -213,8 +213,8 @@ onMounted(() => {
       width: 100%;
 
       .close-btn {
-        color: #666;
-        border-color: #eee;
+        color: var(--h5-text-secondary);
+        border-color: var(--h5-border);
       }
     }
   }

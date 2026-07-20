@@ -17,7 +17,7 @@ defineOptions({ name: 'PcLayout' })
 /* PC 端样式示范：scoped 原生 px + 媒体查询，不使用 UnoCSS 的 px 原子类 */
 .pc-shell {
   min-height: 100vh;
-  background: #f5f6f8;
+  background: var(--h5-bg-page);
 }
 
 .pc-header {
@@ -25,14 +25,14 @@ defineOptions({ name: 'PcLayout' })
   padding: 0 32px;
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border-bottom: 1px solid #ebedf0;
+  background: var(--h5-bg-card);
+  border-bottom: 1px solid var(--h5-border);
 }
 
 .pc-header__title {
   font-size: 18px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--h5-text-primary);
 }
 
 .pc-main {

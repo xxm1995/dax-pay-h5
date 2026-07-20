@@ -197,7 +197,7 @@ function handleBack() {
   align-items: center;
   justify-content: center;
   padding: 32px 16px;
-  background: linear-gradient(180deg, #f5f7fa 0%, #eef1f5 100%);
+  background: linear-gradient(180deg, var(--h5-bg-page) 0%, var(--h5-bg-muted) 100%);
   box-sizing: border-box;
 }
 
@@ -211,7 +211,7 @@ function handleBack() {
   flex-direction: column;
   align-items: center;
   padding: 48px 40px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
 }
@@ -251,7 +251,7 @@ function handleBack() {
 .pc-wechat-auth__loading-text {
   margin: 18px 0 0;
   font-size: 15px;
-  color: #606266;
+  color: var(--h5-text-secondary);
 }
 
 .pc-wechat-auth__secure-tip {
@@ -260,7 +260,7 @@ function handleBack() {
   gap: 4px;
   margin-top: 36px;
   font-size: 13px;
-  color: #909399;
+  color: var(--h5-text-secondary);
 }
 
 /* 状态图标 */
@@ -272,14 +272,14 @@ function handleBack() {
   margin: 0 0 28px;
   font-size: 22px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--h5-text-primary);
 }
 
 .pc-wechat-auth__fail-msg {
   margin: 0 0 32px;
   font-size: 14px;
   line-height: 1.6;
-  color: #606266;
+  color: var(--h5-text-secondary);
   text-align: center;
   word-break: break-all;
 }
@@ -289,7 +289,7 @@ function handleBack() {
   width: 100%;
   padding: 18px;
   margin-bottom: 36px;
-  background: #f8f9fa;
+  background: var(--h5-bg-muted);
   border-radius: 12px;
 }
 
@@ -297,7 +297,7 @@ function handleBack() {
   display: block;
   margin-bottom: 10px;
   font-size: 13px;
-  color: #909399;
+  color: var(--h5-text-secondary);
 }
 
 .pc-wechat-auth__value-box {
@@ -306,7 +306,7 @@ function handleBack() {
   justify-content: space-between;
   gap: 8px;
   padding: 12px 14px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border: 1px solid #ebeef5;
   border-radius: 8px;
   cursor: pointer;
@@ -314,14 +314,14 @@ function handleBack() {
 }
 
 .pc-wechat-auth__value-box:hover {
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
 }
 
 .pc-wechat-auth__value {
   flex: 1;
   font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
   font-size: 14px;
-  color: #1d2129;
+  color: var(--h5-text-primary);
   word-break: break-all;
 }
 
@@ -355,15 +355,15 @@ function handleBack() {
 
 .pc-wechat-auth__btn--ghost {
   margin-top: 12px;
-  color: #606266;
-  background: #fff;
+  color: var(--h5-text-secondary);
+  background: var(--h5-bg-card);
   border: 1px solid #ebeef5;
 }
 
 .pc-wechat-auth__btn--ghost:hover {
   color: #07c160;
   border-color: #07c160;
-  background: #f5fcf8;
+  background: var(--h5-bg-muted);
 }
 
 /* 轻量提示浮层 */

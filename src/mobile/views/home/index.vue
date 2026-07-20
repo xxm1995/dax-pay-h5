@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import WebsiteFooter from '@/shared/components/WebsiteFooter.vue'
+import { useDesignSetting } from '@/shared/hooks/setting/useDesignSetting'
 import {
   getLogoUrl,
   getSystemName,
@@ -11,14 +12,16 @@ import {
 defineOptions({ name: 'HomePage' })
 
 const { t } = useI18n()
+const { getDarkMode } = useDesignSetting()
 
 // 由 vite define 注入的项目信息
 const { pkg, lastBuildTime } = __APP_INFO__
 const version = pkg.version
 
-// 配置 logo, 空则默认 /logo.svg
+// 配置 logo, 空则默认 /logo.svg；依赖 getDarkMode 以在系统切暗色时切换 logoDark
 const logoUrl = computed(() => {
   void websiteConfig.value
+  void getDarkMode.value
   return getLogoUrl()
 })
 
@@ -56,6 +59,7 @@ const titleText = computed(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--h5-bg-page);
 
   &__body {
     flex: 1;
@@ -83,6 +87,7 @@ const titleText = computed(() => {
     text-align: center;
     font-size: 24px;
     font-weight: 900;
+    color: var(--h5-text-primary);
   }
 
   // 底部项目信息（版本号 / 构建时间，参考商业版 fixed bottom-6 text-xs opacity-50）
@@ -95,6 +100,7 @@ const titleText = computed(() => {
     font-size: 12px;
     opacity: 0.5;
     line-height: 1.6;
+    color: var(--h5-text-secondary);
 
     p {
       margin: 0;

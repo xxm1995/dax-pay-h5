@@ -103,7 +103,7 @@ onMounted(() => {
   min-height: 100%;
   min-height: 100dvh;
   padding-bottom: 40px;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
   box-sizing: border-box;
 
   &__brand {
@@ -114,9 +114,9 @@ onMounted(() => {
   &__panel {
     margin: -48px 16px 0;
     padding: 28px 20px 24px;
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+    box-shadow: var(--h5-shadow-card);
     text-align: center;
     box-sizing: border-box;
   }
@@ -124,7 +124,7 @@ onMounted(() => {
   &__tip {
     margin: 16px 0 0;
     font-size: 14px;
-    color: #909399;
+    color: var(--h5-text-secondary);
   }
 
   &__wallets {
@@ -148,14 +148,14 @@ onMounted(() => {
     margin: 0 0 8px;
     font-size: 17px;
     font-weight: 600;
-    color: #303133;
+    color: var(--h5-text-primary);
     line-height: 1.4;
   }
 
   &__desc {
     margin: 0;
     font-size: 13px;
-    color: #909399;
+    color: var(--h5-text-secondary);
     line-height: 1.65;
     padding: 0 4px;
   }
@@ -163,7 +163,7 @@ onMounted(() => {
   &__code {
     margin: 16px 0 0;
     font-size: 12px;
-    color: #c0c4cc;
+    color: var(--h5-text-placeholder);
     word-break: break-all;
     line-height: 1.5;
   }

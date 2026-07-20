@@ -9,6 +9,7 @@ import alipaySvg from '@/shared/assets/icons/channel/alipay.svg'
 import douyinSvg from '@/shared/assets/icons/channel/douyin.svg'
 import unionPaySvg from '@/shared/assets/icons/channel/union_pay.svg'
 import wechatSvg from '@/shared/assets/icons/channel/wechat.svg'
+import { closeWebview } from '@/shared/pay/close-webview'
 
 defineOptions({ name: 'PcAggregateUnsupported' })
 
@@ -50,6 +51,10 @@ const walletIcons = [
       <p v-if="orderNo" class="pc-agg-unsup__order">
         {{ t('aggregate.orderNo') }} {{ orderNo }}
       </p>
+      <!-- 关闭页面 -->
+      <button type="button" class="pc-agg-unsup__close" @click="closeWebview">
+        {{ t('aggregate.closePage') }}
+      </button>
     </div>
   </div>
 </template>
@@ -63,14 +68,14 @@ const walletIcons = [
   justify-content: center;
   padding: 40px 24px;
   box-sizing: border-box;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
 }
 
 .pc-agg-unsup__card {
   width: 100%;
   max-width: 480px;
   padding: 40px 36px 32px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
   box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   text-align: center;
@@ -96,24 +101,43 @@ const walletIcons = [
   margin: 0 0 10px;
   font-size: 20px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--h5-text-primary);
   line-height: 1.4;
 }
 
 .pc-agg-unsup__desc {
   margin: 0;
   font-size: 14px;
-  color: #86909c;
+  color: var(--h5-text-secondary);
   line-height: 1.7;
 }
 
 .pc-agg-unsup__order {
   margin: 20px 0 0;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--h5-border);
   font-size: 12px;
-  color: #c0c4cc;
+  color: var(--h5-text-placeholder);
   word-break: break-all;
   line-height: 1.5;
+}
+
+.pc-agg-unsup__close {
+  margin-top: 24px;
+  width: 100%;
+  max-width: 280px;
+  height: 44px;
+  border-radius: 22px;
+  border: none;
+  background: linear-gradient(135deg, var(--h5-brand-cashier) 0%, var(--h5-brand-cashier-deep) 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
+}
+
+.pc-agg-unsup__close:hover {
+  opacity: 0.92;
 }
 </style>

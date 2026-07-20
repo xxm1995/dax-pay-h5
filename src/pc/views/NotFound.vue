@@ -32,7 +32,7 @@ function goHome() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f7f8fa;
+  background: var(--h5-bg-page);
 }
 
 .pc-notfound__img {
@@ -45,7 +45,7 @@ function goHome() {
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
-  color: #4e5969;
+  color: var(--h5-text-secondary);
 }
 
 .pc-notfound__btn {

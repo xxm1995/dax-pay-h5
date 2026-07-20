@@ -4,7 +4,8 @@ html {
   width: 100%;
 }
 
-#app {
+#app,
+#pc-app {
   height: 100%;
   width: 100%;
   position: relative;
@@ -22,8 +23,8 @@ html.dark {
   --van-background-3: #2c2c2e;
 
   body {
-    background-color: #1c1c1e;
-    color: rgba(255, 255, 255, 0.9) !important;
+    background-color: var(--h5-bg-page);
+    color: var(--h5-text-primary) !important;
   }
 }
 
@@ -34,8 +35,8 @@ html.light {
   }
 
   body {
-    background-color: #fcfbfe;
-    color: var(--van-gray-8) !important;
+    background-color: var(--h5-bg-page);
+    color: var(--h5-text-primary) !important;
   }
 }
 
@@ -98,10 +99,6 @@ a:hover {
 }
 
 html.light {
-  body {
-    background-color: #f5f6fa;
-  }
-
   .my-card {
     backdrop-filter: blur(10px);
     background: rgba(255, 255, 255, 0.9);

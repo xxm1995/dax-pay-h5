@@ -37,5 +37,6 @@
   "closedTip": "This order is closed and cannot be paid",
   "failedTip": "Payment failed. Please try again",
   "paidTip": "Payment completed. Thank you",
-  "loadFailTip": "Please check the payment link or whether the order exists"
+  "loadFailTip": "Please check the payment link or whether the order exists",
+  "closePage": "Close"
 }

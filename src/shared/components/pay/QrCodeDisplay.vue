@@ -67,7 +67,7 @@ watch(() => props.size, render)
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--h5-bg-card);
   box-sizing: border-box;
 }
 
@@ -82,7 +82,7 @@ watch(() => props.size, render)
   padding: 8px;
   font-size: 12px;
   word-break: break-all;
-  color: #64748b;
+  color: var(--h5-text-secondary);
   text-align: center;
   max-height: 100%;
   overflow: auto;

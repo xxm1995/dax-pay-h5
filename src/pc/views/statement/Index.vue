@@ -170,7 +170,7 @@ function statusClass(status: StatusCode) {
   box-sizing: border-box;
   /* 页面加浅色背景，让白色卡片浮起来 */
   min-height: 100vh;
-  background: #f5f6fa;
+  background: var(--h5-bg-page);
 }
 
 .statement__heading {
@@ -179,7 +179,7 @@ function statusClass(status: StatusCode) {
   gap: 12px;
   font-size: 24px;
   font-weight: 700;
-  color: #1d2129;
+  color: var(--h5-text-primary);
   margin: 0 0 24px;
 }
 
@@ -201,7 +201,7 @@ function statusClass(status: StatusCode) {
 
 .statement__summary-card {
   position: relative;
-  background: #ffffff;
+  background: var(--h5-bg-card);
   border-radius: 8px;
   padding: 20px 24px;
   display: flex;
@@ -255,12 +255,12 @@ function statusClass(status: StatusCode) {
 
 .statement__summary-icon--primary {
   color: #5d9dfe;
-  background: #eaf2fe;
+  background: var(--h5-bg-brand-soft);
 }
 
 .statement__summary-icon--neutral {
-  color: #86909c;
-  background: #f2f3f5;
+  color: var(--h5-text-secondary);
+  background: var(--h5-bg-muted);
 }
 
 .statement__summary-icon--success {
@@ -270,18 +270,18 @@ function statusClass(status: StatusCode) {
 
 .statement__summary-icon--warning {
   color: #ff7d00;
-  background: #fff7e8;
+  background: var(--h5-bg-warning);
 }
 
 .statement__summary-label {
   font-size: 13px;
-  color: #86909c;
+  color: var(--h5-text-secondary);
 }
 
 .statement__summary-value {
   font-size: 28px;
   font-weight: 700;
-  color: #1d2129;
+  color: var(--h5-text-primary);
 }
 
 .statement__summary-value--primary {
@@ -297,7 +297,7 @@ function statusClass(status: StatusCode) {
 }
 
 .statement__table-wrap {
-  background: #ffffff;
+  background: var(--h5-bg-card);
   border-radius: 8px;
   overflow-x: auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -313,11 +313,11 @@ function statusClass(status: StatusCode) {
 .statement__table thead th {
   text-align: left;
   padding: 14px 16px;
-  color: #86909c;
+  color: var(--h5-text-secondary);
   font-weight: 500;
   /* 表头底色加深为主色调浅色，与主色呼应 */
-  background: #f0f4fb;
-  border-bottom: 1px solid #ebedf0;
+  background: var(--h5-bg-page);
+  border-bottom: 1px solid var(--h5-border);
   white-space: nowrap;
 }
 
@@ -328,7 +328,7 @@ function statusClass(status: StatusCode) {
 
 .statement__table tbody td {
   padding: 14px 16px;
-  color: #1d2129;
+  color: var(--h5-text-primary);
   border-bottom: 1px solid #f2f3f5;
 }
 
@@ -338,7 +338,7 @@ function statusClass(status: StatusCode) {
 
 /* 行 hover 改为主色调浅色 */
 .statement__table tbody tr:hover {
-  background: #f0f6ff;
+  background: var(--h5-bg-brand-soft);
 }
 
 .statement__mono {
@@ -390,7 +390,7 @@ function statusClass(status: StatusCode) {
 
 .statement__status.is-pending {
   color: #ff7d00;
-  background: #fff7e8;
+  background: var(--h5-bg-warning);
 }
 
 .statement__status.is-pending .statement__status-dot {
@@ -407,7 +407,7 @@ function statusClass(status: StatusCode) {
 
 .statement__empty-text {
   font-size: 14px;
-  color: #86909c;
+  color: var(--h5-text-secondary);
 }
 
 @media (max-width: 768px) {

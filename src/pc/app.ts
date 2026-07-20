@@ -5,6 +5,7 @@ import { createApp } from 'vue'
 import PcApp from '@/pc/App.vue'
 import { pcRouter, setupPCRouter } from '@/pc/router'
 import { setupI18n } from '@/shared/locales'
+import { useDesignSettingStore } from '@/shared/store/modules/designSetting'
 
 // PC 端独立的 pinia 实例（与移动端状态隔离，同一时刻仅一套应用运行）
 const pcStore = createPinia()
@@ -29,6 +30,8 @@ export async function createPCApp() {
   setupPCStore(app)
   // 挂载国际化（PC 端独立实例，与移动端共用同一 i18n 模块）
   setupI18n(app)
+  // 初始化全局主题：跟随系统 prefers-color-scheme（传入 PC 独立 pinia，勿用 mobile 的 store 单例）
+  useDesignSettingStore(pcStore).initSystemListener()
   // 站点配置: 缓存先 apply 防闪, 再远程 hash 比对
   const { initWebsiteConfig } = await import('@/shared/logics/init-website-config')
   await initWebsiteConfig()

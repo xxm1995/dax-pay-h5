@@ -92,7 +92,7 @@ onMounted(load)
 // PC 端: 严格使用 scoped 原生 px + 媒体查询, 禁用 UnoCSS 长度原子类
 .pc-protocol {
   min-height: 100vh;
-  background: #f5f6fa;
+  background: var(--h5-bg-page);
   display: flex;
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -106,7 +106,7 @@ onMounted(load)
   align-items: center;
   height: 56px;
   padding: 0 24px;
-  background: #fff;
+  background: var(--h5-bg-card);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
@@ -124,7 +124,7 @@ onMounted(load)
   transition: background 0.2s;
 
   &:hover {
-    background: #eaf2fe;
+    background: var(--h5-bg-brand-soft);
   }
 }
 
@@ -140,7 +140,7 @@ onMounted(load)
   transform: translateX(-26px);
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--h5-text-primary);
 }
 
 .pc-protocol__main {
@@ -151,7 +151,7 @@ onMounted(load)
 .pc-protocol__container {
   max-width: 820px;
   margin: 0 auto;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 8px;
   padding: 48px 56px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
@@ -159,7 +159,7 @@ onMounted(load)
 
 .pc-protocol__status {
   text-align: center;
-  color: #999;
+  color: var(--h5-text-secondary);
   padding: 80px 0;
   font-size: 14px;
 }
@@ -168,7 +168,7 @@ onMounted(load)
   margin: 0 0 12px;
   font-size: 26px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--h5-text-primary);
   text-align: center;
 }
 
@@ -179,16 +179,16 @@ onMounted(load)
   gap: 16px;
   margin-bottom: 24px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--h5-border);
   font-size: 13px;
-  color: #999;
+  color: var(--h5-text-secondary);
 }
 
 // v-html 内容样式穿透
 :deep(.pc-protocol__content) {
   font-size: 15px;
   line-height: 1.85;
-  color: #333;
+  color: var(--h5-text-primary);
   word-break: break-word;
 
   h1,
@@ -199,7 +199,7 @@ onMounted(load)
   h6 {
     margin: 28px 0 14px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--h5-text-primary);
   }
 
   h1 {
@@ -233,8 +233,8 @@ onMounted(load)
     margin: 16px 0;
     padding: 12px 16px;
     border-left: 4px solid #5d9dfe;
-    background: #f7f9fc;
-    color: #666;
+    background: var(--h5-bg-muted);
+    color: var(--h5-text-secondary);
   }
 
   table {
@@ -244,19 +244,19 @@ onMounted(load)
 
     th,
     td {
-      border: 1px solid #e8e8e8;
+      border: 1px solid var(--h5-border);
       padding: 10px 12px;
     }
 
     th {
-      background: #fafafa;
+      background: var(--h5-bg-muted);
     }
   }
 
   pre {
     margin: 16px 0;
     padding: 14px 16px;
-    background: #f6f8fa;
+    background: var(--h5-bg-muted);
     border-radius: 6px;
     overflow-x: auto;
     font-size: 13px;
@@ -264,7 +264,7 @@ onMounted(load)
   }
 
   code {
-    background: #f6f8fa;
+    background: var(--h5-bg-muted);
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 13px;

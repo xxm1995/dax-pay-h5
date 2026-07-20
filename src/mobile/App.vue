@@ -1,60 +1,17 @@
 <script setup lang="ts">
 import { useDesignSetting } from '@/shared/hooks/setting/useDesignSetting'
+import { useVantThemeVars } from '@/shared/hooks/setting/useVantThemeVars'
 import { useLocale } from '@/shared/locales'
 import { useRouteStore } from '@/shared/store/modules/route'
-import { darken, lighten } from '@/shared/utils'
 
 const routeStore = useRouteStore()
-const { getDarkMode, getAppTheme, getIsPageAnimate, getPageAnimateType } = useDesignSetting()
+const { getIsPageAnimate, getPageAnimateType } = useDesignSetting()
+const { getDarkMode, getThemeVars } = useVantThemeVars()
 // vant 语言包（跟随当前语言，驱动 vant 内置组件文案：Dialog 按钮、Picker 等）
 const { vantLocale } = useLocale()
 
 // 需要缓存的路由组件
 const keepAliveComponents = computed(() => routeStore.keepAliveComponents)
-
-function getThemeVars() {
-  const appTheme = unref(getAppTheme)
-  const darkenStr = darken(appTheme, 25)
-  const lightenStr = lighten(appTheme, 10)
-
-  return {
-    actionSheetCancelTextColor: appTheme,
-    buttonPrimaryBackground: appTheme,
-    buttonPrimaryBorderColor: appTheme,
-    radioCheckedIconColor: appTheme,
-    sliderActiveBackground: appTheme,
-    cascaderActiveColor: appTheme,
-    checkboxCheckedIconColor: appTheme,
-    numberKeyboardButtonBackground: appTheme,
-    pickerLoadingIconColor: appTheme,
-    calendarRangeEdgeBackground: appTheme,
-    calendarRangeMiddleColor: appTheme,
-    calendarSelectedDayBackground: appTheme,
-    stepperButtonRoundThemeColor: appTheme,
-    switchOnBackground: appTheme,
-    dialogConfirmButtonTextColor: appTheme,
-    dropdownMenuOptionActiveColor: appTheme,
-    dropdownMenuTitleActiveTextColor: appTheme,
-    notifyPrimaryBackground: appTheme,
-    circleColor: appTheme,
-    noticeBarBackground: lightenStr,
-    noticeBarTextColor: darkenStr,
-    progressColor: appTheme,
-    progressPivotBackground: appTheme,
-    stepActiveColor: appTheme,
-    stepFinishLineColor: appTheme,
-    swipeIndicatorActiveBackground: appTheme,
-    tagPrimaryColor: appTheme,
-    navBarIconColor: appTheme,
-    navBarTextColor: appTheme,
-    paginationItemDefaultColor: appTheme,
-    sidebarSelectedBorderColor: appTheme,
-    tabsDefaultColor: appTheme,
-    tabsBottomBarColor: appTheme,
-    tabbarItemActiveColor: appTheme,
-    treeSelectItemActiveColor: appTheme,
-  }
-}
 
 const getTransitionName = computed(() => {
   return unref(getIsPageAnimate) ? unref(getPageAnimateType) : undefined

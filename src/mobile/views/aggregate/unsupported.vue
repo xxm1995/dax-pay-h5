@@ -9,6 +9,7 @@ import alipaySvg from '@/shared/assets/icons/channel/alipay.svg'
 import douyinSvg from '@/shared/assets/icons/channel/douyin.svg'
 import unionPaySvg from '@/shared/assets/icons/channel/union_pay.svg'
 import wechatSvg from '@/shared/assets/icons/channel/wechat.svg'
+import { closeWebview } from '@/shared/pay/close-webview'
 
 defineOptions({ name: 'AggregateUnsupportedPage' })
 
@@ -58,6 +59,16 @@ const walletIcons = [
       <p v-if="orderNo" class="agg-unsup__order">
         {{ t('aggregate.orderNo') }} {{ orderNo }}
       </p>
+      <!-- 关闭页面：实心收银蓝 -->
+      <van-button
+        class="agg-unsup__close"
+        round
+        block
+        type="primary"
+        @click="closeWebview"
+      >
+        {{ t('aggregate.closePage') }}
+      </van-button>
     </div>
   </div>
 </template>
@@ -66,23 +77,23 @@ const walletIcons = [
 .agg-unsup {
   min-height: 100%;
   padding-bottom: 40px;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
   box-sizing: border-box;
 }
 
 /* 与 EnvPage brand 一致 */
 .agg-unsup__brand {
   height: 120px;
-  background: linear-gradient(135deg, #5d9dfe, #4787f7);
+  background: linear-gradient(135deg, var(--h5-brand-cashier), var(--h5-brand-cashier-deep));
 }
 
 /* 上浮内容区：全宽贴边 */
 .agg-unsup__panel {
   margin: -48px 16px 0;
   padding: 28px 20px 24px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+  box-shadow: var(--h5-shadow-card);
   text-align: center;
   box-sizing: border-box;
 }
@@ -107,14 +118,14 @@ const walletIcons = [
   margin: 0 0 8px;
   font-size: 17px;
   font-weight: 600;
-  color: #303133;
+  color: var(--h5-text-primary);
   line-height: 1.4;
 }
 
 .agg-unsup__desc {
   margin: 0;
   font-size: 13px;
-  color: #909399;
+  color: var(--h5-text-secondary);
   line-height: 1.65;
   padding: 0 4px;
 }
@@ -122,8 +133,16 @@ const walletIcons = [
 .agg-unsup__order {
   margin: 16px 0 0;
   font-size: 12px;
-  color: #c0c4cc;
+  color: var(--h5-text-placeholder);
   word-break: break-all;
   line-height: 1.5;
+}
+
+.agg-unsup__close {
+  margin-top: 20px;
+  --van-button-primary-background: var(--h5-brand-cashier);
+  --van-button-primary-border-color: var(--h5-brand-cashier);
+  color: #fff;
+  font-weight: 600;
 }
 </style>

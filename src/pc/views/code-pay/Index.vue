@@ -64,14 +64,14 @@ const walletIcons = [
   justify-content: center;
   padding: 40px 24px;
   box-sizing: border-box;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
 }
 
 .pc-code-pay__card {
   width: 100%;
   max-width: 480px;
   padding: 40px 36px 32px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
   box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   text-align: center;
@@ -98,23 +98,23 @@ const walletIcons = [
   margin: 0 0 10px;
   font-size: 20px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--h5-text-primary);
   line-height: 1.4;
 }
 
 .pc-code-pay__desc {
   margin: 0;
   font-size: 14px;
-  color: #86909c;
+  color: var(--h5-text-secondary);
   line-height: 1.7;
 }
 
 .pc-code-pay__code {
   margin: 20px 0 0;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--h5-border);
   font-size: 12px;
-  color: #c0c4cc;
+  color: var(--h5-text-placeholder);
   word-break: break-all;
   line-height: 1.5;
 }

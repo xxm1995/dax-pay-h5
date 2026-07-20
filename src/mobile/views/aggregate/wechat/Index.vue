@@ -104,7 +104,7 @@ onMounted(() => {
 
     <!-- 加载/授权中 -->
     <div v-if="loading || authorizing" class="agg__card agg__card--loading">
-      <van-loading color="#07c160" size="24px" />
+      <van-loading color="var(--agg-brand)" size="24px" />
       <p v-if="authorizing" class="agg__tip">
         {{ t('aggregate.authorizing') }}
       </p>
@@ -183,19 +183,26 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* 微信主题色：覆盖 vant CSS 变量 */
+/* 微信主题色：浅色原色 / 深色压亮 */
 .agg--wechat {
-  --van-button-primary-background: #07c160;
-  --van-button-primary-border-color: #07c160;
-  --van-loading-text-color: #07c160;
-  --van-nav-bar-icon-color: #07c160;
-  --van-nav-bar-text-color: #07c160;
+  --agg-brand: #07c160;
+  --agg-brand-deep: #059e4f;
+  --van-button-primary-background: var(--agg-brand);
+  --van-button-primary-border-color: var(--agg-brand);
+  --van-loading-text-color: var(--agg-brand);
+  --van-nav-bar-icon-color: var(--agg-brand);
+  --van-nav-bar-text-color: var(--agg-brand);
+}
+/* 深色模式：顶栏与主按钮加深，避免刺眼 */
+html.dark .agg--wechat {
+  --agg-brand: #0a9b52;
+  --agg-brand-deep: #067a3f;
 }
 
 .agg {
   min-height: 100%;
   padding-bottom: 40px;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
 }
 
 /* 顶部品牌色装饰区（三圆点缀，背景叠加） */
@@ -205,7 +212,7 @@ onMounted(() => {
     radial-gradient(circle 60px at calc(100% - 15px) 8px, rgb(255 255 255 / 42%), transparent 100%),
     /* 圆2：左上中圆（柔和光晕） */ radial-gradient(circle 38px at 22px 48px, rgb(255 255 255 / 30%), transparent 100%),
     /* 圆3：中上小圆（点缀） */ radial-gradient(circle 28px at 58% 12px, rgb(255 255 255 / 24%), transparent 100%),
-    /* 底层品牌色渐变 */ linear-gradient(135deg, #07c160, #059e4f);
+    /* 底层品牌色渐变 */ linear-gradient(135deg, var(--agg-brand), var(--agg-brand-deep));
 }
 
 .agg__brand {
@@ -218,9 +225,9 @@ onMounted(() => {
 .agg__card {
   margin: -32px 16px 16px;
   padding: 24px 20px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+  box-shadow: var(--h5-shadow-card);
   text-align: center;
 }
 
@@ -237,15 +244,15 @@ onMounted(() => {
 
 .agg__title {
   font-size: 16px;
-  color: #303133;
+  color: var(--h5-text-primary);
   margin-bottom: 12px;
 }
 
-/* 微信端金额用深色，呼应微信支付视觉（商业版同样如此） */
+/* 微信端金额用主文案色，呼应微信支付视觉 */
 .agg__amount {
   font-size: 36px;
   font-weight: 600;
-  color: #333;
+  color: var(--h5-text-primary);
   line-height: 1.2;
 }
 
@@ -257,15 +264,15 @@ onMounted(() => {
 .agg__desc {
   margin-top: 8px;
   font-size: 13px;
-  color: #909399;
+  color: var(--h5-text-secondary);
 }
 
 .agg__meta {
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--h5-border);
   font-size: 12px;
-  color: #909399;
+  color: var(--h5-text-secondary);
   text-align: left;
 }
 
@@ -276,14 +283,14 @@ onMounted(() => {
 }
 
 .agg__countdown {
-  color: #07c160;
+  color: var(--agg-brand);
   font-variant-numeric: tabular-nums;
 }
 
 .agg__tip,
 .agg__pay-tip {
   font-size: 14px;
-  color: #606266;
+  color: var(--h5-text-secondary);
   margin: 8px 0;
 }
 

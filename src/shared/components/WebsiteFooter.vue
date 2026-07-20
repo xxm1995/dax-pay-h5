@@ -114,7 +114,7 @@ const hasContact = computed(() => !!(phone.value || email.value || wechat.value)
   align-items: center;
   font-size: 12px;
   line-height: 1.6;
-  color: rgb(0 0 0 / 45%);
+  color: var(--h5-text-secondary);
 }
 
 .website-footer__contact {

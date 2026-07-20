@@ -3,10 +3,11 @@
  * 码牌收款共用 UI
  *
  * 视觉对齐聚合各环境页（上浮卡 + 灰阶 token）与收银结果态；
- * 通道品牌色由端页注入（微信绿 / 支付宝蓝）。
+ * 通道品牌色由端页注入（微信绿 / 支付宝蓝）；深色模式优先用 night 色压亮。
  */
-import { computed, ref } from 'vue'
+import { computed, ref, unref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useDesignSetting } from '@/shared/hooks/setting/useDesignSetting'
 
 defineOptions({ name: 'CodePayShell' })
 
@@ -27,10 +28,14 @@ const props = withDefaults(defineProps<{
   paid?: boolean
   /** 支付成功后的订单号(可选展示) */
   orderNo?: string
-  /** 品牌色 */
+  /** 品牌色（浅色） */
   brandColor?: string
-  /** 品牌加深色 */
+  /** 品牌加深色（浅色） */
   brandDark?: string
+  /** 品牌色（深色模式，压亮） */
+  brandColorNight?: string
+  /** 品牌加深色（深色模式） */
+  brandDarkNight?: string
 }>(), {
   merchantName: '',
   mchShortName: '',
@@ -41,6 +46,8 @@ const props = withDefaults(defineProps<{
   orderNo: '',
   brandColor: '#5d9dfe',
   brandDark: '#4a87e0',
+  brandColorNight: '',
+  brandDarkNight: '',
 })
 
 const emit = defineEmits<{
@@ -57,11 +64,59 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { getDarkMode } = useDesignSetting()
 const showRemark = ref(false)
 const remarkDraft = ref('')
 
 /** 是否固定金额布局 */
 const isFixed = computed(() => props.amountType === 'fixed')
+
+/** 近黑色品牌（抖音）：深色下主按钮需浅底深字 */
+function isNearBlackBrand(hex?: string) {
+  if (!hex) {
+    return false
+  }
+  const h = hex.replace('#', '')
+  if (h.length !== 6) {
+    return false
+  }
+  const r = Number.parseInt(h.slice(0, 2), 16)
+  const g = Number.parseInt(h.slice(2, 4), 16)
+  const b = Number.parseInt(h.slice(4, 6), 16)
+  return (r + g + b) / 3 < 60
+}
+
+/** 当前生效品牌色（深色优先 night，用于顶栏） */
+const effectiveBrand = computed(() => {
+  if (unref(getDarkMode) === 'dark' && props.brandColorNight) {
+    return props.brandColorNight
+  }
+  return props.brandColor
+})
+
+/** 当前生效品牌加深色（顶栏渐变） */
+const effectiveBrandDark = computed(() => {
+  if (unref(getDarkMode) === 'dark' && props.brandDarkNight) {
+    return props.brandDarkNight
+  }
+  return props.brandDark
+})
+
+/** 操作按钮色：深色 + 近黑品牌时反色为浅底 */
+const effectiveAction = computed(() => {
+  if (unref(getDarkMode) === 'dark' && isNearBlackBrand(props.brandColor)) {
+    return '#f2f2f2'
+  }
+  return effectiveBrand.value
+})
+
+/** 操作按钮文字色 */
+const effectiveActionText = computed(() => {
+  if (unref(getDarkMode) === 'dark' && isNearBlackBrand(props.brandColor)) {
+    return '#161823'
+  }
+  return '#ffffff'
+})
 
 /** 副标题：向{商户简称}付款 */
 const payToText = computed(() => {
@@ -107,7 +162,12 @@ function onPay() {
       'code-pay-shell--fixed': isFixed,
       'code-pay-shell--paid': paid,
     }"
-    :style="{ '--brand': brandColor, '--brand-dark': brandDark }"
+    :style="{
+      '--brand': effectiveBrand,
+      '--brand-dark': effectiveBrandDark,
+      '--brand-action': effectiveAction,
+      '--brand-action-text': effectiveActionText,
+    }"
   >
     <!-- 支付成功结果态：对标收银 cashier__result -->
     <div v-if="paid" class="code-pay-shell__result">
@@ -139,7 +199,7 @@ function onPay() {
         round
         block
         type="primary"
-        color="var(--brand)"
+        color="var(--brand-action)"
         @click="emit('close')"
       >
         {{ t('codePay.closePage') }}
@@ -201,7 +261,7 @@ function onPay() {
         show-cancel-button
         :confirm-button-text="t('common.save')"
         :cancel-button-text="t('common.cancel')"
-        :confirm-button-color="brandColor"
+        :confirm-button-color="effectiveAction"
         cancel-button-color="#999"
         @confirm="saveRemark"
       >
@@ -236,7 +296,7 @@ function onPay() {
           round
           block
           type="primary"
-          :color="brandColor"
+          :color="effectiveAction"
           :loading="paying"
           :disabled="paying"
           :loading-text="t('codePay.paying')"
@@ -249,7 +309,7 @@ function onPay() {
 
     <!-- 支付中遮罩（随机金额键盘场景；固定金额用按钮 loading） -->
     <div v-if="paying && !isFixed" class="code-pay-shell__mask">
-      <van-loading :color="brandColor" size="28px" />
+      <van-loading :color="effectiveBrand" size="28px" />
       <!-- 处理中 -->
       <p>{{ t('codePay.processing') }}</p>
     </div>
@@ -257,21 +317,15 @@ function onPay() {
 </template>
 
 <style scoped lang="less">
-@bg: #f5f7fa;
-@text-main: #303133;
-@text-sub: #909399;
-@text-placeholder: #c0c4cc;
-@card-shadow: 0 4px 16px rgb(0 0 0 / 6%);
-
 :deep(.van-key--blue) {
-  background: var(--brand, #5d9dfe);
-  color: #fff;
+  background: var(--brand-action, var(--brand, #5d9dfe));
+  color: var(--brand-action-text, #fff);
 }
 
 .code-pay-shell {
   min-height: 100%;
   min-height: 100dvh;
-  background: @bg;
+  background: var(--h5-bg-page);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -298,9 +352,9 @@ function onPay() {
     z-index: 1;
     margin: -48px 16px 0;
     padding: 24px 20px;
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 12px;
-    box-shadow: @card-shadow;
+    box-shadow: var(--h5-shadow-card);
   }
 
   &__merchant {
@@ -335,7 +389,7 @@ function onPay() {
   &__merchant-name {
     font-size: 17px;
     font-weight: 600;
-    color: @text-main;
+    color: var(--h5-text-primary);
     line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -346,19 +400,19 @@ function onPay() {
   &__merchant-sub {
     margin-top: 2px;
     font-size: 12px;
-    color: @text-sub;
+    color: var(--h5-text-secondary);
   }
 
   &__amount-label {
     font-size: 14px;
-    color: @text-main;
+    color: var(--h5-text-primary);
     margin-bottom: 10px;
   }
 
   &__amount {
     display: flex;
     align-items: baseline;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--h5-border);
     padding-bottom: 10px;
 
     &--fixed {
@@ -373,7 +427,7 @@ function onPay() {
     font-size: 28px;
     font-weight: 500;
     margin-right: 6px;
-    color: @text-main;
+    color: var(--h5-text-primary);
   }
 
   &__amount--fixed &__currency {
@@ -383,14 +437,14 @@ function onPay() {
   &__amount-value {
     font-size: 40px;
     font-weight: 600;
-    color: @text-main;
+    color: var(--h5-text-primary);
     flex: 1;
     line-height: 1.2;
     transition: color 0.2s ease;
     word-break: break-all;
 
     &--zero {
-      color: @text-placeholder;
+      color: var(--h5-text-placeholder);
     }
   }
 
@@ -400,18 +454,18 @@ function onPay() {
   }
 
   &__remark {
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 12px;
     padding: 16px;
     margin: 12px 16px 0;
     display: flex;
     align-items: center;
-    box-shadow: @card-shadow;
+    box-shadow: var(--h5-shadow-card);
   }
 
   &__remark-label {
     font-size: 15px;
-    color: @text-main;
+    color: var(--h5-text-primary);
     width: 48px;
     flex-shrink: 0;
   }
@@ -421,7 +475,7 @@ function onPay() {
     font-size: 15px;
     margin: 0 12px;
     text-align: right;
-    color: @text-main;
+    color: var(--h5-text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -429,7 +483,7 @@ function onPay() {
   }
 
   &__remark-placeholder {
-    color: @text-placeholder;
+    color: var(--h5-text-placeholder);
   }
 
   &__remark-arrow {
@@ -447,7 +501,7 @@ function onPay() {
     right: 0;
     z-index: 20;
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-    background: #fff;
+    background: var(--h5-bg-card);
     box-shadow: 0 -2px 12px rgb(0 0 0 / 5%);
   }
 
@@ -461,8 +515,8 @@ function onPay() {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    background: rgb(255 255 255 / 80%);
-    color: @text-sub;
+    background: color-mix(in srgb, var(--h5-bg-page) 80%, transparent);
+    color: var(--h5-text-secondary);
     font-size: 14px;
 
     p {
@@ -498,14 +552,14 @@ function onPay() {
   &__result-title {
     font-size: 22px;
     font-weight: 600;
-    color: @text-main;
+    color: var(--h5-text-primary);
     margin-bottom: 12px;
   }
 
   &__result-amount {
     font-size: 36px;
     font-weight: 600;
-    color: @text-main;
+    color: var(--h5-text-primary);
     line-height: 1.2;
     margin-bottom: 24px;
   }
@@ -521,9 +575,9 @@ function onPay() {
     max-width: 320px;
     margin-bottom: 28px;
     padding: 16px 20px;
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 12px;
-    box-shadow: @card-shadow;
+    box-shadow: var(--h5-shadow-card);
     text-align: left;
   }
 
@@ -541,13 +595,13 @@ function onPay() {
 
     span:first-child {
       flex-shrink: 0;
-      color: @text-sub;
+      color: var(--h5-text-secondary);
     }
 
     span:last-child {
       flex: 1;
       min-width: 0;
-      color: @text-main;
+      color: var(--h5-text-primary);
       text-align: right;
       overflow: hidden;
       text-overflow: ellipsis;

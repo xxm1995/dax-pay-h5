@@ -17,6 +17,7 @@ import {
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
+import { closeWebview } from '@/shared/pay/close-webview'
 import { detectClientEnv, isValidH5ClientEnv } from '@/shared/utils/client-env'
 import { fenToYuan } from '@/shared/utils/pay-amount'
 import { invokeJsapiByEnv } from '@/shared/utils/pay-jsapi'
@@ -137,26 +138,6 @@ function redirectIfNeeded() {
       window.location.href = order.value.returnUrl!
     }, 1200)
   }
-}
-
-/**
- * 关闭页面（微信/支付宝 App 内有效，浏览器降级 window.close）
- */
-function closePage() {
-  try {
-    // 微信内置浏览器
-    (window as any).WeixinJSBridge?.call?.('closeWindow')
-  }
-  catch {}
-  try {
-    // 支付宝内置浏览器
-    (window as any).AlipayJSBridge?.call?.('closeWebview')
-  }
-  catch {}
-  try {
-    window.close()
-  }
-  catch {}
 }
 
 /**
@@ -426,7 +407,7 @@ onUnmounted(() => {
           <span class="cashier__result-amount">￥{{ amountYuan }}</span>
         </div>
       </div>
-      <button class="cashier__result-btn" @click="closePage">
+      <button class="cashier__result-btn" @click="closeWebview">
         {{ t('cashier.closePage') }}
       </button>
     </div>
@@ -524,14 +505,9 @@ onUnmounted(() => {
 </template>
 
 <style scoped lang="less">
-@primary: #5d9dfe;
-@primary-dark: #4a87e0;
+@primary: var(--h5-brand-cashier);
+@primary-dark: var(--h5-brand-cashier-deep);
 @danger: #ff4d4f;
-@text-main: #333;
-@text-sub: #999;
-@bg: #f5f6fa;
-@card: #fff;
-@border: #eee;
 
 .cashier {
   // 三区布局: header 固定 / 中间滚动 / footer 贴底，矮屏不压按钮
@@ -539,7 +515,7 @@ onUnmounted(() => {
   height: 100dvh;
   max-height: 100vh;
   max-height: 100dvh;
-  background: @bg;
+  background: var(--h5-bg-page);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -554,7 +530,7 @@ onUnmounted(() => {
   }
 
   &__empty {
-    color: @text-sub;
+    color: var(--h5-text-secondary);
     font-size: 14px;
     text-align: center;
     padding: 24px 0;
@@ -588,13 +564,13 @@ onUnmounted(() => {
   &__result-title {
     font-size: 22px;
     font-weight: 600;
-    color: @text-main;
+    color: var(--h5-text-primary);
     margin-bottom: 8px;
   }
 
   &__result-subtitle {
     font-size: 14px;
-    color: @text-sub;
+    color: var(--h5-text-secondary);
     line-height: 1.6;
     max-width: 280px;
   }
@@ -604,9 +580,9 @@ onUnmounted(() => {
     max-width: 320px;
     margin-top: 24px;
     padding: 16px 20px;
-    background: @card;
+    background: var(--h5-bg-card);
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgb(0 0 0 / 5%);
+    box-shadow: var(--h5-shadow-card);
   }
 
   &__result-order-row {
@@ -623,13 +599,13 @@ onUnmounted(() => {
 
     span:first-child {
       flex-shrink: 0;
-      color: @text-sub;
+      color: var(--h5-text-secondary);
     }
 
     span:last-child {
       flex: 1;
       min-width: 0;
-      color: @text-main;
+      color: var(--h5-text-primary);
       text-align: right;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -666,12 +642,12 @@ onUnmounted(() => {
 
   &__header {
     flex-shrink: 0;
-    background: linear-gradient(180deg, #f0f6ff 0%, #ffffff 100%);
+    background: linear-gradient(180deg, var(--h5-bg-brand-soft) 0%, var(--h5-bg-card) 100%);
     padding: 24px 20px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 2px 10px rgb(0 0 0 / 5%);
+    box-shadow: var(--h5-shadow-card);
   }
 
   // 应付金额用红色，主按钮保持品牌蓝，信息层级更清晰
@@ -700,29 +676,29 @@ onUnmounted(() => {
     align-items: center;
     gap: 8px;
     margin-bottom: 20px;
-    background: #fff7e6;
+    background: var(--h5-bg-warning);
     padding: 6px 16px;
     border-radius: 100px;
 
     &--expired {
-      background: #f5f5f5;
+      background: var(--h5-bg-muted);
     }
   }
 
   &__countdown-label {
     font-size: 12px;
-    color: #fa8c16;
+    color: var(--h5-text-warning);
   }
 
   &__countdown-time {
-    color: #fa8c16;
+    color: var(--h5-text-warning);
     font-weight: 700;
     font-size: 14px;
   }
 
   &__detail {
     width: 100%;
-    border-top: 1px solid @border;
+    border-top: 1px solid var(--h5-border);
     padding-top: 12px;
   }
 
@@ -737,14 +713,14 @@ onUnmounted(() => {
     // 左侧标签不收缩
     span:first-child {
       flex-shrink: 0;
-      color: @text-sub;
+      color: var(--h5-text-secondary);
     }
 
     // 右侧值单行省略，避免长订单号折行撑高头部
     span:last-child {
       flex: 1;
       min-width: 0;
-      color: @text-main;
+      color: var(--h5-text-primary);
       text-align: right;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -764,7 +740,7 @@ onUnmounted(() => {
   &__section-title {
     font-size: 16px;
     font-weight: 600;
-    color: @text-main;
+    color: var(--h5-text-primary);
     margin-bottom: 16px;
   }
 
@@ -775,7 +751,7 @@ onUnmounted(() => {
   }
 
   &__item {
-    background: @card;
+    background: var(--h5-bg-card);
     border-radius: 12px;
     padding: 16px;
     display: flex;
@@ -786,7 +762,7 @@ onUnmounted(() => {
 
     &--active {
       border-color: @primary;
-      background: #eaf2fe;
+      background: var(--h5-bg-brand-soft);
     }
   }
 
@@ -802,12 +778,13 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--h5-text-primary);
   }
 
   &__recommend {
     font-size: 12px;
-    color: #fa8c16;
-    background: #fff7e6;
+    color: var(--h5-text-warning);
+    background: var(--h5-bg-warning);
     border: 1px solid #ffd591;
     padding: 0 4px;
     border-radius: 4px;
@@ -816,7 +793,7 @@ onUnmounted(() => {
   &__radio {
     width: 20px;
     height: 20px;
-    border: 2px solid #d9d9d9;
+    border: 2px solid var(--h5-text-placeholder);
     border-radius: 50%;
     transition: all 0.2s;
     flex-shrink: 0;
@@ -824,7 +801,7 @@ onUnmounted(() => {
     &--checked {
       border-color: @primary;
       background: @primary;
-      box-shadow: inset 0 0 0 3px #fff;
+      box-shadow: inset 0 0 0 3px var(--h5-bg-card);
     }
   }
 
@@ -834,14 +811,14 @@ onUnmounted(() => {
     align-items: center;
     gap: 16px;
     padding: 16px;
-    background: @card;
+    background: var(--h5-bg-card);
     border-radius: 12px;
   }
 
   &__qrcode-tip {
     margin: 0;
     font-size: 13px;
-    color: @text-sub;
+    color: var(--h5-text-secondary);
     text-align: center;
   }
 
@@ -850,7 +827,7 @@ onUnmounted(() => {
     flex-shrink: 0;
     z-index: 10;
     padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px));
-    background: @card;
+    background: var(--h5-bg-card);
     box-shadow: 0 -2px 10px rgb(0 0 0 / 5%);
   }
 

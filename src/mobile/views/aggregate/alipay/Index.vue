@@ -104,7 +104,7 @@ onMounted(() => {
 
     <!-- 加载/授权中/支付中 -->
     <div v-if="loading || authorizing || paying" class="agg__card agg__card--loading">
-      <van-loading color="#1677ff" size="24px" />
+      <van-loading color="var(--agg-brand)" size="24px" />
       <p v-if="authorizing" class="agg__tip">
         {{ t('aggregate.authorizing') }}
       </p>
@@ -187,29 +187,34 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* 支付宝主题色：覆盖 vant CSS 变量，作用于本页面所有 vant 组件 */
+/* 支付宝主题色：浅色原色 / 深色压亮 */
 .agg--alipay {
-  --van-button-primary-background: #1677ff;
-  --van-button-primary-border-color: #1677ff;
-  --van-loading-text-color: #1677ff;
-  --van-nav-bar-icon-color: #1677ff;
-  --van-nav-bar-text-color: #1677ff;
+  --agg-brand: #1677ff;
+  --agg-brand-deep: #0958d9;
+  --van-button-primary-background: var(--agg-brand);
+  --van-button-primary-border-color: var(--agg-brand);
+  --van-loading-text-color: var(--agg-brand);
+  --van-nav-bar-icon-color: var(--agg-brand);
+  --van-nav-bar-text-color: var(--agg-brand);
+}
+
+html.dark .agg--alipay {
+  --agg-brand: #1256d4;
+  --agg-brand-deep: #0a47b0;
 }
 
 .agg {
   min-height: 100%;
   padding-bottom: 40px;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
 }
 
-/* 顶部品牌色装饰区（三圆点缀，背景叠加） */
 .agg--alipay .agg__brand {
   background:
-    /* 圆1：右上大圆（柔和光晕） */
     radial-gradient(circle 60px at calc(100% - 15px) 8px, rgb(255 255 255 / 42%), transparent 100%),
-    /* 圆2：左上中圆（柔和光晕） */ radial-gradient(circle 38px at 22px 48px, rgb(255 255 255 / 30%), transparent 100%),
-    /* 圆3：中上小圆（点缀） */ radial-gradient(circle 28px at 58% 12px, rgb(255 255 255 / 24%), transparent 100%),
-    /* 底层品牌色渐变 */ linear-gradient(135deg, #1677ff, #0958d9);
+    radial-gradient(circle 38px at 22px 48px, rgb(255 255 255 / 30%), transparent 100%),
+    radial-gradient(circle 28px at 58% 12px, rgb(255 255 255 / 24%), transparent 100%),
+    linear-gradient(135deg, var(--agg-brand), var(--agg-brand-deep));
 }
 
 .agg__brand {
@@ -222,9 +227,9 @@ onMounted(() => {
 .agg__card {
   margin: -32px 16px 16px;
   padding: 24px 20px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+  box-shadow: var(--h5-shadow-card);
   text-align: center;
 }
 
@@ -241,14 +246,14 @@ onMounted(() => {
 
 .agg__title {
   font-size: 16px;
-  color: #303133;
+  color: var(--h5-text-primary);
   margin-bottom: 12px;
 }
 
 .agg__amount {
   font-size: 36px;
   font-weight: 600;
-  color: #1677ff;
+  color: var(--agg-brand);
   line-height: 1.2;
 }
 
@@ -260,15 +265,15 @@ onMounted(() => {
 .agg__desc {
   margin-top: 8px;
   font-size: 13px;
-  color: #909399;
+  color: var(--h5-text-secondary);
 }
 
 .agg__meta {
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--h5-border);
   font-size: 12px;
-  color: #909399;
+  color: var(--h5-text-secondary);
   text-align: left;
 }
 
@@ -279,14 +284,14 @@ onMounted(() => {
 }
 
 .agg__countdown {
-  color: #1677ff;
+  color: var(--agg-brand);
   font-variant-numeric: tabular-nums;
 }
 
 .agg__tip,
 .agg__pay-tip {
   font-size: 14px;
-  color: #606266;
+  color: var(--h5-text-secondary);
   margin: 8px 0;
 }
 

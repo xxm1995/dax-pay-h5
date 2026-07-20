@@ -173,7 +173,7 @@ function handleBack() {
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: var(--h5-bg-page);
 
   .loading-box,
   .result-box {
@@ -183,7 +183,7 @@ function handleBack() {
     width: 100%;
     max-width: 340px;
     padding: 40px 24px;
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 16px;
     box-shadow: 0 4px 12px rgb(0 0 0 / 5%);
   }
@@ -203,7 +203,7 @@ function handleBack() {
     .loading-text {
       margin-top: 12px;
       font-size: 14px;
-      color: #666;
+      color: var(--h5-text-secondary);
     }
 
     .footer-tip {
@@ -211,7 +211,7 @@ function handleBack() {
       align-items: center;
       margin-top: 32px;
       font-size: 12px;
-      color: #999;
+      color: var(--h5-text-secondary);
 
       .tip-icon {
         flex-shrink: 0;
@@ -230,13 +230,13 @@ function handleBack() {
       margin: 0 0 24px;
       font-size: 20px;
       font-weight: 600;
-      color: #333;
+      color: var(--h5-text-primary);
     }
 
     .fail-msg {
       margin: 0 0 24px;
       font-size: 14px;
-      color: #666;
+      color: var(--h5-text-secondary);
       text-align: center;
       word-break: break-all;
     }
@@ -245,7 +245,7 @@ function handleBack() {
       width: 100%;
       padding: 16px;
       margin-bottom: 32px;
-      background: #f8f9fa;
+      background: var(--h5-bg-muted);
       border-radius: 12px;
 
       .info-item {
@@ -253,7 +253,7 @@ function handleBack() {
           display: block;
           margin-bottom: 8px;
           font-size: 13px;
-          color: #999;
+          color: var(--h5-text-secondary);
         }
 
         .value-box {
@@ -262,19 +262,19 @@ function handleBack() {
           justify-content: space-between;
           padding: 10px 12px;
           cursor: pointer;
-          background: #fff;
+          background: var(--h5-bg-card);
           border: 1px solid #eee;
           border-radius: 8px;
 
           &:active {
-            background: #f0f0f0;
+            background: var(--h5-bg-muted);
           }
 
           .value {
             margin-right: 8px;
             font-family: monospace;
             font-size: 14px;
-            color: #333;
+            color: var(--h5-text-primary);
             word-break: break-all;
           }
 
@@ -290,8 +290,8 @@ function handleBack() {
 
       .close-btn {
         margin-top: 12px;
-        color: #666;
-        border-color: #eee;
+        color: var(--h5-text-secondary);
+        border-color: var(--h5-border);
       }
     }
   }

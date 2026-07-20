@@ -1,0 +1,39 @@
+// H5 语义色 Token（跟随系统 prefers-color-scheme）
+// 默认浅色写在 :root，避免 initSystemListener 前 var() 无效；html.dark 覆盖为深色
+
+:root,
+html.light {
+  --h5-bg-page: #f5f7fa;
+  --h5-bg-card: #ffffff;
+  --h5-bg-muted: #f8fafc;
+  --h5-text-primary: #303133;
+  --h5-text-secondary: #909399;
+  --h5-text-placeholder: #c0c4cc;
+  --h5-border: #f0f0f0;
+  --h5-shadow-card: 0 4px 16px rgb(0 0 0 / 6%);
+  // 警告提示条底（浅橙）
+  --h5-bg-warning: #fff7e6;
+  --h5-text-warning: #fa8c16;
+  // 品牌浅底（用于选中态等）
+  --h5-bg-brand-soft: #eaf2fe;
+  // 收银默认蓝（浅色）
+  --h5-brand-cashier: #5d9dfe;
+  --h5-brand-cashier-deep: #4a87e0;
+}
+
+html.dark {
+  --h5-bg-page: #1c1c1e;
+  --h5-bg-card: #2c2c2e;
+  --h5-bg-muted: #3a3a3c;
+  --h5-text-primary: rgba(255, 255, 255, 0.9);
+  --h5-text-secondary: rgba(255, 255, 255, 0.55);
+  --h5-text-placeholder: rgba(255, 255, 255, 0.35);
+  --h5-border: rgba(255, 255, 255, 0.08);
+  --h5-shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --h5-bg-warning: rgba(250, 140, 22, 0.15);
+  --h5-text-warning: #fa8c16;
+  --h5-bg-brand-soft: rgba(93, 157, 254, 0.18);
+  // 收银蓝压亮
+  --h5-brand-cashier: #4a87e0;
+  --h5-brand-cashier-deep: #3a6fc4;
+}

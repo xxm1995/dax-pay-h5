@@ -33,20 +33,20 @@ function goHome() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f7f8fa;
+  background: var(--h5-bg-page);
 }
 
 .pc-device-only__title {
   margin: 0 0 8px;
   font-size: 20px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--h5-text-primary);
 }
 
 .pc-device-only__desc {
   margin: 0 0 32px;
   font-size: 14px;
-  color: #4e5969;
+  color: var(--h5-text-secondary);
 }
 
 .pc-device-only__btn {

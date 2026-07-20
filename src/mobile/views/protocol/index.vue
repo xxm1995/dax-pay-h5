@@ -91,7 +91,7 @@ onMounted(load)
 <style scoped lang="less">
 .protocol-page {
   min-height: 100vh;
-  background: #fff;
+  background: var(--h5-bg-card);
   // 留出固定导航栏高度
   padding-top: 46px;
   box-sizing: border-box;
@@ -102,7 +102,7 @@ onMounted(load)
   // 长文阅读行高优化
   font-size: 15px;
   line-height: 1.7;
-  color: #333;
+  color: var(--h5-text-primary);
   word-break: break-word;
 }
 
@@ -116,7 +116,7 @@ onMounted(load)
   margin: 0 0 8px;
   font-size: 22px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--h5-text-primary);
   text-align: center;
 }
 
@@ -127,9 +127,9 @@ onMounted(load)
   gap: 12px;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--h5-border);
   font-size: 12px;
-  color: #999;
+  color: var(--h5-text-secondary);
 }
 
 // v-html 内容样式穿透
@@ -142,7 +142,7 @@ onMounted(load)
   h6 {
     margin: 20px 0 10px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--h5-text-primary);
   }
 
   h1 {
@@ -173,8 +173,8 @@ onMounted(load)
     margin: 12px 0;
     padding: 8px 12px;
     border-left: 3px solid #5d9dfe;
-    background: #f7f9fc;
-    color: #666;
+    background: var(--h5-bg-muted);
+    color: var(--h5-text-secondary);
   }
 
   table {
@@ -184,26 +184,26 @@ onMounted(load)
 
     th,
     td {
-      border: 1px solid #e8e8e8;
+      border: 1px solid var(--h5-border);
       padding: 8px;
     }
 
     th {
-      background: #fafafa;
+      background: var(--h5-bg-muted);
     }
   }
 
   pre {
     margin: 12px 0;
     padding: 12px;
-    background: #f6f8fa;
+    background: var(--h5-bg-muted);
     border-radius: 6px;
     overflow-x: auto;
     font-size: 13px;
   }
 
   code {
-    background: #f6f8fa;
+    background: var(--h5-bg-muted);
     padding: 2px 4px;
     border-radius: 3px;
     font-size: 13px;

@@ -37,5 +37,6 @@
   "closedTip": "Pesanan ditutup, tidak dapat dibayar",
   "failedTip": "Pembayaran gagal. Silakan coba lagi",
   "paidTip": "Pembayaran selesai. Terima kasih",
-  "loadFailTip": "Periksa tautan pembayaran atau apakah pesanan ada"
+  "loadFailTip": "Periksa tautan pembayaran atau apakah pesanan ada",
+  "closePage": "Tutup"
 }

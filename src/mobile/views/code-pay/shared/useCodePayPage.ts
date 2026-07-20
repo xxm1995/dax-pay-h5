@@ -12,6 +12,7 @@ import {
   getCodeOrderStatus,
   getCodePayInfo,
 } from '@/shared/api/code-pay'
+import { closeWebview } from '@/shared/pay/close-webview'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
 import { isAmountOverMax, yuanToFen } from '@/shared/utils/pay-amount'
 import { clearPayOpenId, getPayOpenId } from '@/shared/utils/pay-openid'
@@ -298,29 +299,10 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
   }
 
   /**
-   * 关闭宿主 WebView / 窗口(收银 closePage 同范式)
+   * 关闭宿主 WebView / 窗口（统一 closeWebview）
    */
   function closePage() {
-    try {
-      // 微信内置浏览器
-      ;(window as any).WeixinJSBridge?.call?.('closeWindow')
-    }
-    catch {
-      // ignore
-    }
-    try {
-      // 支付宝内置浏览器
-      ;(window as any).AlipayJSBridge?.call?.('closeWebview')
-    }
-    catch {
-      // ignore
-    }
-    try {
-      window.close()
-    }
-    catch {
-      // ignore
-    }
+    closeWebview()
   }
 
   return {

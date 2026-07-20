@@ -70,7 +70,7 @@ const containerSize = computed(() => props.size + 12)
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  background: #f5f7fa;
+  background: var(--h5-bg-muted);
   flex-shrink: 0;
   overflow: hidden;
   box-sizing: border-box;

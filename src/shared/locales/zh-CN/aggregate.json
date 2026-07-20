@@ -37,5 +37,6 @@
   "closedTip": "订单已关闭，无法继续支付",
   "failedTip": "支付未成功，请重新发起",
   "paidTip": "支付已完成，感谢使用",
-  "loadFailTip": "请确认支付链接是否正确或订单是否存在"
+  "loadFailTip": "请确认支付链接是否正确或订单是否存在",
+  "closePage": "关闭页面"
 }

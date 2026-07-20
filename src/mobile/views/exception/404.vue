@@ -32,7 +32,7 @@ function goHome() {
 
   .text-center {
     h1 {
-      color: #666;
+      color: var(--h5-text-secondary);
       padding: 20px 0;
     }
   }

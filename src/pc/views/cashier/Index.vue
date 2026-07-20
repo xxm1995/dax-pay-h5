@@ -10,6 +10,7 @@ import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gate
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
+import { closeWebview } from '@/shared/pay/close-webview'
 import { fenToYuan } from '@/shared/utils/pay-amount'
 import {
   redirectToPayUrl,
@@ -218,23 +219,10 @@ async function pay() {
 }
 
 /**
- * 关闭页面（微信/支付宝 App 内有效，浏览器降级 window.close）
+ * 关闭页面（统一走 closeWebview）
  */
 function closePage() {
-  try {
-    // 微信内置浏览器
-    (window as any).WeixinJSBridge?.call?.('closeWindow')
-  }
-  catch {}
-  try {
-    // 支付宝内置浏览器
-    (window as any).AlipayJSBridge?.call?.('closeWebview')
-  }
-  catch {}
-  try {
-    window.close()
-  }
-  catch {}
+  closeWebview()
 }
 
 onMounted(() => {
@@ -426,7 +414,7 @@ onUnmounted(() => {
 .pc-cashier {
   width: 100%;
   min-height: 100vh;
-  background: #f0f4fb;
+  background: var(--h5-bg-page);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -437,7 +425,7 @@ onUnmounted(() => {
 .pc-cashier__box {
   width: 1100px;
   max-width: 100%;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 16px;
   box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
   overflow: hidden;
@@ -454,7 +442,7 @@ onUnmounted(() => {
   justify-content: center;
   gap: 16px;
   min-height: 320px;
-  color: #64748b;
+  color: var(--h5-text-secondary);
   font-size: 15px;
 }
 
@@ -462,13 +450,13 @@ onUnmounted(() => {
   width: 36px;
   height: 36px;
   border: 3px solid #e2e8f0;
-  border-top-color: #5d9dfe;
+  border-top-color: var(--h5-brand-cashier);
   border-radius: 50%;
   animation: pc-cashier-spin 0.8s linear infinite;
 }
 
 .pc-cashier__header {
-  background: linear-gradient(135deg, #eaf2fe 0%, #f5f9ff 100%);
+  background: linear-gradient(135deg, var(--h5-bg-brand-soft) 0%, var(--h5-bg-card) 100%);
   padding: 28px 40px 24px;
   border-bottom: 1px solid #edf2f7;
   position: relative;
@@ -490,7 +478,7 @@ onUnmounted(() => {
 
 .pc-cashier__countdown-label {
   font-size: 13px;
-  color: #64748b;
+  color: var(--h5-text-secondary);
 }
 
 .pc-cashier__countdown-time {
@@ -503,7 +491,7 @@ onUnmounted(() => {
 .pc-cashier__title {
   font-size: 17px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--h5-text-primary);
   padding-right: 180px;
   line-height: 1.4;
   /* 长标题单行省略，避免折行 */
@@ -519,7 +507,7 @@ onUnmounted(() => {
 
 .pc-cashier__price-label {
   font-size: 14px;
-  color: #64748b;
+  color: var(--h5-text-secondary);
 }
 
 .pc-cashier__price p {
@@ -538,7 +526,7 @@ onUnmounted(() => {
 
 .pc-cashier__order-no {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--h5-text-secondary);
   /* 长订单号单行省略 */
   overflow: hidden;
   text-overflow: ellipsis;
@@ -547,7 +535,7 @@ onUnmounted(() => {
 
 .pc-cashier__content {
   flex: 1;
-  background: #fff;
+  background: var(--h5-bg-card);
   padding: 28px 40px 20px;
   display: flex;
   flex-direction: column;
@@ -562,7 +550,7 @@ onUnmounted(() => {
 .pc-cashier__section-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--h5-text-primary);
   margin-bottom: 16px;
 }
 
@@ -611,13 +599,13 @@ onUnmounted(() => {
 .pc-cashier__result-title {
   font-size: 26px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--h5-text-primary);
   margin-bottom: 10px;
 }
 
 .pc-cashier__result-subtitle {
   font-size: 15px;
-  color: #64748b;
+  color: var(--h5-text-secondary);
   line-height: 1.6;
   max-width: 360px;
 }
@@ -627,7 +615,7 @@ onUnmounted(() => {
   max-width: 360px;
   margin-top: 28px;
   padding: 20px 24px;
-  background: #f8fafc;
+  background: var(--h5-bg-muted);
   border-radius: 12px;
 }
 
@@ -646,13 +634,13 @@ onUnmounted(() => {
 
 .pc-cashier__result-row span:first-child {
   flex-shrink: 0;
-  color: #94a3b8;
+  color: var(--h5-text-secondary);
 }
 
 .pc-cashier__result-row span:last-child {
   flex: 1;
   min-width: 0;
-  color: #1e293b;
+  color: var(--h5-text-primary);
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -660,7 +648,7 @@ onUnmounted(() => {
 }
 
 .pc-cashier__result-amount {
-  color: #5d9dfe !important;
+  color: var(--h5-brand-cashier) !important;
   font-weight: 600;
 }
 
@@ -671,7 +659,7 @@ onUnmounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(135deg, #5d9dfe 0%, #4a87e0 100%);
+  background: linear-gradient(135deg, var(--h5-brand-cashier) 0%, var(--h5-brand-cashier-deep) 100%);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -686,7 +674,7 @@ onUnmounted(() => {
 }
 
 .pc-cashier__empty {
-  color: #94a3b8;
+  color: var(--h5-text-secondary);
   text-align: center;
   padding: 32px 16px;
   font-size: 14px;
@@ -709,28 +697,28 @@ onUnmounted(() => {
   border-radius: 12px;
   height: 80px;
   cursor: pointer;
-  background: #f8fafc;
+  background: var(--h5-bg-muted);
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
 .pc-cashier__method:hover {
-  border-color: #5d9dfe;
-  background: #eaf2fe;
+  border-color: var(--h5-brand-cashier);
+  background: var(--h5-bg-brand-soft);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(93, 157, 254, 0.12);
 }
 
 .pc-cashier__method--active {
-  border-color: #5d9dfe;
-  background: #eaf2fe;
+  border-color: var(--h5-brand-cashier);
+  background: var(--h5-bg-brand-soft);
   box-shadow: 0 4px 12px rgba(93, 157, 254, 0.18);
 }
 
 .pc-cashier__method-name {
   font-size: 15px;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--h5-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -741,7 +729,7 @@ onUnmounted(() => {
   margin-left: auto;
   font-size: 12px;
   color: #f59e0b;
-  background: #fffbeb;
+  background: var(--h5-bg-warning);
   border: 1px solid #fef3c7;
   padding: 2px 8px;
   border-radius: 4px;
@@ -762,7 +750,7 @@ onUnmounted(() => {
   width: 200px;
   height: 200px;
   padding: 10px;
-  border: 1px dashed #5d9dfe;
+  border: 1px dashed var(--h5-brand-cashier);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -776,7 +764,7 @@ onUnmounted(() => {
   position: absolute;
   width: 16px;
   height: 16px;
-  border: 2px solid #5d9dfe;
+  border: 2px solid var(--h5-brand-cashier);
 }
 
 .pc-cashier__corner--tl {
@@ -814,13 +802,13 @@ onUnmounted(() => {
 .pc-cashier__qrcode-title {
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--h5-text-primary);
   margin: 0 0 8px;
 }
 
 .pc-cashier__qrcode-sub {
   font-size: 14px;
-  color: #64748b;
+  color: var(--h5-text-secondary);
   margin: 0;
 }
 
@@ -832,7 +820,7 @@ onUnmounted(() => {
   gap: 24px;
   padding: 16px 40px 28px;
   border-top: 1px solid #f1f5f9;
-  background: #fff;
+  background: var(--h5-bg-card);
 }
 
 .pc-cashier__footer-amount {
@@ -843,7 +831,7 @@ onUnmounted(() => {
 
 .pc-cashier__footer-label {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--h5-text-secondary);
 }
 
 .pc-cashier__footer-value {
@@ -866,7 +854,7 @@ onUnmounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(135deg, #5d9dfe 0%, #4a87e0 100%);
+  background: linear-gradient(135deg, var(--h5-brand-cashier) 0%, var(--h5-brand-cashier-deep) 100%);
   border: none;
   border-radius: 10px;
   cursor: pointer;

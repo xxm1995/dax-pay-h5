@@ -79,6 +79,8 @@ onMounted(() => {
       :order-no="orderNo"
       brand-color="#161823"
       brand-dark="#000000"
+      brand-color-night="#2a2a32"
+      brand-dark-night="#1a1a22"
       @update:description="setDescription"
       @input="onInput"
       @delete="onDelete"
@@ -92,7 +94,7 @@ onMounted(() => {
 .code-pay-page {
   min-height: 100%;
   min-height: 100dvh;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
   box-sizing: border-box;
 
   &__brand {
@@ -107,9 +109,9 @@ onMounted(() => {
   &__card {
     margin: -48px 16px 0;
     padding: 40px 20px;
-    background: #fff;
+    background: var(--h5-bg-card);
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+    box-shadow: var(--h5-shadow-card);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -120,7 +122,7 @@ onMounted(() => {
   &__tip {
     margin: 0;
     font-size: 14px;
-    color: #909399;
+    color: var(--h5-text-secondary);
   }
 
   &__error-icon {
@@ -138,14 +140,18 @@ onMounted(() => {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #303133;
+    color: var(--h5-text-primary);
   }
 
   &__error {
     margin: 0;
     font-size: 13px;
-    color: #909399;
+    color: var(--h5-text-secondary);
     line-height: 1.6;
   }
+}
+
+html.dark .code-pay-page__brand--douyin {
+  background: linear-gradient(135deg, #2a2a32 0%, #1a1a22 100%);
 }
 </style>

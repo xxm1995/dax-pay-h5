@@ -108,8 +108,20 @@ export function getSystemName() {
   return websiteConfig.value.systemName?.trim() || ''
 }
 
+/** 当前是否深色（读 html.dark，由 designSetting 同步） */
+function isHtmlDark() {
+  return typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+}
+
+/**
+ * 站点 logo URL
+ * 深色且配置了 logoDark 时优先用暗色 logo，否则回退 logo / 默认
+ */
 export function getLogoUrl() {
-  const id = websiteConfig.value.logo?.trim()
+  const darkId = websiteConfig.value.logoDark?.trim()
+  const lightId = websiteConfig.value.logo?.trim()
+  // 深色优先 logoDark
+  const id = (isHtmlDark() && darkId) ? darkId : lightId
   if (!id) {
     return DEFAULT_BRAND.logo
   }

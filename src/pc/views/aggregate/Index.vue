@@ -14,6 +14,7 @@ import unionPaySvg from '@/shared/assets/icons/channel/union_pay.svg'
 import wechatSvg from '@/shared/assets/icons/channel/wechat.svg'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
+import { closeWebview } from '@/shared/pay/close-webview'
 import { fenToYuan } from '@/shared/utils/pay-amount'
 
 defineOptions({ name: 'PcAggregatePage' })
@@ -94,7 +95,7 @@ const resultMeta = computed(() => {
     case 'loadError':
       return { titleKey: 'aggregate.loadFail', tipKey: 'aggregate.loadFailTip', color: '#fa8c16' }
     default:
-      return { titleKey: '', tipKey: '', color: '#303133' }
+      return { titleKey: '', tipKey: '', color: 'var(--h5-text-primary)' }
   }
 })
 
@@ -293,6 +294,11 @@ onUnmounted(() => {
             <span class="pc-aggregate__info-amount">¥{{ amountYuan }}</span>
           </div>
         </div>
+
+        <!-- 关闭页面（异常/成功兜底） -->
+        <button type="button" class="pc-aggregate__close-btn" @click="closeWebview">
+          {{ t('aggregate.closePage') }}
+        </button>
       </div>
 
       <!-- 可支付：金额 + 落地码 + 引导 + 订单摘要（Web 默认展示） -->
@@ -364,7 +370,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f7fa;
+  background: var(--h5-bg-page);
   padding: 40px 24px;
   box-sizing: border-box;
 }
@@ -373,7 +379,7 @@ onUnmounted(() => {
   width: 100%;
   max-width: 540px;
   padding: 40px 36px 32px;
-  background: #fff;
+  background: var(--h5-bg-card);
   border-radius: 12px;
   box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   text-align: center;
@@ -386,7 +392,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   padding: 56px 0;
-  color: #909399;
+  color: var(--h5-text-secondary);
   font-size: 14px;
 }
 
@@ -441,7 +447,7 @@ onUnmounted(() => {
   border: 1px solid #ebeef5;
   border-radius: 8px;
   margin-bottom: 16px;
-  background: #fafbfc;
+  background: var(--h5-bg-muted);
 }
 
 .pc-aggregate__countdown {
@@ -453,7 +459,7 @@ onUnmounted(() => {
 }
 
 .pc-aggregate__countdown-label {
-  color: #606266;
+  color: var(--h5-text-secondary);
   margin-right: 6px;
 }
 
@@ -502,7 +508,7 @@ onUnmounted(() => {
 .pc-aggregate__scan-text {
   margin: 0;
   font-size: 14px;
-  color: #606266;
+  color: var(--h5-text-secondary);
   line-height: 1.6;
 }
 
@@ -510,7 +516,7 @@ onUnmounted(() => {
 .pc-aggregate__summary {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--h5-border);
   text-align: left;
 }
 
@@ -525,13 +531,13 @@ onUnmounted(() => {
 }
 
 .pc-aggregate__info-row > span:first-child {
-  color: #909399;
+  color: var(--h5-text-secondary);
   flex-shrink: 0;
   min-width: 88px;
 }
 
 .pc-aggregate__info-row > span:last-child {
-  color: #303133;
+  color: var(--h5-text-primary);
   text-align: right;
   word-break: break-all;
 }
@@ -562,19 +568,38 @@ onUnmounted(() => {
   margin: 0 0 8px;
   font-size: 20px;
   font-weight: 600;
-  color: #1d2129;
+  color: var(--h5-text-primary);
   line-height: 1.4;
 }
 
 .pc-aggregate__result-tip {
   margin: 0;
   font-size: 14px;
-  color: #86909c;
+  color: var(--h5-text-secondary);
   line-height: 1.6;
   max-width: 360px;
 }
 
 .pc-aggregate__result .pc-aggregate__summary {
   width: 100%;
+}
+
+.pc-aggregate__close-btn {
+  margin-top: 24px;
+  width: 100%;
+  max-width: 280px;
+  height: 44px;
+  border-radius: 22px;
+  border: none;
+  background: linear-gradient(135deg, var(--h5-brand-cashier) 0%, var(--h5-brand-cashier-deep) 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(93, 157, 254, 0.3);
+}
+
+.pc-aggregate__close-btn:hover {
+  opacity: 0.92;
 }
 </style>

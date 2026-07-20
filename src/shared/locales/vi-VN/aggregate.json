@@ -37,5 +37,6 @@
   "closedTip": "Đơn hàng đã đóng, không thể thanh toán",
   "failedTip": "Thanh toán thất bại. Vui lòng thử lại",
   "paidTip": "Thanh toán hoàn tất. Cảm ơn bạn",
-  "loadFailTip": "Vui lòng kiểm tra liên kết thanh toán hoặc đơn hàng"
+  "loadFailTip": "Vui lòng kiểm tra liên kết thanh toán hoặc đơn hàng",
+  "closePage": "Đóng"
 }
