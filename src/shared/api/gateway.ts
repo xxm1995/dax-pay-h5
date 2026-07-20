@@ -57,7 +57,7 @@ export interface CashierItemPublic {
 /** 查询网关订单 */
 export function getGatewayOrder(orderNo: string): Promise<GatewayOrderInfo> {
   return http.request<GatewayOrderInfo>({
-    url: '/client/gateway/order',
+    url: '/unipay/gateway/order',
     method: RequestEnum.GET,
     params: { orderNo },
   }, {
@@ -78,7 +78,7 @@ export function getAggregateMeta(params: {
   runtime?: string
 }): Promise<AggregatePayMeta> {
   return http.request<AggregatePayMeta>({
-    url: '/client/gateway/aggregate/meta',
+    url: '/unipay/gateway/aggregate/meta',
     method: RequestEnum.GET,
     params,
   }, {
@@ -96,7 +96,7 @@ export function aggregatePay(data: {
   clientIp?: string
 }): Promise<AggregatePayResult> {
   return http.request<AggregatePayResult>({
-    url: '/client/gateway/aggregate/pay',
+    url: '/unipay/gateway/aggregate/pay',
     method: RequestEnum.POST,
     data,
   }, {
@@ -116,7 +116,7 @@ export function generateGatewayAuthUrl(data: {
   returnPath: string
 }): Promise<GatewayAuthUrlResult> {
   return http.request<GatewayAuthUrlResult>({
-    url: '/client/gateway/auth/generate-url',
+    url: '/unipay/gateway/auth/generate-url',
     method: RequestEnum.POST,
     data,
   }, {
@@ -131,7 +131,7 @@ export function listCashierItems(params: {
   clientEnv?: string
 }): Promise<CashierItemPublic[]> {
   return http.request<CashierItemPublic[]>({
-    url: '/client/gateway/cashier/items',
+    url: '/unipay/gateway/cashier/items',
     method: RequestEnum.GET,
     params,
   }, {
@@ -156,7 +156,7 @@ export function cashierPay(data: {
   clientIp?: string
 }): Promise<AggregatePayResult> {
   return http.request<AggregatePayResult>({
-    url: '/client/gateway/cashier/pay',
+    url: '/unipay/gateway/cashier/pay',
     method: RequestEnum.POST,
     data: {
       ...data,
