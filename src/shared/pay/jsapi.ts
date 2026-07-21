@@ -1,7 +1,9 @@
 /**
- * 宿主 JSAPI 调起（微信 / 支付宝）
+ * 宿主 JSAPI 调起（微信 / 支付宝 / 抖音）
  * payBody 一般为通道返回的 JSON 字符串
  */
+
+import { invokeDouyinJsapi } from '@/shared/pay/douyin'
 
 export interface WechatJsapiPayload {
   appId?: string
@@ -147,6 +149,12 @@ export async function invokeJsapiByEnv(clientEnv: string, payBody: string): Prom
     await invokeAlipayJsapi(payBody)
     return
   }
-  // 云闪付 / 抖音：一期无统一桥，抛出由上层轮询兜底
+  if (clientEnv === 'douyin') {
+    // 抖音: 动态加载 JS-SDK + sdk.config 验签 + ttcjpay.dypay
+    // 抛出 Error('cancel') 表示用户取消, 其他 Error 表示失败
+    await invokeDouyinJsapi(payBody)
+    return
+  }
+  // 云闪付等: 一期无统一桥, 抛出由上层轮询兜底
   throw new Error(`jsapi not implemented for ${clientEnv}`)
 }

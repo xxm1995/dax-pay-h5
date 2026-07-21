@@ -1,6 +1,8 @@
 /**
- * 容器内 JSAPI 调起(微信公众号 / 支付宝生活号)
+ * 容器内 JSAPI 调起(微信公众号 / 支付宝生活号 / 抖音 H5)
  */
+
+import { invokeDouyinJsapi } from '@/shared/pay/douyin'
 
 /** 微信 JSAPI 调起参数(通道 payBody JSON) */
 export interface WechatJsapiPayBody {
@@ -150,6 +152,20 @@ export async function invokeJsapiByEnv(
   }
   if (clientEnv === 'alipay') {
     return invokeAlipayTradePay(payBody)
+  }
+  if (clientEnv === 'douyin') {
+    // 抖音: 调用 invokeDouyinJsapi(throw 'cancel' 表示取消, 其他 Error 表示失败)
+    try {
+      await invokeDouyinJsapi(payBody)
+      return 'ok'
+    }
+    catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      if (msg === 'cancel') {
+        return 'cancel'
+      }
+      return 'fail'
+    }
   }
   return 'unsupported'
 }
