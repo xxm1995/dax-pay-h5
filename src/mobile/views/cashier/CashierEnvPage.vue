@@ -408,10 +408,44 @@ async function handleJsapi(payload: string) {
 }
 
 /**
+ * 支付发起成功后同步锁定态
+ *
+ * 后端已将订单置为 paying 并写入 method, 需刷新 locked 以禁用切换其他项;
+ * 刷新失败时兜底把当前选中项标为 locked, 避免同页仍可点选
+ */
+async function syncLockedPayMethods() {
+  const currentId = selectId.value
+  try {
+    payMethods.value = await listCashierItems({
+      orderNo,
+      cashierType: 'h5',
+      clientEnv: clientEnvParam,
+    })
+    if (lockedItemId.value) {
+      selectId.value = lockedItemId.value
+    }
+  }
+  catch {
+    // 刷新失败: 本地兜底锁定当前选中项
+    if (currentId) {
+      payMethods.value = payMethods.value.map(item => ({
+        ...item,
+        locked: item.id === currentId,
+      }))
+      selectId.value = currentId
+    }
+  }
+}
+
+/**
  * 发起收银台支付
  */
 async function pay() {
   if (paying.value || paid.value || !selectId.value || expired.value) {
+    return
+  }
+  // 本地已锁定时禁止用非锁定项发起支付
+  if (lockedItemId.value && selectId.value !== lockedItemId.value) {
     return
   }
   paying.value = true
@@ -437,6 +471,10 @@ async function pay() {
       openId,
     })
     const action = resolvePayResult(result)
+    // 未直接成功时同步锁定态(JSAPI 取消/二维码等仍停留本页的场景)
+    if (action.type !== 'success') {
+      await syncLockedPayMethods()
+    }
     switch (action.type) {
       case 'success':
         order.value.status = 'paid'
