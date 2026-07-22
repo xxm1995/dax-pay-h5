@@ -19,6 +19,7 @@ import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
+import { prefetchDouyinJsapi } from '@/shared/pay/douyin'
 import { useGatewayAuth } from '@/shared/pay/use-gateway-auth'
 import { detectClientEnv, isValidH5ClientEnv } from '@/shared/utils/client-env'
 import { formatDateTime } from '@/shared/utils/datetime'
@@ -305,7 +306,15 @@ async function loadPage() {
   }
   // 授权成功回跳后自动继续支付：保持 ready=false 让遮罩持续到支付发起
   if (!isTerminal.value && !loadError.value && route.query.autoPay === '1' && selectId.value) {
+    // 抖音: OAuth 回跳后 URL(含 autoPay query) 已稳定, 预取后再自动支付
+    if (clientEnvParam === 'douyin') {
+      prefetchDouyinJsapi({ orderNo })
+    }
     await pay()
+  }
+  else if (!isTerminal.value && !loadError.value && clientEnvParam === 'douyin') {
+    // 可交互页: 预取 SDK + jsapi-config(点支付复用; 若随后 OAuth 回跳会按新 URL 再预取)
+    prefetchDouyinJsapi({ orderNo })
   }
   // 支付未触发或已结束（未跳走）：渲染业务内容
   ready.value = true
@@ -336,7 +345,14 @@ const gatewayAuth = useGatewayAuth({
     const returnPath
       = `/cashier/${encodeURIComponent(orderNo)}/${clientEnvParam}`
         + `?itemId=${encodeURIComponent(selectId.value)}&autoPay=1`
-    return generateGatewayAuthUrl({ orderNo, authType, returnPath })
+    return generateGatewayAuthUrl({
+      orderNo,
+      authType,
+      returnPath,
+      clientEnv: clientEnvParam,
+      itemId: selectId.value,
+      cashierType: 'h5',
+    })
   },
   // 抛错由 pay() 的 try/catch 接管, 与原实现行为一致
   onError: (msg) => {
@@ -372,7 +388,7 @@ async function ensureOpenIdOrRedirect(): Promise<string | null> {
  * 处理 JSAPI 调起结果
  */
 async function handleJsapi(payload: string) {
-  const status = await invokeJsapiByEnv(clientEnvParam, payload)
+  const status = await invokeJsapiByEnv(clientEnvParam, payload, { orderNo })
   if (status === 'ok') {
     // JSAPI 调起支付成功: 仅更新状态,成功卡片由 resultState 渲染、倒计时跳转由 watch 触发
     order.value.status = 'paid'

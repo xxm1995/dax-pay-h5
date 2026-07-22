@@ -7,6 +7,9 @@
  * 3. `sdk.config({...})` 通过签名验证 → `sdk.ready` 回调
  * 4. `sdk.ttcjpay.dypay({sdk_info, success, fail})` 拉起抖音支付
  *
+ * 页面级预取: OAuth 完成后可调用 prefetchDouyinJsapi, 并行加载 SDK + 验签包;
+ * 点支付时 invokeDouyinJsapi 复用缓存, 去掉调起路径上的额外 RTT。
+ *
  * 参考文档:
  * - JSAPI 调起: https://pay.douyinpay.com/wiki/639fd48f17c2f3021d237f61/64413fddc6217f024ae23ae9.md
  * - JS 接入指南: https://developer.open-douyin.com/docs/resource/zh-CN/dop/develop/sdk/web-app/js/js-access
@@ -34,15 +37,63 @@ export interface DouyinJsapiConfig {
   signature: string
 }
 
-/** ttcjpay.dypay 响应(res.code 是外层 JSB 状态, res.data.code 是支付状态) */
+/**
+ * ttcjpay.dypay 响应
+ * - 旧版 bridge.call: code 为数字型 JSB 状态, 支付结果在 data.code
+ * - 新版 sdk.ttcjpay.dypay(≥1.0.17): 支付结果在顶层 code(字符串 '0'/'1'/…), 双端结构一致
+ */
 interface DypayResult {
-  /** JSB 调用返回码: 1=成功, -1/-100=无权限, -2=客户端无此方法, -3=参数错误, 0=失败 */
-  code?: number
+  /**
+   * 旧版: 数字 JSB 码(1=成功, -1/-100=无权限, -2=无方法, -3=参数错, 0=失败)
+   * 新版: 字符串支付码('0'=成功, '1'=取消, '2'=失败 …)
+   */
+  code?: number | string
   data?: {
-    /** 支付状态: '0'=成功, '1'=取消, '2'=失败, '3'=业务传参错误, '4'=下单失败, '-1'=未知 */
+    /** 旧版支付状态: '0'=成功, '1'=取消, '2'=失败, '3'=业务传参错误, '4'=下单失败, '-1'=未知 */
     code?: string
     msg?: string
   }
+  /** 新版失败文案(部分回调可能带 message) */
+  msg?: string
+  message?: string
+}
+
+/** 抖音 JSAPI 验签上下文(与后端通道应用解析对齐) */
+export interface DouyinJsapiContext {
+  orderNo?: string
+  code?: string
+  channelMchNo?: string
+  capability?: string
+  channelAppId?: string
+}
+
+/** 页面级预取缓存(url + ctx 一致时复用) */
+interface DouyinPrefetchCache {
+  key: string
+  configPromise: Promise<DouyinJsapiConfig>
+}
+
+let prefetchCache: DouyinPrefetchCache | null = null
+
+/**
+ * 当前页 URL(去掉 # 及后面), 作为 sdk.config 的 url 参数
+ */
+function currentPageUrl(): string {
+  return location.href.split('#')[0]
+}
+
+/**
+ * 规范化预取缓存 key(url + 上下文字段)
+ */
+function buildPrefetchKey(url: string, ctx?: DouyinJsapiContext): string {
+  return [
+    url,
+    ctx?.orderNo || '',
+    ctx?.code || '',
+    ctx?.channelMchNo || '',
+    ctx?.capability || '',
+    ctx?.channelAppId || '',
+  ].join('|')
 }
 
 /**
@@ -65,16 +116,83 @@ export async function ensureDouyinSdk(): Promise<void> {
  * 调后端接口获取 sdk.config 验签包
  *
  * @param url 当前页面 URL(不含 # 及后面部分)
+ * @param ctx 通道上下文(与 OAuth 同源; orderNo / code / channelMchNo 三选一)
  */
-export async function fetchDouyinJsapiConfig(url: string): Promise<DouyinJsapiConfig> {
+export async function fetchDouyinJsapiConfig(
+  url: string,
+  ctx?: DouyinJsapiContext,
+): Promise<DouyinJsapiConfig> {
   return http.request<DouyinJsapiConfig>({
     url: DOUYIN_JSAPI_CONFIG_URL,
     method: RequestEnum.GET,
-    params: { url },
+    params: {
+      url,
+      orderNo: ctx?.orderNo,
+      code: ctx?.code,
+      channelMchNo: ctx?.channelMchNo,
+      capability: ctx?.capability,
+      channelAppId: ctx?.channelAppId,
+    },
   }, {
     // 由调用方自行处理错误展示
     isShowMessage: false,
   })
+}
+
+/**
+ * 页面级预取: 并行加载 JS-SDK + 拉取 sdk.config 验签包
+ *
+ * 须在 OAuth 完成(或无需授权)、当前页 URL 已稳定后调用;
+ * 失败仅 console.warn, 不打断页面, 调起时走即时拉取兜底。
+ *
+ * @param ctx 通道上下文(orderNo/code 等, 与 invokeDouyinJsapi 一致)
+ */
+export function prefetchDouyinJsapi(ctx?: DouyinJsapiContext): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+  const url = currentPageUrl()
+  const key = buildPrefetchKey(url, ctx)
+  // 同 key 已在预取中或已完成, 不重复发起
+  if (prefetchCache?.key === key) {
+    return
+  }
+  const configPromise = fetchDouyinJsapiConfig(url, ctx).catch((e) => {
+    // 预取失败丢弃缓存, 调起时重新拉
+    if (prefetchCache?.key === key) {
+      prefetchCache = null
+    }
+    throw e
+  })
+  prefetchCache = { key, configPromise }
+  // 并行加载 SDK(失败同样静默, 调起时再试)
+  void ensureDouyinSdk().catch((e) => {
+    console.warn('[douyin] prefetch sdk failed', e)
+  })
+  void configPromise.catch((e) => {
+    console.warn('[douyin] prefetch jsapi-config failed', e)
+  })
+}
+
+/**
+ * 取预取缓存中的验签包; key 不匹配或失败则即时拉取
+ */
+async function resolveJsapiConfig(
+  url: string,
+  ctx?: DouyinJsapiContext,
+): Promise<DouyinJsapiConfig> {
+  const key = buildPrefetchKey(url, ctx)
+  if (prefetchCache?.key === key) {
+    try {
+      return await prefetchCache.configPromise
+    }
+    catch {
+      // 预取失败, 下面即时拉取
+    }
+  }
+  const configPromise = fetchDouyinJsapiConfig(url, ctx)
+  prefetchCache = { key, configPromise }
+  return configPromise
 }
 
 /**
@@ -162,44 +280,53 @@ export function callDypay(sdkInfoJson: string): Promise<DypayResult> {
 /**
  * 抖音 JSAPI 调起主入口
  *
- * 完整流程: 注入 SDK → 拉取验签包 → sdk.config → ttcjpay.dypay → 解析结果
+ * 完整流程: 注入 SDK → 拉取验签包(优先预取缓存) → sdk.config → ttcjpay.dypay → 解析结果
  *
  * @param payBody 通道返回的 sdk_info JSON 字符串
+ * @param ctx 通道上下文(orderNo/code 等, 与 OAuth 同源解析网站应用)
  * @throws Error('cancel') 用户取消
  * @throws Error 其他失败
  */
-export async function invokeDouyinJsapi(payBody: string): Promise<void> {
+export async function invokeDouyinJsapi(
+  payBody: string,
+  ctx?: DouyinJsapiContext,
+): Promise<void> {
   // 当前页面 URL(去掉 # 及后面), 作为 sdk.config 的 url 参数
-  const url = location.href.split('#')[0]
+  const url = currentPageUrl()
 
-  // 1. 注入 JS-SDK
+  // 1. 注入 JS-SDK(预取可能已完成)
   await ensureDouyinSdk()
-  // 2. 拉取 sdk.config 验签包
-  const cfg = await fetchDouyinJsapiConfig(url)
+  // 2. 验签包: 优先用页面级预取缓存
+  const cfg = await resolveJsapiConfig(url, ctx)
   // 3. sdk.config 验签
   await douyinSdkConfig(cfg)
   // 4. ttcjpay.dypay 调起支付
   const res = await callDypay(payBody)
 
-  // 外层 code 校验(JSB_NO_PERMISSION/JSB_NO_HANDLER 等需明确报错)
+  // 仅数字型外层码才是旧版 JSB 错误(新版支付结果也是字符串 '0'/'1', 勿当 JSB 码)
   const outerCode = res.code
-  if (outerCode === -1 || outerCode === -100) {
-    throw new Error('Douyin JSB no permission (check JSBridge security domain config)')
-  }
-  if (outerCode === -2) {
-    throw new Error('Douyin JSB no handler (upgrade Douyin App)')
-  }
-  if (outerCode === -3) {
-    throw new Error('Douyin JSB params error (sdk_info invalid)')
+  if (typeof outerCode === 'number') {
+    if (outerCode === -1 || outerCode === -100) {
+      throw new Error('Douyin JSB no permission (check JSBridge security domain config)')
+    }
+    if (outerCode === -2) {
+      throw new Error('Douyin JSB no handler (upgrade Douyin App)')
+    }
+    if (outerCode === -3) {
+      throw new Error('Douyin JSB params error (sdk_info invalid)')
+    }
   }
 
-  // 支付状态码(在 res.data.code)
-  const payCode = res.data?.code
+  // 支付状态码: 优先旧版 data.code, 兼容新版顶层字符串 code
+  const payCode
+    = res.data?.code
+      ?? (typeof res.code === 'string' ? res.code : undefined)
   if (payCode === '0') {
     return
   }
   if (payCode === '1') {
     throw new Error('cancel')
   }
-  throw new Error(`Douyin pay failed: ${payCode || 'unknown'} ${res.data?.msg || ''}`)
+  const failMsg = res.data?.msg || res.msg || res.message || ''
+  throw new Error(`Douyin pay failed: ${payCode || 'unknown'} ${failMsg}`.trim())
 }

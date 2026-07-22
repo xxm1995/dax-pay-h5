@@ -2,6 +2,7 @@
  * 容器内 JSAPI 调起(微信公众号 / 支付宝生活号 / 抖音 H5)
  */
 
+import type { DouyinJsapiContext } from '@/shared/pay/douyin'
 import { invokeDouyinJsapi } from '@/shared/pay/douyin'
 
 /** 微信 JSAPI 调起参数(通道 payBody JSON) */
@@ -142,10 +143,12 @@ export async function invokeAlipayTradePay(payBody: string): Promise<'ok' | 'can
 
 /**
  * 按 clientEnv 调起 JSAPI
+ * @param douyinCtx 抖音验签上下文(orderNo/code), 与通道 OAuth 同源
  */
 export async function invokeJsapiByEnv(
   clientEnv: string,
   payBody: string,
+  douyinCtx?: DouyinJsapiContext,
 ): Promise<'ok' | 'cancel' | 'fail' | 'unsupported'> {
   if (clientEnv === 'wechat') {
     return invokeWechatJsapi(payBody)
@@ -156,7 +159,7 @@ export async function invokeJsapiByEnv(
   if (clientEnv === 'douyin') {
     // 抖音: 调用 invokeDouyinJsapi(throw 'cancel' 表示取消, 其他 Error 表示失败)
     try {
-      await invokeDouyinJsapi(payBody)
+      await invokeDouyinJsapi(payBody, douyinCtx)
       return 'ok'
     }
     catch (e) {

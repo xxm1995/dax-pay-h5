@@ -3,6 +3,7 @@
  * payBody 一般为通道返回的 JSON 字符串
  */
 
+import type { DouyinJsapiContext } from '@/shared/pay/douyin'
 import { invokeDouyinJsapi } from '@/shared/pay/douyin'
 
 export interface WechatJsapiPayload {
@@ -139,8 +140,15 @@ export function invokeAlipayJsapi(payBody: string): Promise<void> {
 
 /**
  * 按 clientEnv 调起 JSAPI
+ * @param clientEnv
+ * @param payBody
+ * @param douyinCtx 抖音验签上下文(orderNo/code), 与通道 OAuth 同源
  */
-export async function invokeJsapiByEnv(clientEnv: string, payBody: string): Promise<void> {
+export async function invokeJsapiByEnv(
+  clientEnv: string,
+  payBody: string,
+  douyinCtx?: DouyinJsapiContext,
+): Promise<void> {
   if (clientEnv === 'wechat') {
     await invokeWechatJsapi(payBody)
     return
@@ -152,7 +160,7 @@ export async function invokeJsapiByEnv(clientEnv: string, payBody: string): Prom
   if (clientEnv === 'douyin') {
     // 抖音: 动态加载 JS-SDK + sdk.config 验签 + ttcjpay.dypay
     // 抛出 Error('cancel') 表示用户取消, 其他 Error 表示失败
-    await invokeDouyinJsapi(payBody)
+    await invokeDouyinJsapi(payBody, douyinCtx)
     return
   }
   // 云闪付等: 一期无统一桥, 抛出由上层轮询兜底

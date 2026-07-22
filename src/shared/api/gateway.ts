@@ -116,6 +116,14 @@ export function generateGatewayAuthUrl(data: {
   orderNo: string
   authType: string
   returnPath: string
+  /** 客户端环境(微信/抖音通道解析用) */
+  clientEnv?: string
+  /** 运行形态 h5/mini */
+  runtime?: string
+  /** 收银台支付项 ID */
+  itemId?: string
+  /** 收银台类型 h5/web/mini */
+  cashierType?: string
 }): Promise<GatewayAuthUrlResult> {
   return http.request<GatewayAuthUrlResult>({
     url: '/unipay/gateway/auth/generate-url',

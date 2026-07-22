@@ -13,6 +13,7 @@ import {
   getCodePayInfo,
 } from '@/shared/api/code-pay'
 import { closeWebview } from '@/shared/pay/close-webview'
+import { prefetchDouyinJsapi } from '@/shared/pay/douyin'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
 import { useGatewayAuth } from '@/shared/pay/use-gateway-auth'
 import { isAmountOverMax, yuanToFen } from '@/shared/utils/pay-amount'
@@ -111,6 +112,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
       // 仅 needOpenId===true 且尚未拿到 openId → 整段 OAuth（回跳即换 openId）
       // false / null / 缺省: 不跳转，可直接收款
       if (info.value.needOpenId === true && !openId.value) {
+        // 禁止在跳转授权前预取(回跳 URL 可能变化, 签名会失效)
         const ok = await gatewayAuth.ensureOpenId(true, openId.value)
         if (!ok) {
           // 已跳转 OAuth 或失败(loadError 已由 onError 写入); 失败时显示错误卡
@@ -119,6 +121,10 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
           }
           return
         }
+      }
+      // 抖音: OAuth 完成或无需授权后预取 SDK + jsapi-config(点支付复用)
+      if (clientEnv === 'douyin') {
+        prefetchDouyinJsapi({ code })
       }
       // 正常态：可渲染码牌收款 UI
       ready.value = true
@@ -201,7 +207,7 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
         return
       case 'jsapi':
         try {
-          await invokeJsapiByEnv(clientEnv, action.payload)
+          await invokeJsapiByEnv(clientEnv, action.payload, { code })
           markPaid(result)
         }
         catch (e: any) {

@@ -18,6 +18,7 @@ import {
 } from '@/shared/api/gateway'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
+import { prefetchDouyinJsapi } from '@/shared/pay/douyin'
 import { invokeJsapiByEnv } from '@/shared/pay/jsapi'
 import { useGatewayAuth } from '@/shared/pay/use-gateway-auth'
 import { buildAggregateEnvPath } from '@/shared/utils/client-env'
@@ -159,7 +160,13 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
       const returnPath = buildAggregateEnvPath(orderNo, clientEnv)
       // clientEnv='union-pay' 已在 ensureOpenId 中提前 return, 不会进入此分支
       const authType = clientEnv === 'douyin' ? 'douyin' : clientEnv
-      return generateGatewayAuthUrl({ orderNo, authType, returnPath })
+      return generateGatewayAuthUrl({
+        orderNo,
+        authType,
+        returnPath,
+        clientEnv,
+        runtime: 'h5',
+      })
     },
     onError: msg => onError?.(msg),
     failKey: 'aggregate.authFail',
@@ -218,7 +225,7 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
         break
       case 'jsapi':
         try {
-          await invokeJsapiByEnv(clientEnv, action.payload)
+          await invokeJsapiByEnv(clientEnv, action.payload, { orderNo })
           // JSAPI 桥成功 → 立即标记已支付，模板切到整页成功卡片（与收银台/码牌语义一致）
           order.value.status = 'paid'
           clearCachedOrder(orderNo)
@@ -322,8 +329,13 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
       })
       if (meta.value.needOpenId && !openId.value) {
         // 需要 OAuth：保持 ready=false，InitLoadingMask 持续显示直到跳转
+        // 禁止在跳转授权前预取(回跳 URL 带 query, 签名会失效)
         await ensureOpenId()
         return
+      }
+      // 抖音: OAuth 完成或无需授权后预取 SDK + jsapi-config(点支付复用)
+      if (clientEnv === 'douyin') {
+        prefetchDouyinJsapi({ orderNo })
       }
       // 仅配置显式 autoLaunch=true 时自动拉起
       if (meta.value.autoLaunch === true) {
