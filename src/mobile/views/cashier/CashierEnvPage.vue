@@ -579,6 +579,10 @@ onUnmounted(() => {
           {{ t('cashier.backToMerchant') }}
         </button>
       </template>
+      <!-- 抖音：无可靠关 WebView API，改为手动关闭提示 -->
+      <p v-else-if="clientEnvParam === 'douyin'" class="cashier__result-close-hint">
+        {{ t('common.closeManually') }}
+      </p>
       <!-- 其他情况: 关闭页面按钮 -->
       <button v-else class="cashier__result-btn" @click="closeWebview">
         {{ t('cashier.closePage') }}
@@ -793,6 +797,14 @@ onUnmounted(() => {
     color: var(--h5-text-secondary);
     line-height: 1.6;
     font-variant-numeric: tabular-nums;
+  }
+
+  // 无法关 WebView 时的手动关闭提示（如抖音）
+  &__result-close-hint {
+    margin: 24px 0 0;
+    font-size: 13px;
+    color: var(--h5-text-secondary);
+    line-height: 1.6;
   }
 
   &__result-btn {

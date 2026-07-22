@@ -15,7 +15,7 @@
  *
  * 成功态（state='paid'）特殊处理：
  *  - 有 returnUrl：显示倒计时提示 + 「返回商户」按钮，倒计时归零自动 emit('redirect')
- *  - 无 returnUrl：保持「关闭页面」按钮，由用户点击关闭 webview
+ *  - 无 returnUrl：默认「关闭页面」按钮；抖音等 showClose=false 时改为手动关闭提示
  */
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -38,8 +38,11 @@ const props = withDefaults(defineProps<{
   returnUrl?: string
   // 成功态倒计时秒数（有 returnUrl 时生效），默认 3
   countdownSeconds?: number
+  /** 是否显示关闭页面按钮；抖音等无法关 WebView 的环境传 false */
+  showClose?: boolean
 }>(), {
   countdownSeconds: 3,
+  showClose: true,
 })
 
 const emit = defineEmits<{
@@ -190,9 +193,9 @@ function handleClose() {
     >
       {{ t('aggregate.backToMerchant') }}
     </van-button>
-    <!-- 其他情况：关闭页面按钮 -->
+    <!-- 其他情况：关闭页面按钮（微信/支付宝等可关 WebView） -->
     <van-button
-      v-else
+      v-else-if="showClose"
       class="agg-result__close"
       round
       block
@@ -201,6 +204,10 @@ function handleClose() {
     >
       {{ t('aggregate.closePage') }}
     </van-button>
+    <!-- 请点击右上角关闭（抖音等无可靠关页 API） -->
+    <p v-else class="agg-result__close-hint">
+      {{ t('common.closeManually') }}
+    </p>
   </div>
 </template>
 
@@ -301,5 +308,13 @@ function handleClose() {
   --van-button-primary-color: var(--agg-action-text, #fff);
   color: var(--agg-action-text, #fff);
   font-weight: 600;
+}
+
+/* 无法关 WebView 时的手动关闭提示（如抖音） */
+.agg-result__close-hint {
+  margin: 16px 0 0;
+  font-size: 13px;
+  color: var(--h5-text-secondary);
+  line-height: 1.6;
 }
 </style>

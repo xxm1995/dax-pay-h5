@@ -37,6 +37,8 @@ const props = withDefaults(defineProps<{
   brandColorNight?: string
   /** 品牌加深色（深色模式） */
   brandDarkNight?: string
+  /** 是否显示关闭/完成按钮；抖音等无法关 WebView 的环境传 false */
+  showClose?: boolean
 }>(), {
   merchantName: '',
   mchShortName: '',
@@ -49,6 +51,7 @@ const props = withDefaults(defineProps<{
   brandDark: '#4a87e0',
   brandColorNight: '',
   brandDarkNight: '',
+  showClose: true,
 })
 
 const emit = defineEmits<{
@@ -181,6 +184,7 @@ function onPay() {
       :order-no="orderNo"
       :brand-color="brandColor"
       :brand-color-dark="brandColorNight || brandColor"
+      :show-close="showClose"
       @close="emit('close')"
     />
 

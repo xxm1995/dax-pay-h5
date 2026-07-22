@@ -93,6 +93,7 @@ onMounted(() => {
       brand-dark="#000000"
       brand-color-night="#2a2a32"
       brand-dark-night="#1a1a22"
+      :show-close="false"
       @update:description="setDescription"
       @input="onInput"
       @delete="onDelete"

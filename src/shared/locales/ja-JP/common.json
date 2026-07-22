@@ -8,5 +8,6 @@
   "tip": "知らせ",
   "operationSuccess": "作戦成功！",
   "operationFailed": "操作は失敗しました!",
-  "processing": "処理中..."
+  "processing": "処理中...",
+  "closeManually": "右上の閉じるボタンをタップしてください"
 }

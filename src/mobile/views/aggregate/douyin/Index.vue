@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 /**
  * 聚合扫码-抖音环境
- * 抖音黑主题（#161823），支付完成无 returnUrl 时自动关闭 webview 回到抖音
+ * 抖音黑主题（#161823）；无可靠关 WebView API，成功态不自动关页、不展示关闭按钮
  */
 import type { AggregateResultState } from '../components/AggregateResultCard.vue'
 import { showNotify } from 'vant'
@@ -45,8 +45,8 @@ const {
   orderNo,
   clientEnv: 'douyin',
   device: 'mobile',
-  // 支付完成无 returnUrl 时关闭 webview 回到抖音
-  closeOnPaidWithoutReturn: true,
+  // 抖音 App 内 H5 无可靠关页 API，不自动 closeWebview
+  closeOnPaidWithoutReturn: false,
   t,
   // 支付成功不再显示 toast（与成功卡片同时显示会双反馈）
   // 用户取消 JSAPI 支付时仅提示（复用 cashier.payCancel 文案）
@@ -126,7 +126,7 @@ onMounted(() => {
     <!-- 加载错误：补 brand 色块作为结果卡负 margin 的叠放对象，与其他终态视觉一致 -->
     <template v-else-if="loadError">
       <div class="agg__brand" />
-      <AggregateResultCard state="loadError" :message="loadError" />
+      <AggregateResultCard state="loadError" :message="loadError" :show-close="false" />
     </template>
 
     <template v-else>
@@ -156,21 +156,32 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- 支付成功 -->
+      <!-- 支付成功：无 returnUrl 时不展示关闭按钮（抖音无法关 WebView） -->
       <AggregateResultCard
         v-if="paid"
         state="paid"
         :brand-color="BRAND_COLOR"
         :summary="orderSummary"
         :return-url="order.returnUrl"
+        :show-close="false"
         @redirect="redirectIfNeeded"
       />
 
       <!-- 终态（非支付成功：失败/关闭/过期） -->
-      <AggregateResultCard v-else-if="terminal" :state="terminalState" :summary="orderSummary" />
+      <AggregateResultCard
+        v-else-if="terminal"
+        :state="terminalState"
+        :summary="orderSummary"
+        :show-close="false"
+      />
 
       <!-- 过期（倒计时归零，前端判定） -->
-      <AggregateResultCard v-else-if="expired" state="expired" :summary="orderSummary" />
+      <AggregateResultCard
+        v-else-if="expired"
+        state="expired"
+        :summary="orderSummary"
+        :show-close="false"
+      />
 
       <!-- 二维码 -->
       <div v-else-if="showQrcode && qrContent" class="agg__card">

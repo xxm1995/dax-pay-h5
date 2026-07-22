@@ -8,5 +8,6 @@
   "tip": "สังเกต",
   "operationSuccess": "ปฏิบัติการสำเร็จ!",
   "operationFailed": "การดำเนินการล้มเหลว!",
-  "processing": "กำลังประมวลผล..."
+  "processing": "กำลังประมวลผล...",
+  "closeManually": "โปรดแตะปุ่มปิดที่มุมขวาบน"
 }

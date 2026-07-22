@@ -8,5 +8,6 @@
   "tip": "Notice",
   "operationSuccess": "Operation succeeded!",
   "operationFailed": "Operation failed!",
-  "processing": "Processing..."
+  "processing": "Processing...",
+  "closeManually": "Please tap the close button in the top-right corner"
 }

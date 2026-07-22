@@ -8,5 +8,6 @@
   "tip": "Melihat",
   "operationSuccess": "Operasi berhasil!",
   "operationFailed": "Operasi gagal!",
-  "processing": "Memproses..."
+  "processing": "Memproses...",
+  "closeManually": "Silakan ketuk tombol tutup di pojok kanan atas"
 }

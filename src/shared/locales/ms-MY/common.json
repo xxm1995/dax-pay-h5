@@ -8,5 +8,6 @@
   "tip": "Notis",
   "operationSuccess": "Operasi berjaya!",
   "operationFailed": "Operasi gagal!",
-  "processing": "Memproses..."
+  "processing": "Memproses...",
+  "closeManually": "Sila ketik butang tutup di penjuru kanan atas"
 }

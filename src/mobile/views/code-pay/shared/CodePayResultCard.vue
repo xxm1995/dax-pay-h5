@@ -30,6 +30,8 @@ const props = withDefaults(defineProps<{
   brandColorDark?: string
   /** 关闭按钮文案（已 $t，留空走 i18n codePay.closePage） */
   closeText?: string
+  /** 是否显示关闭/完成按钮；抖音等无法关 WebView 的环境传 false */
+  showClose?: boolean
 }>(), {
   title: '',
   tip: '',
@@ -38,6 +40,7 @@ const props = withDefaults(defineProps<{
   brandColor: '#5d9dfe',
   brandColorDark: '',
   closeText: '',
+  showClose: true,
 })
 
 const emit = defineEmits<{
@@ -147,8 +150,9 @@ const closeText = computed(() => props.closeText || t('codePay.closePage'))
         <span class="code-pay-result__summary-value">{{ orderNo }}</span>
       </div>
     </div>
-    <!-- 完成/关闭 -->
+    <!-- 完成/关闭（抖音等环境无可靠关页 API 时改为提示） -->
     <van-button
+      v-if="showClose"
       class="code-pay-result__close"
       round
       block
@@ -158,6 +162,10 @@ const closeText = computed(() => props.closeText || t('codePay.closePage'))
     >
       {{ closeText }}
     </van-button>
+    <!-- 请点击右上角关闭 -->
+    <p v-else class="code-pay-result__close-hint">
+      {{ t('common.closeManually') }}
+    </p>
   </div>
 </template>
 
@@ -260,6 +268,14 @@ const closeText = computed(() => props.closeText || t('codePay.closePage'))
   margin-top: 16px;
   width: 100%;
   max-width: 280px;
+}
+
+// 无法关 WebView 时的手动关闭提示（如抖音）
+.code-pay-result__close-hint {
+  margin: 16px 0 0;
+  font-size: 13px;
+  color: var(--h5-text-secondary);
+  line-height: 1.6;
 }
 
 @keyframes code-pay-result-up {

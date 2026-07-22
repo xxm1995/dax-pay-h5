@@ -8,5 +8,6 @@
   "tip": "알아채다",
   "operationSuccess": "작전 성공!",
   "operationFailed": "작업이 실패했습니다!",
-  "processing": "처리 중..."
+  "processing": "처리 중...",
+  "closeManually": "오른쪽 상단의 닫기 버튼을 눌러 주세요"
 }

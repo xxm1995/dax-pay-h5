@@ -8,5 +8,6 @@
   "tip": "提示",
   "operationSuccess": "操作成功！",
   "operationFailed": "操作失敗！",
-  "processing": "正在處理..."
+  "processing": "正在處理...",
+  "closeManually": "請點擊右上角關閉"
 }
