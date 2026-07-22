@@ -23,8 +23,6 @@ export interface AuthCodeParam {
   authCode?: string
   /** 查询码(管理端轮询用) */
   queryCode?: string
-  /** 通道 */
-  channel?: string
   /** 应用号 */
   appId?: string
   /** 认证会话码 */
