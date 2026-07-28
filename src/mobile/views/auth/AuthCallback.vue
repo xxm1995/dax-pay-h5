@@ -9,9 +9,11 @@
  * - **网关业务场景**(收银/聚合/码牌): 拿到 openId/userId 后由 finishGatewayAuthAndRedirect
  *   直接落盘 sessionStorage 并 location.replace 回业务页, 本页始终处于 loading 态直到跳走
  * - **调试场景**(Web 端 ChannelAuth 扫码): AuthSession 无 returnPath, 拿到标识后
- *   展示"获取成功"卡片(点击即可复制), 供 PC 端扫码调试查看
+ *   展示"获取成功"卡片 + 显式复制按钮, 供 PC 端扫码调试查看
  *
- * 失败兜底: 缺 code/state 或后端换标识失败时显示错误卡 + 关闭按钮。
+ * 关闭: 抖音/支付宝/微信内嵌 WebView 均无可靠关页 API, 统一改为
+ * "请点击右上角关闭"提示, 让用户手动关闭。
+ * 失败兜底: 缺 code/state 或后端换标识失败时显示错误卡。
  */
 import { showFailToast, showSuccessToast } from 'vant'
 import { computed, ref } from 'vue'
@@ -19,7 +21,6 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { authAndGet } from '@/shared/api/channel-auth'
 import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
-import { closeWebview } from '@/shared/pay/close-webview'
 import { finishGatewayAuthAndRedirect } from '@/shared/utils/auth-return'
 
 type AuthChannel = 'wechat' | 'alipay' | 'douyin'
@@ -53,13 +54,13 @@ const code = route.query[cfg.value.codeField] as string | undefined
 const loading = ref(true)
 const failed = ref(false)
 const failMsg = ref('')
-// 调试场景(Web 端 ChannelAuth 扫码)成功态: 展示可点击复制的标识卡片
+// 调试场景(Web 端 ChannelAuth 扫码)成功态: 展示标识卡片 + 显式复制按钮
 const success = ref(false)
 const identifierValue = ref('')
 
 /**
  * 标记调试场景成功: 无 returnPath 但后端已返回 openId/userId
- * 展示可点击复制的标识卡片, 供 PC 端扫码调试查看
+ * 展示标识卡片, 由下方主按钮复制, 供 PC 端扫码调试查看
  */
 function markSuccess(identifier: string) {
   success.value = true
@@ -165,17 +166,27 @@ async function copyIdentifier() {
       <h3 class="result-title">
         {{ t('auth.common.successTitle') }}
       </h3>
-      <div class="identifier-card" @click="copyIdentifier">
+      <div class="identifier-card">
         <span class="card-label">{{ t(`auth.${cfg.i18nNs}.identifierLabel`) }}</span>
         <div class="card-value" :style="{ color: cfg.brandColor }">
           {{ identifierValue }}
         </div>
-        <span class="copy-hint">{{ t('auth.common.copy') }}</span>
       </div>
+
+      <!-- 显式复制主按钮（品牌色，最显眼操作）+ 手动关闭提示 -->
       <div class="action-buttons">
-        <van-button plain round block class="close-btn" @click="closeWebview">
-          {{ t('auth.common.close') }}
+        <van-button
+          type="primary"
+          round
+          block
+          :color="cfg.brandColor"
+          @click="copyIdentifier"
+        >
+          {{ t('auth.common.copy') }}
         </van-button>
+        <p class="close-hint">
+          {{ t('common.closeManually') }}
+        </p>
       </div>
     </div>
 
@@ -193,10 +204,12 @@ async function copyIdentifier() {
       <p class="fail-msg">
         {{ failMsg }}
       </p>
+
+      <!-- 失败态同样无法自动关页，提示手动关闭 -->
       <div class="action-buttons">
-        <van-button plain round block class="close-btn" @click="closeWebview">
-          {{ t('auth.common.close') }}
-        </van-button>
+        <p class="close-hint">
+          {{ t('common.closeManually') }}
+        </p>
       </div>
     </div>
   </div>
@@ -243,19 +256,13 @@ async function copyIdentifier() {
       word-break: break-all;
     }
 
-    // 调试场景: 标识展示卡片(可点击复制)
+    // 调试场景: 标识展示卡片(纯展示, 复制由下方主按钮触发)
     .identifier-card {
       width: 100%;
       margin: 0 0 20px;
       padding: 14px 16px;
       background: var(--h5-bg-page);
       border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:active {
-        background: rgb(0 0 0 / 6%);
-      }
 
       .card-label {
         display: block;
@@ -271,22 +278,17 @@ async function copyIdentifier() {
         font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
         word-break: break-all;
       }
-
-      .copy-hint {
-        display: block;
-        margin-top: 8px;
-        font-size: 12px;
-        color: var(--h5-text-secondary);
-        text-align: right;
-      }
     }
 
     .action-buttons {
       width: 100%;
 
-      .close-btn {
+      // 手动关闭提示(三通道统一: 无可靠关页 API)
+      .close-hint {
+        margin: 12px 0 0;
+        font-size: 13px;
         color: var(--h5-text-secondary);
-        border-color: var(--h5-border);
+        text-align: center;
       }
     }
   }

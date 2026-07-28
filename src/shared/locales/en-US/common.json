@@ -9,5 +9,5 @@
   "operationSuccess": "Operation succeeded!",
   "operationFailed": "Operation failed!",
   "processing": "Processing...",
-  "closeManually": "Please tap the close button in the top-right corner"
+  "closeManually": "Please tap Back or Close Page in the top-left corner"
 }
