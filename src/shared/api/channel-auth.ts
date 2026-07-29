@@ -6,7 +6,7 @@ import { http } from '@/shared/utils/http/axios'
  */
 export function authAndGet(param: AuthCodeParam): Promise<AuthResult> {
   return http.request<AuthResult>({
-    url: '/unipay/assist/channel/auth/auth',
+    url: '/unipay/gateway/auth/callback',
     method: RequestEnum.POST,
     data: param,
   }, {
