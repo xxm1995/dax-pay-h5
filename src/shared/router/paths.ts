@@ -44,6 +44,12 @@ export const RoutePath = {
   /** 聚合-不支持的宿主环境提示（Mobile + PC 注册用） */
   AGGREGATE_UNSUPPORTED: '/aggregate/unsupported',
   /**
+   * 聚合小程序入口（跨端；linkForm=mini 预下单落地 URL 契约）
+   * 微信/支付宝扫码后由"普通链接二维码"规则拉起小程序（dax-pay-cashier）;
+   * H5/PC 浏览器直接打开时展示扫码引导（不发起支付）
+   */
+  AGGREGATE_MINI: '/am/:orderNo',
+  /**
    * 码牌支付父级分组（仅 Mobile 路由注册用）
    * Mobile 把入口 + 各宿主环境页（wechat/alipay/union-pay/douyin）全部合并到此父级下作为
    * 子路由，让 App.vue 顶层 transition key（matched[0].name）在 entry → 环境页跳转时保持不变
