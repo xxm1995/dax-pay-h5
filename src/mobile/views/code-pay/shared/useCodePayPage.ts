@@ -164,6 +164,13 @@ export function useCodePayPage(options: UseCodePayPageOptions) {
     else {
       current += k
     }
+    // 防止零值死锁: 结果金额为零且小数位满2位(如"0.00"), 拦截
+    if (Number(current) === 0) {
+      const zeroDot = current.indexOf('.')
+      if (zeroDot >= 0 && current.length - zeroDot > 2) {
+        return
+      }
+    }
     // 上限：对齐后端 amount @Max(9999999999 分)，超限则忽略本次按键
     if (isAmountOverMax(current)) {
       return
