@@ -27,6 +27,12 @@ export const RoutePath = {
    */
   CASHIER_ENV: '/cashier/:orderNo/:clientEnv',
   /**
+   * 收银台小程序入口（跨端；cashier 预下单返回的 miniUrl 契约）
+   * 微信/支付宝扫码后由「普通链接二维码」规则拉起收银台小程序;
+   * 浏览器直接打开时展示扫码引导提示（不发起支付）
+   */
+  CASHIER_MINI: '/cm/:orderNo',
+  /**
    * 聚合扫码入口（跨端；预下单落地 URL 契约，不可改）
    * Mobile：UA 探测后 replace 到环境页；PC：单页处理
    */

@@ -27,6 +27,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/cashier/index.vue'),
     meta: { title: 'route.cashier' }, // 收银台
   },
+  // 收银台小程序引导页（跨端：浏览器直接打开 /cm/:orderNo 时展示扫码提示，不发起支付）
+  {
+    path: RoutePath.CASHIER_MINI,
+    name: 'PcCashierMini',
+    component: () => import('@/pc/views/cashier-mini/index.vue'),
+    meta: { title: 'route.cashier' }, // 收银台
+  },
   // 聚合「非宿主」提示：须在 /aggregate/:orderNo 之前注册，避免 path 段 "unsupported" 被当成 orderNo 查单
   {
     path: RoutePath.AGGREGATE_UNSUPPORTED,

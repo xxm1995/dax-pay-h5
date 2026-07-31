@@ -41,5 +41,9 @@
   "paidTip": "Payment completed. Thank you",
   "autoRedirectTip": "Auto-return to merchant in {n}s",
   "backToMerchant": "Return to merchant",
-  "payTime": "Payment time"
+  "payTime": "Payment time",
+  "miniScanTitle": "Scan to open the cashier mini-program",
+  "miniScanDesc": "Scan the QR code with WeChat to open the cashier and complete payment",
+  "miniInWalletTitle": "Cashier mini-program unavailable",
+  "miniInWalletDesc": "Please confirm the cashier mini-program is published and its normal-link QR rule is configured"
 }

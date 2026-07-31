@@ -41,5 +41,9 @@
   "paidTip": "支付已完成,感谢使用",
   "autoRedirectTip": "{n} 秒后自动返回商户",
   "backToMerchant": "返回商户",
-  "payTime": "支付时间"
+  "payTime": "支付时间",
+  "miniScanTitle": "请扫码打开收银台小程序",
+  "miniScanDesc": "请使用微信扫描二维码进入统一收银台并完成支付",
+  "miniInWalletTitle": "收银台小程序暂不可用",
+  "miniInWalletDesc": "请确认收银台小程序已发布并配置普通链接二维码规则"
 }

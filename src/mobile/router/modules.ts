@@ -47,6 +47,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
       },
     ],
   },
+  // 收银台小程序引导页（跨端：浏览器直接打开 /cm/:orderNo 时展示扫码提示，不发起支付）
+  {
+    path: RoutePath.CASHIER_MINI,
+    name: 'CashierMiniGuide',
+    component: () => import('@/mobile/views/cashier-mini/index.vue'),
+    meta: {
+      title: 'route.cashier', // 收银台
+    },
+  },
   // 聚合扫码：入口 + 非宿主提示 + 各宿主环境页 统一在 Aggregate 父级下作为子路由
   // 让 App.vue 顶层 transition key（matched[0].name）在 entry → 环境页跳转时保持不变（都是 Aggregate），
   // 避免整页 remount 与 Entry.vue 的 onBeforeMount router.replace 竞争导致白屏

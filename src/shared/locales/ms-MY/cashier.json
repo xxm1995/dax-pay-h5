@@ -41,5 +41,9 @@
   "paidTip": "Pembayaran selesai. Terima kasih",
   "autoRedirectTip": "Kembali ke merchant automatik dalam {n} saat",
   "backToMerchant": "Kembali ke merchant",
-  "payTime": "Masa pembayaran"
+  "payTime": "Masa pembayaran",
+  "miniScanTitle": "Imbas untuk membuka mini-program kaunter",
+  "miniScanDesc": "Sila imbas kod QR dengan WeChat untuk membuka kaunter dan melengkapkan bayaran",
+  "miniInWalletTitle": "Mini-program kaunter tidak tersedia",
+  "miniInWalletDesc": "Sahkan mini-program kaunter telah diterbitkan dan peraturan QR pautan biasa telah dikonfigurasi"
 }

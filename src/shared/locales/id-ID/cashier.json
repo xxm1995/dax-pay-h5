@@ -41,5 +41,9 @@
   "paidTip": "Pembayaran selesai. Terima kasih",
   "autoRedirectTip": "Kembali ke merchant otomatis dalam {n} detik",
   "backToMerchant": "Kembali ke merchant",
-  "payTime": "Waktu pembayaran"
+  "payTime": "Waktu pembayaran",
+  "miniScanTitle": "Pindai untuk membuka mini-program kasir",
+  "miniScanDesc": "Pindai kode QR dengan WeChat untuk membuka kasir dan menyelesaikan pembayaran",
+  "miniInWalletTitle": "Mini-program kasir tidak tersedia",
+  "miniInWalletDesc": "Pastikan mini-program kasir telah diterbitkan dan aturan QR tautan biasa telah dikonfigurasi"
 }

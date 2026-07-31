@@ -41,5 +41,9 @@
   "paidTip": "Thanh toán hoàn tất. Cảm ơn bạn",
   "autoRedirectTip": "Tự động quay lại merchant sau {n} giây",
   "backToMerchant": "Quay lại merchant",
-  "payTime": "Thời gian thanh toán"
+  "payTime": "Thời gian thanh toán",
+  "miniScanTitle": "Quét để mở mini-program thu ngân",
+  "miniScanDesc": "Vui lòng quét mã QR bằng WeChat để mở thu ngân và hoàn tất thanh toán",
+  "miniInWalletTitle": "Mini-program thu ngân không khả dụng",
+  "miniInWalletDesc": "Vui lòng xác nhận mini-program thu ngân đã được phát hành và đã cấu hình quy tắc QR liên kết thường"
 }
