@@ -19,7 +19,7 @@ routeStore.setRouters(constantRouter.concat(routeModuleList))
 const pcOnlyStubs: RouteRecordRaw[] = otherDeviceExclusives('mobile').map(r => ({
   path: r.path,
   name: `${r.name}__stub`,
-  component: () => import('@/mobile/views/device-only.vue'),
+  component: () => import('@/mobile/views/DeviceOnly.vue'),
 }))
 
 const router = createRouter({

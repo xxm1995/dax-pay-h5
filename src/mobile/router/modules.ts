@@ -37,7 +37,7 @@ const routeModuleList: Array<RouteRecordRaw> = [
         // 入口：UA 探测后 replace 到环境页
         path: '',
         name: 'CashierEntry',
-        component: () => import('@/mobile/views/cashier/entry.vue'),
+        component: () => import('@/mobile/views/cashier/Entry.vue'),
       },
       {
         // 环境页：clientEnv 白名单在页内校验（不缓存：收银台为一次性支付页，每次须重新探测与加载）
@@ -66,31 +66,31 @@ const routeModuleList: Array<RouteRecordRaw> = [
       {
         path: 'unsupported',
         name: 'AggregateUnsupportedPage',
-        component: () => import('@/mobile/views/aggregate/unsupported.vue'),
+        component: () => import('@/mobile/views/aggregate/Unsupported.vue'),
       },
       // 微信环境页
       {
         path: 'wechat/:orderNo',
         name: 'AggregateWechatPage',
-        component: () => import('@/mobile/views/aggregate/wechat/Index.vue'),
+        component: () => import('@/mobile/views/aggregate/wechat/index.vue'),
       },
       // 支付宝环境页
       {
         path: 'alipay/:orderNo',
         name: 'AggregateAlipayPage',
-        component: () => import('@/mobile/views/aggregate/alipay/Index.vue'),
+        component: () => import('@/mobile/views/aggregate/alipay/index.vue'),
       },
       // 云闪付环境页
       {
         path: 'union-pay/:orderNo',
         name: 'AggregateUnionPage',
-        component: () => import('@/mobile/views/aggregate/union-pay/Index.vue'),
+        component: () => import('@/mobile/views/aggregate/union-pay/index.vue'),
       },
       // 抖音环境页
       {
         path: 'douyin/:orderNo',
         name: 'AggregateDouyinPage',
-        component: () => import('@/mobile/views/aggregate/douyin/Index.vue'),
+        component: () => import('@/mobile/views/aggregate/douyin/index.vue'),
       },
       // 入口：UA 探测后 replace 到环境页（静态段已注册完毕，:orderNo 兜底匹配订单号）
       {
@@ -99,6 +99,24 @@ const routeModuleList: Array<RouteRecordRaw> = [
         component: () => import('@/mobile/views/aggregate/Entry.vue'),
       },
     ],
+  },
+  // 聚合小程序引导页（跨端：浏览器直接打开 /am/:orderNo 时展示扫码提示，不发起支付）
+  {
+    path: RoutePath.AGGREGATE_MINI,
+    name: 'AggregateMiniGuide',
+    component: () => import('@/mobile/views/aggregate-mini/index.vue'),
+    meta: {
+      title: 'route.cashier', // 收银台
+    },
+  },
+  // 码牌小程序引导页（跨端：浏览器直接打开 /m/:code 时展示扫码提示，不发起支付）
+  {
+    path: RoutePath.CODE_PAY_MINI,
+    name: 'CodePayMiniGuide',
+    component: () => import('@/mobile/views/code-pay-mini/index.vue'),
+    meta: {
+      title: 'route.codePay', // 码牌支付
+    },
   },
   // 码牌支付：入口 + 各宿主环境页 统一在 CodePay 父级下作为子路由
   // 让 App.vue 顶层 transition key（matched[0].name）在 entry → 环境页跳转时保持不变（都是 CodePay），

@@ -44,9 +44,9 @@ export const RoutePath = {
   /** 聚合-不支持的宿主环境提示（Mobile + PC 注册用） */
   AGGREGATE_UNSUPPORTED: '/aggregate/unsupported',
   /**
-   * 聚合小程序入口（跨端；linkForm=mini 预下单落地 URL 契约）
-   * 微信/支付宝扫码后由"普通链接二维码"规则拉起小程序（dax-pay-cashier）;
-   * H5/PC 浏览器直接打开时展示扫码引导（不发起支付）
+   * 聚合小程序入口（跨端；预下单同时返回的 miniUrl 落地 URL 契约）
+   * 微信/支付宝扫码后由「普通链接二维码」规则拉起各自小程序;
+   * 浏览器直接打开时展示扫码引导提示（不发起支付）
    */
   AGGREGATE_MINI: '/am/:orderNo',
   /**
@@ -69,6 +69,12 @@ export const RoutePath = {
   CODE_PAY_UNION: '/h/union-pay/:code',
   /** 码牌支付-抖音端（Mobile 收款；PC 同入口扫码引导） */
   CODE_PAY_DOUYIN: '/h/douyin/:code',
+  /**
+   * 码牌小程序入口（跨端；programType=mini_app 码牌落地 URL 契约）
+   * 微信/支付宝扫码后由「普通链接二维码」规则拉起小程序（dax-pay-cashier）;
+   * H5/PC 浏览器直接打开时展示扫码引导（不发起支付）。path 与后端 CODE_MINI_PATH /m/{code} 一致
+   */
+  CODE_PAY_MINI: '/m/:code',
   /** 商户对账单（PC 独占） */
   MERCHANT_STATEMENT: '/merchant/statement',
   /** 协议展示页（跨端：用户协议/隐私政策，链接可独立分享） */

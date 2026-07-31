@@ -22,7 +22,7 @@ const ENV_ROUTE_NAME: Record<string, string> = {
 
 // onBeforeMount 探测并 replace：挂载前跳走，避免与 App.vue <transition mode="out-in" appear> 的 enter 动画
 // 发生竞争（onMounted 跳转曾导致 /aggregate/unsupported 首次打开白屏、刷新才正常）。
-// 不用 setup 同步 replace，以免在当前导航未确认时触发新导航引发竞态（与 cashier/entry.vue 同源结论）。
+// 不用 setup 同步 replace，以免在当前导航未确认时触发新导航引发竞态（与 cashier/Entry.vue 同源结论）。
 onBeforeMount(() => {
   const orderNo = route.params.orderNo as string
   if (!orderNo) {

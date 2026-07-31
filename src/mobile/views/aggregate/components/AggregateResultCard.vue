@@ -10,7 +10,7 @@
 /**
  * 聚合扫码 - 结果状态卡片
  * 统一展示支付终态：成功 / 失败 / 关闭 / 过期 / 加载失败
- * 图标 + 颜色 + 标题 + 副提示，与 PC 端视觉语言对齐（见 pc/views/aggregate/Index.vue resultMeta）
+ * 图标 + 颜色 + 标题 + 副提示，与 PC 端视觉语言对齐（见 pc/views/aggregate/index.vue resultMeta）
  * 4 个聚合环境页共用；成功色优先继承父级 --agg-brand（深色已压亮）
  *
  * 成功态（state='paid'）特殊处理：
