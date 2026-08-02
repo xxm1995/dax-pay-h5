@@ -20,6 +20,6 @@
   "channel": {
     "wechat": "微信",
     "alipay": "支付宝",
-    "union": "银联"
+    "union": "银联支付"
   }
 }
