@@ -1,0 +1,20 @@
+{
+  "title": "결제 결과",
+  "processing": "결제 결과 확인 중...",
+  "paid": "결제 성공",
+  "failed": "결제 실패",
+  "closed": "주문이 마감되었습니다",
+  "expired": "주문이 만료되었습니다",
+  "loadFail": "주문 조회 실패",
+  "paidTip": "결제가 완료되었습니다. 이용해주셔서 감사합니다",
+  "failedTip": "결제가 성공하지 못했습니다",
+  "closedTip": "주문이 마감되었습니다",
+  "expiredTip": "주문이 만료되었습니다",
+  "loadFailTip": "주문이 존재하지 않거나 링크가 만료되었습니다",
+  "backToMerchant": "가맹점으로 돌아가기",
+  "autoRedirectTip": "{n}초 후 자동으로 가맹점으로 이동합니다",
+  "closePage": "페이지 닫기",
+  "amount": "결제 금액",
+  "orderTitle": "상품명",
+  "orderNo": "주문번호"
+}

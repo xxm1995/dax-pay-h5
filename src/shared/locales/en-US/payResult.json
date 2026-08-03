@@ -1,0 +1,20 @@
+{
+  "title": "Payment Result",
+  "processing": "Confirming payment result...",
+  "paid": "Payment Successful",
+  "failed": "Payment Failed",
+  "closed": "Order Closed",
+  "expired": "Order Expired",
+  "loadFail": "Failed to Load Order",
+  "paidTip": "Payment completed, thank you",
+  "failedTip": "Payment unsuccessful",
+  "closedTip": "The order has been closed",
+  "expiredTip": "The order has expired",
+  "loadFailTip": "The order does not exist or the link is invalid",
+  "backToMerchant": "Back to Merchant",
+  "autoRedirectTip": "Automatically return to merchant in {n}s",
+  "closePage": "Close Page",
+  "amount": "Amount",
+  "orderTitle": "Subject",
+  "orderNo": "Order No."
+}

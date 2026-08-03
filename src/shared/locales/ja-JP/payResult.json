@@ -1,0 +1,20 @@
+{
+  "title": "支払結果",
+  "processing": "支払結果を確認中...",
+  "paid": "支払成功",
+  "failed": "支払失敗",
+  "closed": "注文は閉じられました",
+  "expired": "注文は期限切れです",
+  "loadFail": "注文の読み込みに失敗",
+  "paidTip": "支払が完了しました。ご利用ありがとうございます",
+  "failedTip": "支払が成功しませんでした",
+  "closedTip": "注文は閉じられました",
+  "expiredTip": "注文は期限切れです",
+  "loadFailTip": "注文が存在しないか、リンクが無効です",
+  "backToMerchant": "加盟店へ戻る",
+  "autoRedirectTip": "{n} 秒後に自動的に加盟店へ戻ります",
+  "closePage": "ページを閉じる",
+  "amount": "支払金額",
+  "orderTitle": "商品名",
+  "orderNo": "注文番号"
+}

@@ -8,5 +8,6 @@
   "wechatAuth": "การยืนยันตัวตน WeChat",
   "douyinAuth": "การยืนยันตัวตน Douyin",
   "merchantStatement": "คำชี้แจงของผู้ขาย",
-  "errorPage": "ไม่พบหน้า"
+  "errorPage": "ไม่พบหน้า",
+  "payResult": "ผลการชำระเงิน"
 }

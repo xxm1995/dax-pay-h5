@@ -8,5 +8,6 @@
   "wechatAuth": "微信认证",
   "douyinAuth": "抖音认证",
   "merchantStatement": "商户对账单",
-  "errorPage": "页面不存在"
+  "errorPage": "页面不存在",
+  "payResult": "支付结果"
 }

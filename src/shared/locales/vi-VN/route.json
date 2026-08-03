@@ -8,5 +8,6 @@
   "wechatAuth": "Xác thực WeChat",
   "douyinAuth": "Xác thực Douyin",
   "merchantStatement": "Tuyên bố của người bán",
-  "errorPage": "Không tìm thấy trang"
+  "errorPage": "Không tìm thấy trang",
+  "payResult": "Kết quả thanh toán"
 }

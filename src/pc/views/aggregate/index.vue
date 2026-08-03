@@ -122,8 +122,8 @@ const { startPoll, stopPoll } = useGatewayOrderPoll({
     order.value = latest
   },
   onPaid(latest) {
+    // 支付成功仅更新订单, 结果卡由 resultState 渲染; PC 为扫码引导页(支付在手机), 不回跳商户 returnUrl
     order.value = latest
-    redirectIfNeeded()
   },
 })
 
@@ -161,15 +161,6 @@ function startCountdown(expiredTime?: string) {
       countdownTimer = null
     }
   }, 1000)
-}
-
-/** 支付成功后若有 returnUrl 则延迟跳转 */
-function redirectIfNeeded() {
-  if (order.value.returnUrl) {
-    setTimeout(() => {
-      window.location.href = order.value.returnUrl!
-    }, 1200)
-  }
 }
 
 async function loadOrder() {

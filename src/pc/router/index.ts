@@ -114,6 +114,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/code-pay/index.vue'),
     meta: { title: 'route.codePay' }, // 码牌支付
   },
+  // 支付结果页（跨端：与移动端同 path 各指各 view，通道同步回跳落地页）
+  {
+    path: RoutePath.PAY_RESULT,
+    name: 'PcPayResult',
+    component: () => import('@/pc/views/pay-result/index.vue'),
+    meta: { title: 'route.payResult' }, // 支付结果
+  },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页
   // 用 component 而非 redirect——vue-router 5 下 catch-all + redirect 在初始导航不触发

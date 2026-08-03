@@ -7,9 +7,11 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gateway'
+import { getPayResult } from '@/shared/api/pay-result'
 import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
+import StripeIntentPay from '@/shared/components/pay/StripeIntentPay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { formatDateTime } from '@/shared/utils/datetime'
@@ -35,6 +37,9 @@ const payMethods = ref<CashierItemPublic[]>([])
 const selectId = ref<string>('')
 const showQrcode = ref(false)
 const qrContent = ref('')
+// Stripe PaymentIntent: 卡支付面板可见性与 payload(原始 payBody)
+const showStripeIntent = ref(false)
+const stripePayload = ref('')
 
 // 订单已锁定的支付项ID（订单支付中后端会标记唯一匹配项）; 非空时禁用切换其他项
 const lockedItemId = computed(() => payMethods.value.find(i => i.locked)?.id || '')
@@ -121,6 +126,8 @@ const { startPoll, stopPoll } = useGatewayOrderPoll({
 const REDIRECT_COUNTDOWN_SECONDS = 3
 const redirectCountdown = ref(0)
 let redirectTimer: ReturnType<typeof setInterval> | null = null
+// 跳转查单中标志(防重复触发, 查单期间保持 true)
+const redirecting = ref(false)
 
 function clearRedirectTimer() {
   if (redirectTimer) {
@@ -129,6 +136,12 @@ function clearRedirectTimer() {
   }
 }
 
+/**
+ * 进入 paid 终态后启动倒计时, 归零时才查单(getPayResult)
+ *
+ * 倒计时 3s 给后端缓冲让通道回调推进状态, 从而拿到带签名的 redirectUrl;
+ * redirectUrl 为空时返回 null 不跳转(不兜底裸跳, 让问题暴露)。
+ */
 function startRedirectCountdown() {
   if (!order.value.returnUrl || redirectTimer) {
     return
@@ -138,21 +151,51 @@ function startRedirectCountdown() {
     redirectCountdown.value--
     if (redirectCountdown.value <= 0) {
       clearRedirectTimer()
-      if (order.value.returnUrl) {
-        window.location.href = order.value.returnUrl
-      }
+      doRedirect()
     }
   }, 1000)
 }
 
+/** 查单 + 跳转(倒计时归零或手动按钮触发), redirectUrl 为空则不跳(让问题暴露, 不兜底裸跳) */
+async function doRedirect() {
+  if (redirecting.value) {
+    return
+  }
+  redirecting.value = true
+  try {
+    const url = await resolveRedirectUrl()
+    if (url) {
+      window.location.href = url
+    }
+  }
+  finally {
+    redirecting.value = false
+  }
+}
+
+/** 查询带签名的跳转地址, 状态未就绪或查询失败时返回 null(不兜底裸跳, 让问题暴露) */
+async function resolveRedirectUrl(): Promise<string | null> {
+  if (!order.value.tradeNo) {
+    return null
+  }
+  try {
+    const info = await getPayResult(order.value.tradeNo)
+    // 不兜底裸跳: redirectUrl 为空说明状态未就绪/条件不满足, 返回 null 让调用方感知
+    return info?.redirectUrl || null
+  }
+  catch {
+    return null
+  }
+}
+
 /**
  * 用户点击「返回商户」立即跳转(不等倒计时)
+ *
+ * 内部调 doRedirect 查单 + 跳转(redirectUrl 为空则不跳, 让问题暴露)。
  */
-function redirectNow() {
+async function redirectNow() {
   clearRedirectTimer()
-  if (order.value.returnUrl) {
-    window.location.href = order.value.returnUrl
-  }
+  await doRedirect()
 }
 
 // 进入 paid 终态时启动倒计时跳转(由 status 变化驱动,所有触发 paid 的路径统一在此处理)
@@ -287,6 +330,10 @@ async function pay() {
       device: 'pc',
     })
     const action = resolvePayResult(result)
+    // 同步资金交易号: 支付发起时后端已创建 PayTrade, 响应含 tradeNo; 前端 order 来自预下单(bootstrap), 彼时无 tradeNo
+    if (result?.tradeNo) {
+      order.value.tradeNo = result.tradeNo
+    }
     // 未直接成功时同步锁定态(取消/二维码等仍停留本页的场景)
     if (action.type !== 'success') {
       await syncLockedPayMethods()
@@ -312,6 +359,11 @@ async function pay() {
         payError.value = t('cashier.jsapiPending')
         startPoll(orderNo)
         break
+      case 'stripe_intent':
+        // Stripe PaymentIntent: 弹层内动态加载 Stripe.js + Elements 卡输入
+        stripePayload.value = action.payload
+        showStripeIntent.value = true
+        break
       case 'unsupported':
         payError.value = t('cashier.payLaunched')
         startPoll(orderNo)
@@ -328,6 +380,30 @@ async function pay() {
   finally {
     paying.value = false
   }
+}
+
+/**
+ * Stripe 卡支付成功：Stripe 已确认扣款, 成功卡片由 resultState 渲染、倒计时跳转由 watch 触发
+ */
+function handleStripeSuccess() {
+  showStripeIntent.value = false
+  order.value.status = 'paid'
+}
+
+/**
+ * Stripe 卡支付已受理未终态(3DS 处理中/processing): 关闭面板, 轮询订单兜底
+ */
+function handleStripePending() {
+  showStripeIntent.value = false
+  startPoll(orderNo)
+}
+
+/**
+ * Stripe 卡支付面板关闭(用户取消): 提示并保留在页面(支付方式已锁定, 可重新发起)
+ */
+function handleStripeCancel() {
+  showStripeIntent.value = false
+  payError.value = t('cashier.payCancel')
 }
 
 /**
@@ -540,6 +616,17 @@ onUnmounted(() => {
       </template>
     </div>
   </div>
+
+  <!-- Stripe PaymentIntent 卡支付面板(弹层, 动态加载 Stripe.js + Elements) -->
+  <StripeIntentPay
+    :visible="showStripeIntent"
+    :payload="stripePayload"
+    :title="order.title"
+    :amount-yuan="amountYuan"
+    @success="handleStripeSuccess"
+    @pending="handleStripePending"
+    @cancel="handleStripeCancel"
+  />
 </template>
 
 <style scoped>

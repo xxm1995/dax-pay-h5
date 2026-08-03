@@ -8,5 +8,6 @@
   "wechatAuth": "WeChat Auth",
   "douyinAuth": "Douyin Auth",
   "merchantStatement": "Merchant Statement",
-  "errorPage": "Page Not Found"
+  "errorPage": "Page Not Found",
+  "payResult": "Payment Result"
 }

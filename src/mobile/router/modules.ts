@@ -226,6 +226,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
       title: 'route.douyinAuth', // 抖音认证
     },
   },
+  // 支付结果页（跨端：通道同步回跳落地页 + jsapi 终态统一入口）
+  {
+    path: RoutePath.PAY_RESULT,
+    name: 'PayResult',
+    component: () => import('@/mobile/views/pay-result/index.vue'),
+    meta: {
+      title: 'route.payResult', // 支付结果
+    },
+  },
 ]
 
 export default routeModuleList

@@ -14,9 +14,11 @@ import {
   getGatewayOrder,
   listCashierItems,
 } from '@/shared/api/gateway'
+import { getPayResult } from '@/shared/api/pay-result'
 import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
+import StripeIntentPay from '@/shared/components/pay/StripeIntentPay.vue'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { prefetchDouyinJsapi } from '@/shared/pay/douyin'
@@ -56,6 +58,9 @@ const payMethods = ref<CashierItemPublic[]>([])
 const selectId = ref<string>('')
 const showQrcode = ref(false)
 const qrContent = ref('')
+// Stripe PaymentIntent: 卡支付面板可见性与 payload(原始 payBody)
+const showStripeIntent = ref(false)
+const stripePayload = ref('')
 
 // 订单已锁定的支付项ID（订单支付中后端会标记唯一匹配项）; 非空时禁用切换其他项
 const lockedItemId = computed(() => payMethods.value.find(i => i.locked)?.id || '')
@@ -166,6 +171,11 @@ const REDIRECT_COUNTDOWN_SECONDS = 3
 const redirectCountdown = ref(0)
 let redirectTimer: ReturnType<typeof setInterval> | null = null
 
+// 是否为「重入已支付订单」: 初始加载即为 paid(非本会话支付成功), 不自动倒计时跳转, 仅展示结果卡 + 手动按钮
+const isReentry = ref(false)
+// 跳转中标志(防重复触发, 查单期间保持 true)
+const redirecting = ref(false)
+
 function clearRedirectTimer() {
   if (redirectTimer) {
     clearInterval(redirectTimer)
@@ -175,37 +185,79 @@ function clearRedirectTimer() {
 
 /**
  * 启动可视化倒计时,由 watch(resultState) 在进入 paid 终态时触发
+ *
+ * 倒计时归零时才查单(getPayResult), 给后端 3s 缓冲让通道回调把状态推进到 paid,
+   * 从而拿到带签名的 redirectUrl; 查询失败或状态未就绪时不跳转(让问题暴露, 不兜底裸跳)。
+ *
+ * @param autoCountdown true=首次支付成功, 启动倒计时归零自动跳转;
+ *                      false=重入已支付订单, 不启动倒计时(仅手动按钮 redirectNow 跳转)
  */
-function startRedirectCountdown() {
-  if (!order.value.returnUrl || redirectTimer) {
+function startRedirectCountdown(autoCountdown = true) {
+  if (!order.value.returnUrl || (autoCountdown && redirectTimer)) {
     return
   }
+  // 重入态: 不启动倒计时, 仅手动按钮(redirectNow 内部查单)可跳
+  if (!autoCountdown) {
+    return
+  }
+  // 首次支付成功: 启动倒计时, 归零时才查单(3s 缓冲让通道回调推进状态)
   redirectCountdown.value = REDIRECT_COUNTDOWN_SECONDS
   redirectTimer = setInterval(() => {
     redirectCountdown.value--
     if (redirectCountdown.value <= 0) {
       clearRedirectTimer()
-      if (order.value.returnUrl) {
-        window.location.href = order.value.returnUrl
-      }
+      doRedirect()
     }
   }, 1000)
 }
 
-/**
- * 用户点击「返回商户」立即跳转(不等倒计时)
- */
-function redirectNow() {
-  clearRedirectTimer()
-  if (order.value.returnUrl) {
-    window.location.href = order.value.returnUrl
+/** 查单 + 跳转(倒计时归零或手动按钮触发), redirectUrl 为空则不跳(让问题暴露, 不兜底裸跳) */
+async function doRedirect() {
+  if (redirecting.value) {
+    return
+  }
+  redirecting.value = true
+  try {
+    const url = await resolveRedirectUrl()
+    if (url) {
+      window.location.href = url
+    }
+  }
+  finally {
+    redirecting.value = false
   }
 }
 
+/** 查询带签名的跳转地址, 状态未就绪或查询失败时返回 null(不兜底裸跳, 让问题暴露) */
+async function resolveRedirectUrl(): Promise<string | null> {
+  if (!order.value.tradeNo) {
+    return null
+  }
+  try {
+    const info = await getPayResult(order.value.tradeNo)
+    // 不兜底裸跳: redirectUrl 为空说明状态未就绪/条件不满足, 返回 null 让调用方感知
+    return info?.redirectUrl || null
+  }
+  catch {
+    return null
+  }
+}
+
+/**
+ * 用户点击「返回商户」立即跳转(不等倒计时)
+ *
+ * 内部调 doRedirect 查单 + 跳转(redirectUrl 为空则不跳, 让问题暴露)。
+ */
+async function redirectNow() {
+  clearRedirectTimer()
+  await doRedirect()
+}
+
 // 进入 paid 终态时启动倒计时跳转(由 status 变化驱动,所有触发 paid 的路径统一在此处理)
+// 重入已支付订单(isReentry=true)仅预取签名URL, 不自动倒计时跳转
 watch(resultState, (state) => {
   if (state === 'paid') {
-    startRedirectCountdown()
+    startRedirectCountdown(!isReentry.value)
   }
 })
 
@@ -270,6 +322,10 @@ async function loadPage() {
   }
   try {
     order.value = await getGatewayOrder(orderNo)
+    // 初始加载即为 paid = 重入已支付订单(非本会话支付成功), 标记后 watch(resultState) 仅预取签名URL不自动跳转
+    if (order.value.status === 'paid') {
+      isReentry.value = true
+    }
     // 写入缓存，OAuth 跳转回跳时可快速恢复
     cacheOrder(orderNo, order.value)
     startCountdown(order.value.expiredTime)
@@ -408,6 +464,30 @@ async function handleJsapi(payload: string) {
 }
 
 /**
+ * Stripe 卡支付成功：Stripe 已确认扣款, 成功卡片由 resultState 渲染、倒计时跳转由 watch 触发
+ */
+function handleStripeSuccess() {
+  showStripeIntent.value = false
+  order.value.status = 'paid'
+}
+
+/**
+ * Stripe 卡支付已受理未终态(3DS 处理中/processing): 关闭面板, 轮询订单兜底
+ */
+function handleStripePending() {
+  showStripeIntent.value = false
+  startPoll(orderNo)
+}
+
+/**
+ * Stripe 卡支付面板关闭(用户取消): 提示并保留在页面(支付方式已锁定, 可重新发起)
+ */
+function handleStripeCancel() {
+  showStripeIntent.value = false
+  showNotify({ type: 'warning', message: t('cashier.payCancel') })
+}
+
+/**
  * 支付发起成功后同步锁定态
  *
  * 后端已将订单置为 paying 并写入 method, 需刷新 locked 以禁用切换其他项;
@@ -471,6 +551,10 @@ async function pay() {
       openId,
     })
     const action = resolvePayResult(result)
+    // 同步资金交易号: 支付发起时后端已创建 PayTrade, 响应含 tradeNo; 前端 order 来自预下单(bootstrap), 彼时无 tradeNo
+    if (result?.tradeNo) {
+      order.value.tradeNo = result.tradeNo
+    }
     // 未直接成功时同步锁定态(JSAPI 取消/二维码等仍停留本页的场景)
     if (action.type !== 'success') {
       await syncLockedPayMethods()
@@ -496,6 +580,11 @@ async function pay() {
         break
       case 'jsapi':
         await handleJsapi(action.payload)
+        break
+      case 'stripe_intent':
+        // Stripe PaymentIntent: 弹层内动态加载 Stripe.js + Elements 卡输入
+        stripePayload.value = action.payload
+        showStripeIntent.value = true
         break
       case 'unsupported':
         showNotify({ type: 'warning', message: t('cashier.payLaunched') })
@@ -608,9 +697,9 @@ onUnmounted(() => {
           <span :title="order.payTime">{{ formatDateTime(order.payTime) }}</span>
         </div>
       </div>
-      <!-- 成功态且有 returnUrl: 倒计时提示 + 返回商户按钮 -->
+      <!-- 成功态且有 returnUrl: 倒计时提示 + 返回商户按钮(重入态仅显示按钮, 不自动跳) -->
       <template v-if="resultState === 'paid' && order.returnUrl">
-        <p v-if="redirectCountdown > 0" class="cashier__result-countdown">
+        <p v-if="!isReentry && redirectCountdown > 0" class="cashier__result-countdown">
           {{ t('cashier.autoRedirectTip', { n: redirectCountdown }) }}
         </p>
         <button class="cashier__result-btn" @click="redirectNow">
@@ -712,6 +801,17 @@ onUnmounted(() => {
         </button>
       </div>
     </template>
+
+    <!-- Stripe PaymentIntent 卡支付面板(弹层, 动态加载 Stripe.js + Elements) -->
+    <StripeIntentPay
+      :visible="showStripeIntent"
+      :payload="stripePayload"
+      :title="order.title"
+      :amount-yuan="amountYuan"
+      @success="handleStripeSuccess"
+      @pending="handleStripePending"
+      @cancel="handleStripeCancel"
+    />
   </div>
 </template>
 

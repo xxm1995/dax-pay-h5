@@ -1,0 +1,20 @@
+{
+  "title": "支付结果",
+  "processing": "支付结果确认中...",
+  "paid": "支付成功",
+  "failed": "支付失败",
+  "closed": "订单已关闭",
+  "expired": "订单已过期",
+  "loadFail": "订单加载失败",
+  "paidTip": "支付已完成，感谢使用",
+  "failedTip": "支付未成功",
+  "closedTip": "订单已关闭",
+  "expiredTip": "订单已过期",
+  "loadFailTip": "订单不存在或链接失效",
+  "backToMerchant": "返回商户",
+  "autoRedirectTip": "{n} 秒后自动返回商户",
+  "closePage": "关闭页面",
+  "amount": "支付金额",
+  "orderTitle": "商品标题",
+  "orderNo": "订单号"
+}

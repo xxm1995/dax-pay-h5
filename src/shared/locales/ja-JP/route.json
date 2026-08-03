@@ -8,5 +8,6 @@
   "wechatAuth": "WeChat認証",
   "douyinAuth": "Douyin認証",
   "merchantStatement": "販売者の声明",
-  "errorPage": "ページが見つかりません"
+  "errorPage": "ページが見つかりません",
+  "payResult": "支払結果"
 }

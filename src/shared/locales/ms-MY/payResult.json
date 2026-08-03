@@ -1,0 +1,20 @@
+{
+  "title": "Hasil Pembayaran",
+  "processing": "Mengesahkan hasil pembayaran...",
+  "paid": "Pembayaran Berjaya",
+  "failed": "Pembayaran Gagal",
+  "closed": "Pesanan Ditutup",
+  "expired": "Pesanan Tamat Tempoh",
+  "loadFail": "Gagal Memuatkan Pesanan",
+  "paidTip": "Pembayaran selesai, terima kasih",
+  "failedTip": "Pembayaran tidak berjaya",
+  "closedTip": "Pesanan telah ditutup",
+  "expiredTip": "Pesanan telah tamat tempoh",
+  "loadFailTip": "Pesanan tidak wujud atau pautan tidak sah",
+  "backToMerchant": "Kembali ke Merchant",
+  "autoRedirectTip": "Kembali ke merchant secara automatik dalam {n} saat",
+  "closePage": "Tutup Halaman",
+  "amount": "Jumlah",
+  "orderTitle": "Subjek",
+  "orderNo": "No. Pesanan"
+}

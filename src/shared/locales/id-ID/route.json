@@ -8,5 +8,6 @@
   "wechatAuth": "Autentikasi WeChat",
   "douyinAuth": "Autentikasi Douyin",
   "merchantStatement": "Pernyataan Pedagang",
-  "errorPage": "Halaman tidak ditemukan"
+  "errorPage": "Halaman tidak ditemukan",
+  "payResult": "Hasil Pembayaran"
 }

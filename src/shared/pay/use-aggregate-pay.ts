@@ -16,6 +16,7 @@ import {
   getAggregateMeta,
   getGatewayOrder,
 } from '@/shared/api/gateway'
+import { getPayResult } from '@/shared/api/pay-result'
 import { useGatewayOrderPoll } from '@/shared/hooks/use-gateway-order-poll'
 import { closeWebview } from '@/shared/pay/close-webview'
 import { prefetchDouyinJsapi } from '@/shared/pay/douyin'
@@ -112,23 +113,58 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     onPaid(latest) {
       order.value = latest
       onPaid?.()
-      // 不再立即 redirectIfNeeded()：模板切到成功卡片后，由卡片倒计时或用户点击触发跳转
+      // 不预取签名URL: 倒计时归零/手动点击时由 redirectIfNeeded 内部查单(3s 缓冲让通道回调推进状态)
     },
   })
 
+  // 是否为「重入已支付订单」: 初始加载即为 paid(非本会话支付成功), 不自动倒计时跳转, 仅展示结果卡 + 手动按钮
+  const isReentry = ref(false)
+  // 跳转查单中标志(防重复触发, 查单期间保持 true)
+  const redirectLoading = ref(false)
+
   /**
    * 跳转到商户 returnUrl 或关闭 webview
-   * 同步执行（不再 setTimeout），由成功卡片倒计时归零或用户点击按钮触发
+   *
+   * 跳转时刻才查单(getPayResult), 给后端倒计时 3s 缓冲让通道回调把状态推进到 paid,
+   * 从而拿到带签名的 redirectUrl; 查询失败或状态未就绪时不跳转(让问题暴露, 不兜底裸跳)。
+   * 由成功卡片倒计时归零或用户点击按钮触发(异步)。
    */
-  function redirectIfNeeded() {
-    if (order.value.returnUrl) {
-      // 有商户回跳地址：立即跳转
-      window.location.href = order.value.returnUrl!
+  async function redirectIfNeeded() {
+    if (redirectLoading.value) {
       return
     }
-    // 无 returnUrl 且开启自动关闭：关闭 webview 回到宿主钱包
-    if (closeOnPaidWithoutReturn) {
-      closeWebview()
+    redirectLoading.value = true
+    try {
+      if (order.value.returnUrl) {
+        // 跳转时刻查单: 优先带签名 redirectUrl, 未就绪回退裸跳 returnUrl
+        const url = await resolveRedirectUrl()
+        if (url) {
+          window.location.href = url
+        }
+        return
+      }
+      // 无 returnUrl 且开启自动关闭: 关闭 webview 回到宿主钱包
+      if (closeOnPaidWithoutReturn) {
+        closeWebview()
+      }
+    }
+    finally {
+      redirectLoading.value = false
+    }
+  }
+
+  /** 查询带签名的跳转地址, 状态未就绪或查询失败时返回 null(不兜底裸跳, 让问题暴露) */
+  async function resolveRedirectUrl(): Promise<string | null> {
+    if (!order.value.tradeNo) {
+      return null
+    }
+    try {
+      const info = await getPayResult(order.value.tradeNo)
+      // 不兜底裸跳: redirectUrl 为空说明状态未就绪/条件不满足, 返回 null 让调用方感知
+      return info?.redirectUrl || null
+    }
+    catch {
+      return null
     }
   }
 
@@ -191,6 +227,10 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
    */
   async function applyPayResult(result: AggregatePayResult | null) {
     payResult.value = result
+    // 同步资金交易号: 支付发起时后端已创建 PayTrade, 响应含 tradeNo; 前端 order 来自预下单(bootstrap), 彼时无 tradeNo
+    if (result?.tradeNo) {
+      order.value.tradeNo = result.tradeNo
+    }
     const action = resolvePayResult(result)
     switch (action.type) {
       case 'success':
@@ -319,6 +359,11 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
       startCountdown(order.value.expiredTime)
       // 终态订单：显示结果卡
       if (paid.value || terminal.value) {
+        // 初始加载即为 paid = 重入(非本会话支付成功), 标记重入态: 不自动倒计时跳转, 仅手动按钮可跳
+        // 不预取签名URL: 手动按钮点击时由 redirectIfNeeded 内部查单
+        if (paid.value) {
+          isReentry.value = true
+        }
         ready.value = true
         return
       }
@@ -381,6 +426,7 @@ export function useAggregatePay(options: UseAggregatePayOptions) {
     terminal,
     expired,
     countdown,
+    isReentry,
     bootstrap,
     doPay,
     startPoll,

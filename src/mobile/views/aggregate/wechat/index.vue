@@ -41,6 +41,7 @@ const {
   bootstrap,
   doPay,
   redirectIfNeeded,
+  isReentry,
 } = useAggregatePay({
   orderNo,
   clientEnv: 'wechat',
@@ -166,6 +167,7 @@ onMounted(() => {
         :brand-color="BRAND_COLOR"
         :summary="orderSummary"
         :return-url="order.returnUrl"
+        :auto-redirect="!isReentry"
         @redirect="redirectIfNeeded"
       />
 

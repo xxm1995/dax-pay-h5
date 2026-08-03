@@ -7,6 +7,7 @@ import error from './error.json'
 import home from './home.json'
 import http from './http.json'
 import isvAuth from './isv-auth.json'
+import payResult from './payResult.json'
 import protocol from './protocol.json'
 import route from './route.json'
 import statement from './statement.json'
@@ -24,4 +25,5 @@ export default {
   home,
   error,
   aggregate,
+  payResult,
 }

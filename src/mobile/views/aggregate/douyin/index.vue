@@ -41,6 +41,7 @@ const {
   bootstrap,
   doPay,
   redirectIfNeeded,
+  isReentry,
 } = useAggregatePay({
   orderNo,
   clientEnv: 'douyin',
@@ -164,6 +165,7 @@ onMounted(() => {
         :summary="orderSummary"
         :return-url="order.returnUrl"
         :show-close="false"
+        :auto-redirect="!isReentry"
         @redirect="redirectIfNeeded"
       />
 

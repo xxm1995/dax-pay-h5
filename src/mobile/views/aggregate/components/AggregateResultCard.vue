@@ -40,9 +40,12 @@ const props = withDefaults(defineProps<{
   countdownSeconds?: number
   /** 是否显示关闭页面按钮；抖音等无法关 WebView 的环境传 false */
   showClose?: boolean
+  /** 是否自动倒计时跳转；重入已支付订单传 false(仅展示手动按钮, 不自动跳) */
+  autoRedirect?: boolean
 }>(), {
   countdownSeconds: 3,
   showClose: true,
+  autoRedirect: true,
 })
 
 const emit = defineEmits<{
@@ -94,7 +97,8 @@ const countdown = ref(0)
 let timer: ReturnType<typeof setInterval> | null = null
 
 onMounted(() => {
-  if (!showRedirect.value) {
+  // 重入态(autoRedirect=false)不启动自动倒计时, 仅保留手动「返回商户」按钮
+  if (!showRedirect.value || !props.autoRedirect) {
     return
   }
   countdown.value = props.countdownSeconds
@@ -178,8 +182,8 @@ function handleClose() {
         <span class="agg-result__summary-value">{{ item.value }}</span>
       </div>
     </div>
-    <!-- 自动跳转倒计时（仅成功态 + 有 returnUrl） -->
-    <p v-if="showRedirect && countdown > 0" class="agg-result__countdown">
+    <!-- 自动跳转倒计时（仅成功态 + 有 returnUrl + 非重入态自动跳转） -->
+    <p v-if="showRedirect && autoRedirect && countdown > 0" class="agg-result__countdown">
       {{ t('aggregate.autoRedirectTip', { n: countdown }) }}
     </p>
     <!-- 成功态有 returnUrl：显示「返回商户」按钮（用户可立即跳转，不等倒计时） -->

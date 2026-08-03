@@ -1,0 +1,20 @@
+{
+  "title": "支付結果",
+  "processing": "支付結果確認中...",
+  "paid": "支付成功",
+  "failed": "支付失敗",
+  "closed": "訂單已關閉",
+  "expired": "訂單已過期",
+  "loadFail": "訂單載入失敗",
+  "paidTip": "支付已完成，感謝使用",
+  "failedTip": "支付未成功",
+  "closedTip": "訂單已關閉",
+  "expiredTip": "訂單已過期",
+  "loadFailTip": "訂單不存在或連結失效",
+  "backToMerchant": "返回商戶",
+  "autoRedirectTip": "{n} 秒後自動返回商戶",
+  "closePage": "關閉頁面",
+  "amount": "支付金額",
+  "orderTitle": "商品名稱",
+  "orderNo": "訂單號"
+}

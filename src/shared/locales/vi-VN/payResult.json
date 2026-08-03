@@ -1,0 +1,20 @@
+{
+  "title": "Kết quả thanh toán",
+  "processing": "Đang xác nhận kết quả thanh toán...",
+  "paid": "Thanh toán thành công",
+  "failed": "Thanh toán thất bại",
+  "closed": "Đơn hàng đã đóng",
+  "expired": "Đơn hàng đã hết hạn",
+  "loadFail": "Tải đơn hàng thất bại",
+  "paidTip": "Thanh toán hoàn tất, cảm ơn bạn",
+  "failedTip": "Thanh toán không thành công",
+  "closedTip": "Đơn hàng đã bị đóng",
+  "expiredTip": "Đơn hàng đã hết hạn",
+  "loadFailTip": "Đơn hàng không tồn tại hoặc liên kết không hợp lệ",
+  "backToMerchant": "Về Merchant",
+  "autoRedirectTip": "Tự động về merchant sau {n} giây",
+  "closePage": "Đóng trang",
+  "amount": "Số tiền",
+  "orderTitle": "Sản phẩm",
+  "orderNo": "Mã đơn"
+}
