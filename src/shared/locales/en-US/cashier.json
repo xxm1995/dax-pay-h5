@@ -18,7 +18,8 @@
     "douyin": "Douyin Pay",
     "aggregate_pay": "Aggregate Pay",
     "visa": "Visa",
-    "mastercard": "Mastercard"
+    "mastercard": "Mastercard",
+    "stripe": "Stripe"
   },
   "loadFail": "Failed to load order",
   "payFail": "Failed to start payment",
@@ -42,6 +43,12 @@
   "autoRedirectTip": "Auto-return to merchant in {n}s",
   "backToMerchant": "Return to merchant",
   "payTime": "Payment time",
+  "stripeIntentTitle": "Stripe Card Payment",
+  "stripeCardTip": "Enter your card details to complete the payment",
+  "stripePayNow": "Pay",
+  "stripePayloadInvalid": "Invalid payment payload, please try again",
+  "stripeKeyMissing": "Payment configuration is missing, unable to pay",
+  "stripeLoadFail": "Failed to load Stripe, please try again",
   "miniScanTitle": "Scan to open the cashier mini-program",
   "miniScanDesc": "Scan the QR code with WeChat to open the cashier and complete payment",
   "miniInWalletTitle": "Cashier mini-program unavailable",

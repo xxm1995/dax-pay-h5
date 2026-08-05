@@ -19,6 +19,7 @@ export type PayResultAction
     | { type: 'qrcode', content: string }
     | { type: 'form', html: string }
     | { type: 'jsapi', payload: string }
+    | { type: 'stripe_intent', payload: string }
     | { type: 'poll' }
     | { type: 'unsupported', payBodyType?: string, payBody?: string }
 
@@ -61,6 +62,16 @@ export function resolvePayResult(
 
   if (body && bodyType === PayBodyType.JSAPI) {
     return { type: 'jsapi', payload: body }
+  }
+
+  // Stripe Checkout Session: 跳转 URL(与 link 分支行为一致)
+  if (body && bodyType === PayBodyType.STRIPE_CHECKOUT) {
+    return { type: 'redirect', url: body }
+  }
+
+  // Stripe PaymentIntent: client_secret(JSON 或纯字符串), 由调用方弹 Elements 卡输入面板
+  if (body && bodyType === PayBodyType.STRIPE_INTENT) {
+    return { type: 'stripe_intent', payload: body }
   }
 
   // json / identifier / 未知：有 body 时先轮询并交给上层展示；无 body 纯轮询

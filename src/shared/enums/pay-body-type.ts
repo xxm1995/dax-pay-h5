@@ -3,6 +3,7 @@
  *
  * 后端枚举: link / jsapi / from / identifier / qr_code / json
  * 历史误写 url 在分发层按 link 兼容
+ * Stripe 通道扩展: stripe_checkout(Checkout Session 跳转) / stripe_intent(PaymentIntent client_secret)
  */
 export const PayBodyType = {
   /** 支付链接 */
@@ -19,6 +20,10 @@ export const PayBodyType = {
   JSON: 'json',
   /** 历史误写, 按 link 处理 */
   URL_LEGACY: 'url',
+  /** Stripe Checkout Session 跳转 URL(前端直接跳转, 与 link 行为一致) */
+  STRIPE_CHECKOUT: 'stripe_checkout',
+  /** Stripe PaymentIntent client_secret(前端用 Stripe.js Elements 调 confirmCardPayment) */
+  STRIPE_INTENT: 'stripe_intent',
 } as const
 
 export type PayBodyTypeCode = (typeof PayBodyType)[keyof typeof PayBodyType]

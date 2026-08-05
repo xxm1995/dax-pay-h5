@@ -18,7 +18,8 @@
     "douyin": "Douyin Pay",
     "aggregate_pay": "통합 결제",
     "visa": "Visa",
-    "mastercard": "Mastercard"
+    "mastercard": "Mastercard",
+    "stripe": "Stripe"
   },
   "loadFail": "주문을 불러오지 못했습니다",
   "payFail": "결제를 시작하지 못했습니다",
@@ -42,6 +43,12 @@
   "autoRedirectTip": "{n}초 후 자동으로 가맹점으로 돌아갑니다",
   "backToMerchant": "가맹점으로 돌아가기",
   "payTime": "결제 시간",
+  "stripeIntentTitle": "Stripe 카드 결제",
+  "stripeCardTip": "카드 정보를 입력하여 결제를 완료하세요",
+  "stripePayNow": "결제하기",
+  "stripePayloadInvalid": "결제 파라미터가 올바르지 않습니다. 다시 시도해 주세요",
+  "stripeKeyMissing": "결제 설정이 없습니다",
+  "stripeLoadFail": "Stripe 로드에 실패했습니다. 다시 시도해 주세요",
   "miniScanTitle": "스캔하여 결제 미니프로그램 열기",
   "miniScanDesc": "WeChat으로 QR 코드를 스캔하여 결제 미니프로그램을 열고 결제를 완료하세요",
   "miniInWalletTitle": "결제 미니프로그램을 사용할 수 없습니다",

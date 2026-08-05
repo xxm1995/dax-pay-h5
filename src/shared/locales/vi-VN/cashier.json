@@ -18,7 +18,8 @@
     "douyin": "Douyin Pay",
     "aggregate_pay": "Thanh toán tổng hợp",
     "visa": "Visa",
-    "mastercard": "Mastercard"
+    "mastercard": "Mastercard",
+    "stripe": "Stripe"
   },
   "loadFail": "Không tải được đơn hàng",
   "payFail": "Không thể bắt đầu thanh toán",
@@ -42,6 +43,12 @@
   "autoRedirectTip": "Tự động quay lại merchant sau {n} giây",
   "backToMerchant": "Quay lại merchant",
   "payTime": "Thời gian thanh toán",
+  "stripeIntentTitle": "Thanh toán thẻ Stripe",
+  "stripeCardTip": "Nhập thông tin thẻ để hoàn tất thanh toán",
+  "stripePayNow": "Thanh toán",
+  "stripePayloadInvalid": "Tham số thanh toán không hợp lệ, vui lòng thử lại",
+  "stripeKeyMissing": "Thiếu cấu hình thanh toán",
+  "stripeLoadFail": "Không tải được Stripe, vui lòng thử lại",
   "miniScanTitle": "Quét để mở mini-program thu ngân",
   "miniScanDesc": "Vui lòng quét mã QR bằng WeChat để mở thu ngân và hoàn tất thanh toán",
   "miniInWalletTitle": "Mini-program thu ngân không khả dụng",

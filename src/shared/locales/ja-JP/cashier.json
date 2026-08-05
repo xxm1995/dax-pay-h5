@@ -18,7 +18,8 @@
     "douyin": "Douyin Pay",
     "aggregate_pay": "統合決済",
     "visa": "Visa",
-    "mastercard": "Mastercard"
+    "mastercard": "Mastercard",
+    "stripe": "Stripe"
   },
   "loadFail": "注文の読み込みに失敗しました",
   "payFail": "支払いの開始に失敗しました",
@@ -42,6 +43,12 @@
   "autoRedirectTip": "{n} 秒後に自動的に店舗に戻ります",
   "backToMerchant": "店舗に戻る",
   "payTime": "支払い日時",
+  "stripeIntentTitle": "Stripe カード支払い",
+  "stripeCardTip": "カード情報を入力して支払いを完了してください",
+  "stripePayNow": "支払いを確定",
+  "stripePayloadInvalid": "支払いパラメータが無効です。もう一度お試しください",
+  "stripeKeyMissing": "支払い設定がありません",
+  "stripeLoadFail": "Stripe の読み込みに失敗しました。もう一度お試しください",
   "miniScanTitle": "スキャンして決済ミニプログラムを開く",
   "miniScanDesc": "WeChatでQRコードをスキャンして決済ミニプログラムを開き、支払いを完了してください",
   "miniInWalletTitle": "決済ミニプログラムは現在利用できません",

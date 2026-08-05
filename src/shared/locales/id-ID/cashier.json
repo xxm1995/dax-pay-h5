@@ -18,7 +18,8 @@
     "douyin": "Douyin Pay",
     "aggregate_pay": "Pembayaran agregat",
     "visa": "Visa",
-    "mastercard": "Mastercard"
+    "mastercard": "Mastercard",
+    "stripe": "Stripe"
   },
   "loadFail": "Gagal memuat pesanan",
   "payFail": "Gagal memulai pembayaran",
@@ -42,6 +43,12 @@
   "autoRedirectTip": "Kembali ke merchant otomatis dalam {n} detik",
   "backToMerchant": "Kembali ke merchant",
   "payTime": "Waktu pembayaran",
+  "stripeIntentTitle": "Pembayaran Kartu Stripe",
+  "stripeCardTip": "Masukkan detail kartu untuk menyelesaikan pembayaran",
+  "stripePayNow": "Bayar",
+  "stripePayloadInvalid": "Parameter pembayaran tidak valid, coba lagi",
+  "stripeKeyMissing": "Konfigurasi pembayaran tidak ada",
+  "stripeLoadFail": "Gagal memuat Stripe, coba lagi",
   "miniScanTitle": "Pindai untuk membuka mini-program kasir",
   "miniScanDesc": "Pindai kode QR dengan WeChat untuk membuka kasir dan menyelesaikan pembayaran",
   "miniInWalletTitle": "Mini-program kasir tidak tersedia",

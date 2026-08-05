@@ -18,7 +18,8 @@
     "douyin": "抖音支付",
     "aggregate_pay": "聚合支付",
     "visa": "Visa",
-    "mastercard": "Mastercard"
+    "mastercard": "Mastercard",
+    "stripe": "Stripe"
   },
   "loadFail": "載入訂單失敗",
   "payFail": "支付發起失敗",
@@ -42,6 +43,12 @@
   "autoRedirectTip": "{n} 秒後自動返回商戶",
   "backToMerchant": "返回商戶",
   "payTime": "支付時間",
+  "stripeIntentTitle": "Stripe 卡支付",
+  "stripeCardTip": "請輸入信用卡資料完成付款",
+  "stripePayNow": "確認付款",
+  "stripePayloadInvalid": "付款參數無效，請重試",
+  "stripeKeyMissing": "付款設定遺失，無法完成付款",
+  "stripeLoadFail": "Stripe 載入失敗，請重試",
   "miniScanTitle": "請掃碼開啟收銀台小程式",
   "miniScanDesc": "請使用微信掃描二維碼進入統一收銀台並完成付款",
   "miniInWalletTitle": "收銀台小程式暫不可用",

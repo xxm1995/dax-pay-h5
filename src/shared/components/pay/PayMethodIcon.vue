@@ -10,12 +10,13 @@ import alipaySvg from '@/shared/assets/icons/channel/alipay.svg'
 import douyinSvg from '@/shared/assets/icons/channel/douyin.svg'
 import mastercardSvg from '@/shared/assets/icons/channel/mastercard.svg'
 import otherSvg from '@/shared/assets/icons/channel/other.svg'
+import stripeSvg from '@/shared/assets/icons/channel/stripe.svg'
 import unionPaySvg from '@/shared/assets/icons/channel/union_pay.svg'
 import visaSvg from '@/shared/assets/icons/channel/visa.svg'
 import wechatSvg from '@/shared/assets/icons/channel/wechat.svg'
 
 const props = withDefaults(defineProps<{
-  /** 图标编码: wechat / alipay / union_pay / douyin / aggregate_pay / visa / mastercard */
+  /** 图标编码: wechat / alipay / union_pay / douyin / aggregate_pay / visa / mastercard / stripe */
   icon?: string
   /** 图标显示边长(px)，容器略大以留内边距 */
   size?: number
@@ -33,6 +34,7 @@ const ICON_MAP: Record<string, string> = {
   aggregate_pay: aggregatePaySvg,
   visa: visaSvg,
   mastercard: mastercardSvg,
+  stripe: stripeSvg,
 }
 
 const src = computed(() => {
