@@ -11,6 +11,7 @@ import payResult from './payResult.json'
 import protocol from './protocol.json'
 import route from './route.json'
 import statement from './statement.json'
+import transferConfirm from './transferConfirm.json'
 
 export default {
   common,
@@ -21,6 +22,7 @@ export default {
   codePay,
   protocol,
   route,
+  transferConfirm,
   statement,
   home,
   error,

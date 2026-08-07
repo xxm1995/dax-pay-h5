@@ -1,0 +1,16 @@
+{
+  "loading": "読み込み中...",
+  "pending": "確認待ち",
+  "pendingDesc": "送金を受信しました。確認してください",
+  "completed": "完了",
+  "confirm": "受領確認",
+  "processing": "処理中...",
+  "success": "受領成功",
+  "cancelled": "キャンセルされました",
+  "failed": "受領失敗、後でもう一度お試しください",
+  "loadFailed": "送金情報の取得に失敗しました",
+  "openInWechat": "WeChatで開いてください",
+  "invalidTransferNo": "送金番号が無効です",
+  "title": "送金内容",
+  "transferNo": "送金番号"
+}

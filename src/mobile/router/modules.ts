@@ -235,6 +235,15 @@ const routeModuleList: Array<RouteRecordRaw> = [
       title: 'route.payResult', // 支付结果
     },
   },
+  // 微信转账确认收款页（跨端：收款人在微信内打开拉起确认）
+  {
+    path: RoutePath.TRANSFER_CONFIRM,
+    name: 'TransferConfirm',
+    component: () => import('@/mobile/views/transfer/wechat/TransferConfirm.vue'),
+    meta: {
+      title: 'route.transferConfirm', // 转账确认收款
+    },
+  },
 ]
 
 export default routeModuleList

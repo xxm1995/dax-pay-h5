@@ -9,5 +9,6 @@
   "douyinAuth": "Autentikasi Douyin",
   "merchantStatement": "Pernyataan Pedagang",
   "errorPage": "Halaman tidak ditemukan",
-  "payResult": "Hasil Pembayaran"
+  "payResult": "Hasil Pembayaran",
+  "transferConfirm": "Konfirmasi Transfer"
 }

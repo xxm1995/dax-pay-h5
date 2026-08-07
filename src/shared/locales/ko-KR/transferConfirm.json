@@ -1,0 +1,16 @@
+{
+  "loading": "로딩 중...",
+  "pending": "확인 대기",
+  "pendingDesc": "송금을 받았습니다. 확인해 주세요",
+  "completed": "완료됨",
+  "confirm": "수령 확인",
+  "processing": "처리 중...",
+  "success": "수령 성공",
+  "cancelled": "취소됨",
+  "failed": "수령 실패, 나중에 다시 시도해 주세요",
+  "loadFailed": "송금 정보를 불러오지 못했습니다",
+  "openInWechat": "WeChat에서 열어주세요",
+  "invalidTransferNo": "송금 번호가 유효하지 않습니다",
+  "title": "송금 내용",
+  "transferNo": "송금 번호"
+}

@@ -9,5 +9,6 @@
   "douyinAuth": "Douyin Auth",
   "merchantStatement": "Merchant Statement",
   "errorPage": "Page Not Found",
-  "payResult": "Payment Result"
+  "payResult": "Payment Result",
+  "transferConfirm": "Transfer Confirm"
 }

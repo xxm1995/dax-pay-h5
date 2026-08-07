@@ -1,0 +1,16 @@
+{
+  "loading": "Loading...",
+  "pending": "Pending Confirmation",
+  "pendingDesc": "You received a transfer, please confirm",
+  "completed": "Completed",
+  "confirm": "Confirm Receipt",
+  "processing": "Processing...",
+  "success": "Receipt Successful",
+  "cancelled": "Cancelled",
+  "failed": "Receipt failed, please try again later",
+  "loadFailed": "Failed to load transfer info",
+  "openInWechat": "Please open in WeChat",
+  "invalidTransferNo": "Invalid transfer number",
+  "title": "Transfer Details",
+  "transferNo": "Transfer No."
+}

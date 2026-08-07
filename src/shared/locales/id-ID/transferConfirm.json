@@ -1,0 +1,16 @@
+{
+  "loading": "Memuat...",
+  "pending": "Menunggu Konfirmasi",
+  "pendingDesc": "Anda menerima transfer, silakan konfirmasi",
+  "completed": "Selesai",
+  "confirm": "Konfirmasi Penerimaan",
+  "processing": "Memproses...",
+  "success": "Penerimaan Berhasil",
+  "cancelled": "Dibatalkan",
+  "failed": "Penerimaan gagal, coba lagi nanti",
+  "loadFailed": "Gagal memuat info transfer",
+  "openInWechat": "Buka di WeChat",
+  "invalidTransferNo": "Nomor transfer tidak valid",
+  "title": "Detail Transfer",
+  "transferNo": "No. Transfer"
+}

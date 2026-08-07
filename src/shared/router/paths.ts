@@ -99,4 +99,10 @@ export const RoutePath = {
    * 支付完成后凭 tradeNo 查订单状态, 有商户 returnUrl 则带签名跳转, 无则展示结果结束页
    */
   PAY_RESULT: '/pay-result/:tradeNo',
+  /**
+   * 微信转账确认收款页（跨端；后端发起转账返回的 confirmUrl 落地契约）
+   * 收款人在微信内打开: {paymentGatewayBaseUrl}/transfer-confirm/{transferNo}
+   * 调 WeixinJSBridge.invoke('requestMerchantTransfer') 拉起微信官方收款确认页
+   */
+  TRANSFER_CONFIRM: '/transfer-confirm/:transferNo',
 } as const

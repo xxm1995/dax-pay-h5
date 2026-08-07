@@ -121,6 +121,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pc/views/pay-result/index.vue'),
     meta: { title: 'route.payResult' }, // 支付结果
   },
+  // 微信转账确认收款页（跨端：PC 仅引导提示，收款需在微信内打开）
+  {
+    path: RoutePath.TRANSFER_CONFIRM,
+    name: 'PcTransferConfirm',
+    component: () => import('@/pc/views/transfer/wechat/TransferConfirm.vue'),
+    meta: { title: 'route.transferConfirm' }, // 转账确认收款
+  },
   ...mobileOnlyStubs,
   // 兜底：移动端专属路径（如 /home/index）或任何未匹配路径，渲染 PC 404 页
   // 用 component 而非 redirect——vue-router 5 下 catch-all + redirect 在初始导航不触发

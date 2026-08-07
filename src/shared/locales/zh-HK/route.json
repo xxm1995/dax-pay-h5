@@ -9,5 +9,6 @@
   "douyinAuth": "抖音認證",
   "merchantStatement": "商户對賬單",
   "errorPage": "頁面不存在",
-  "payResult": "支付結果"
+  "payResult": "支付結果",
+  "transferConfirm": "轉賬確認收款"
 }

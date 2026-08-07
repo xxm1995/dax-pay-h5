@@ -1,0 +1,16 @@
+{
+  "loading": "Memuatkan...",
+  "pending": "Menunggu Pengesahan",
+  "pendingDesc": "Anda menerima pemindahan, silakan sahkan",
+  "completed": "Selesai",
+  "confirm": "Sahkan Penerimaan",
+  "processing": "Memproses...",
+  "success": "Penerimaan Berjaya",
+  "cancelled": "Dibatalkan",
+  "failed": "Penerimaan gagal, sila cuba lagi kemudian",
+  "loadFailed": "Gagal memuatkan info pemindahan",
+  "openInWechat": "Sila buka dalam WeChat",
+  "invalidTransferNo": "Nombor pemindahan tidak sah",
+  "title": "Butiran Pemindahan",
+  "transferNo": "No. Pemindahan"
+}

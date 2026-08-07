@@ -1,0 +1,16 @@
+{
+  "loading": "載入中...",
+  "pending": "待確認收款",
+  "pendingDesc": "收到一筆轉賬，請確認收款",
+  "completed": "已完成",
+  "confirm": "確認收款",
+  "processing": "處理中...",
+  "success": "收款成功",
+  "cancelled": "已取消收款",
+  "failed": "收款失敗，請稍後重試",
+  "loadFailed": "獲取轉賬資訊失敗",
+  "openInWechat": "請在微信中開啟",
+  "invalidTransferNo": "轉賬單號無效",
+  "title": "轉賬內容",
+  "transferNo": "轉賬單號"
+}
