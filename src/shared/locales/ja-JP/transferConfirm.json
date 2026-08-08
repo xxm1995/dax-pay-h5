@@ -3,6 +3,8 @@
   "pending": "確認待ち",
   "pendingDesc": "送金を受信しました。確認してください",
   "completed": "完了",
+  "confirmedTitle": "受取確認済み",
+  "confirmedDesc": "資金処理中です。後ほどWeChatウォレットでご確認ください",
   "confirm": "受領確認",
   "processing": "処理中...",
   "success": "受領成功",
@@ -12,5 +14,6 @@
   "openInWechat": "WeChatで開いてください",
   "invalidTransferNo": "送金番号が無効です",
   "title": "送金内容",
-  "transferNo": "送金番号"
+  "transferNo": "送金番号",
+  "done": "完了"
 }

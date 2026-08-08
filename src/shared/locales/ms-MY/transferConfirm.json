@@ -3,6 +3,8 @@
   "pending": "Menunggu Pengesahan",
   "pendingDesc": "Anda menerima pemindahan, silakan sahkan",
   "completed": "Selesai",
+  "confirmedTitle": "Penerimaan Disahkan",
+  "confirmedDesc": "Dana sedang diproses, sila semak dompet WeChat anda kemudian",
   "confirm": "Sahkan Penerimaan",
   "processing": "Memproses...",
   "success": "Penerimaan Berjaya",
@@ -12,5 +14,6 @@
   "openInWechat": "Sila buka dalam WeChat",
   "invalidTransferNo": "Nombor pemindahan tidak sah",
   "title": "Butiran Pemindahan",
-  "transferNo": "No. Pemindahan"
+  "transferNo": "No. Pemindahan",
+  "done": "Selesai"
 }

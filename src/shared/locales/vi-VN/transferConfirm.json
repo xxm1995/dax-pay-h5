@@ -3,6 +3,8 @@
   "pending": "Chờ xác nhận",
   "pendingDesc": "Bạn nhận được một chuyển khoản, vui lòng xác nhận",
   "completed": "Hoàn thành",
+  "confirmedTitle": "Đã xác nhận nhận tiền",
+  "confirmedDesc": "Tiền đang được xử lý, vui lòng kiểm tra ví WeChat sau",
   "confirm": "Xác nhận nhận tiền",
   "processing": "Đang xử lý...",
   "success": "Nhận tiền thành công",
@@ -12,5 +14,6 @@
   "openInWechat": "Vui lòng mở trong WeChat",
   "invalidTransferNo": "Số chuyển khoản không hợp lệ",
   "title": "Nội dung chuyển khoản",
-  "transferNo": "Số chuyển khoản"
+  "transferNo": "Số chuyển khoản",
+  "done": "Hoàn thành"
 }

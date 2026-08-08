@@ -12,6 +12,8 @@ const { t } = useI18n()
 const route = useRoute()
 
 const loading = ref(true)
+// 加载是否失败(失败时不渲染金额等空数据)
+const loadFailed = ref(false)
 const info = ref<TransferConfirmInfo>({})
 
 const amountYuan = computed(() => {
@@ -32,7 +34,8 @@ onMounted(async () => {
     info.value = await getTransferConfirmInfo(transferNo)
   }
   catch {
-    // ignore
+    // 加载失败, 显示错误提示而非空数据
+    loadFailed.value = true
   }
   finally {
     loading.value = false
@@ -44,6 +47,9 @@ onMounted(async () => {
   <div class="pc-transfer-confirm">
     <div v-if="loading" class="pc-transfer-confirm__loading">
       {{ t('transferConfirm.loading') }}
+    </div>
+    <div v-else-if="loadFailed" class="pc-transfer-confirm__tip">
+      {{ t('transferConfirm.loadFailed') }}
     </div>
     <template v-else>
       <!-- 金额 -->

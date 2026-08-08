@@ -15,6 +15,8 @@ const route = useRoute()
 
 const loading = ref(true)
 const processing = ref(false)
+// 加载是否失败(失败时不渲染收款按钮, 避免带空参数拉起)
+const loadFailed = ref(false)
 const info = ref<TransferConfirmInfo>({})
 
 // 是否在微信内浏览器
@@ -29,15 +31,45 @@ const amountYuan = computed(() => {
 // 是否已终态不可操作
 const isTerminal = computed(() => info.value.received === true)
 
+// 用户已确认收款(前端状态, 切换到成功视图)
+const confirmed = ref(false)
+
+// 是否展示成功图标(已完成/已确认)
+const showSuccessIcon = computed(() => isTerminal.value || confirmed.value)
+
+// 顶部状态标题
+const statusTitle = computed(() => {
+  if (isTerminal.value) {
+    return t('transferConfirm.completed')
+  }
+  if (confirmed.value) {
+    return t('transferConfirm.confirmedTitle')
+  }
+  return t('transferConfirm.pending')
+})
+
+// 顶部状态描述
+const statusDesc = computed(() => {
+  if (confirmed.value) {
+    return t('transferConfirm.confirmedDesc')
+  }
+  if (!isTerminal.value) {
+    return t('transferConfirm.pendingDesc')
+  }
+  return ''
+})
+
 const transferNo = route.params.transferNo as string
 
 /** 加载确认收款信息 */
 async function loadInfo() {
   try {
     loading.value = true
+    loadFailed.value = false
     info.value = await getTransferConfirmInfo(transferNo)
   }
   catch {
+    loadFailed.value = true
     // 国际化：获取转账信息失败
     showToast(t('transferConfirm.loadFailed'))
   }
@@ -117,15 +149,8 @@ async function handleConfirm() {
   try {
     await waitForBridge()
     await invokeMerchantTransfer()
-    // 成功：关闭当前窗口（微信内 webview）
-    // 国际化：收款成功
-    showToast(t('transferConfirm.success'))
-    setTimeout(() => {
-      const bridge = (window as any).WeixinJSBridge
-      if (bridge?.call) {
-        bridge.call('closeWindow')
-      }
-    }, 1500)
+    // 确认成功: 切换到"已确认收款"视图, 由用户手动关闭
+    confirmed.value = true
   }
   catch (err: any) {
     if (err?.message === 'cancel') {
@@ -139,6 +164,14 @@ async function handleConfirm() {
   }
   finally {
     processing.value = false
+  }
+}
+
+/** 确认成功后点击完成, 关闭当前窗口(微信内 webview) */
+function handleDone() {
+  const bridge = (window as any).WeixinJSBridge
+  if (bridge?.call) {
+    bridge.call('closeWindow')
   }
 }
 
@@ -161,25 +194,32 @@ onMounted(() => {
       </van-loading>
     </div>
 
+    <!-- 加载失败 -->
+    <div v-else-if="loadFailed" class="transfer-confirm__error">
+      {{ t('transferConfirm.loadFailed') }}
+    </div>
+
     <!-- 内容 -->
     <template v-else>
       <!-- 顶部状态 -->
       <div class="transfer-confirm__status">
         <div class="transfer-confirm__icon">
-          <svg v-if="isTerminal" viewBox="0 0 48 48" width="48" height="48">
+          <!-- 已完成/已确认: 绿色勾 -->
+          <svg v-if="showSuccessIcon" viewBox="0 0 48 48" width="48" height="48">
             <circle cx="24" cy="24" r="22" fill="#07c160" />
             <path d="M16 24l6 6 12-12" stroke="#fff" stroke-width="3" fill="none" />
           </svg>
+          <!-- 待确认: 黄色感叹号 -->
           <svg v-else viewBox="0 0 48 48" width="48" height="48">
             <circle cx="24" cy="24" r="22" fill="#faad14" />
             <path d="M24 14v12M24 32v2" stroke="#fff" stroke-width="3" stroke-linecap="round" />
           </svg>
         </div>
         <h2 class="transfer-confirm__title">
-          {{ isTerminal ? t('transferConfirm.completed') : t('transferConfirm.pending') }}
+          {{ statusTitle }}
         </h2>
-        <p v-if="!isTerminal" class="transfer-confirm__desc">
-          {{ t('transferConfirm.pendingDesc') }}
+        <p v-if="statusDesc" class="transfer-confirm__desc">
+          {{ statusDesc }}
         </p>
       </div>
 
@@ -202,14 +242,24 @@ onMounted(() => {
       </div>
 
       <!-- 非微信环境提示 -->
-      <div v-if="!isWechat && !isTerminal" class="transfer-confirm__env-tip">
+      <div v-if="!isWechat && !isTerminal && !confirmed" class="transfer-confirm__env-tip">
         {{ t('transferConfirm.openInWechat') }}
       </div>
 
       <!-- 操作按钮 -->
-      <div v-if="!isTerminal" class="transfer-confirm__action">
+      <div v-if="confirmed" class="transfer-confirm__action">
         <van-button
-
+          round block
+          type="primary"
+          color="#07c160"
+          size="large"
+          @click="handleDone"
+        >
+          {{ t('transferConfirm.done') }}
+        </van-button>
+      </div>
+      <div v-else-if="!isTerminal" class="transfer-confirm__action">
+        <van-button
           round block
           type="primary"
           color="#07c160"
@@ -239,6 +289,15 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     height: 100vh;
+  }
+
+  &__error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 15px;
+    color: #888;
   }
 
   &__status {

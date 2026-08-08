@@ -3,6 +3,8 @@
   "pending": "Menunggu Konfirmasi",
   "pendingDesc": "Anda menerima transfer, silakan konfirmasi",
   "completed": "Selesai",
+  "confirmedTitle": "Penerimaan Dikonfirmasi",
+  "confirmedDesc": "Dana sedang diproses, periksa dompet WeChat Anda nanti",
   "confirm": "Konfirmasi Penerimaan",
   "processing": "Memproses...",
   "success": "Penerimaan Berhasil",
@@ -12,5 +14,6 @@
   "openInWechat": "Buka di WeChat",
   "invalidTransferNo": "Nomor transfer tidak valid",
   "title": "Detail Transfer",
-  "transferNo": "No. Transfer"
+  "transferNo": "No. Transfer",
+  "done": "Selesai"
 }

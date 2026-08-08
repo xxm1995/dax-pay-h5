@@ -3,6 +3,8 @@
   "pending": "확인 대기",
   "pendingDesc": "송금을 받았습니다. 확인해 주세요",
   "completed": "완료됨",
+  "confirmedTitle": "수취 확인됨",
+  "confirmedDesc": "자금 처리 중입니다. 나중에 WeChat 지갑에서 확인하세요",
   "confirm": "수령 확인",
   "processing": "처리 중...",
   "success": "수령 성공",
@@ -12,5 +14,6 @@
   "openInWechat": "WeChat에서 열어주세요",
   "invalidTransferNo": "송금 번호가 유효하지 않습니다",
   "title": "송금 내용",
-  "transferNo": "송금 번호"
+  "transferNo": "송금 번호",
+  "done": "완료"
 }
