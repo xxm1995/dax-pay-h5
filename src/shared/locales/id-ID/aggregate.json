@@ -42,5 +42,7 @@
   "failedTip": "Pembayaran gagal. Silakan coba lagi",
   "paidTip": "Pembayaran selesai. Terima kasih",
   "loadFailTip": "Periksa tautan pembayaran atau apakah pesanan ada",
-  "closePage": "Tutup"
+  "closePage": "Tutup",
+  "backToMerchant": "Kembali ke Merchant",
+  "autoRedirectTip": "Otomatis kembali ke merchant dalam {n} detik"
 }

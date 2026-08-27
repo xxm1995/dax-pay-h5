@@ -42,5 +42,7 @@
   "failedTip": "Thanh toán thất bại. Vui lòng thử lại",
   "paidTip": "Thanh toán hoàn tất. Cảm ơn bạn",
   "loadFailTip": "Vui lòng kiểm tra liên kết thanh toán hoặc đơn hàng",
-  "closePage": "Đóng"
+  "closePage": "Đóng",
+  "backToMerchant": "Quay lại người bán",
+  "autoRedirectTip": "Tự động quay lại người bán sau {n} giây"
 }
