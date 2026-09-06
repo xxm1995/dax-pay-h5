@@ -8,6 +8,7 @@
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import BeianFooter from '@/shared/components/BeianFooter.vue'
 import { usePayResult } from '@/shared/hooks/use-pay-result'
 import { closeWebview } from '@/shared/pay/close-webview'
 
@@ -160,6 +161,8 @@ onMounted(() => {
         {{ t('payResult.closePage') }}
       </van-button>
     </div>
+    <!-- 平台备案信息(版权 + ICP + 公网安, 配置为空不渲染) -->
+    <BeianFooter class="pay-result__beian" />
   </div>
 </template>
 
@@ -269,5 +272,11 @@ onMounted(() => {
   margin-top: 16px;
   width: 100%;
   max-width: 280px;
+}
+
+/* 平台备案栏: 卡片下方弱化展示 */
+.pay-result__beian {
+  margin-top: 12px;
+  opacity: 0.75;
 }
 </style>

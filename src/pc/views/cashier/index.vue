@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { cashierPay, getGatewayOrder, listCashierItems } from '@/shared/api/gateway'
 import { getPayResult } from '@/shared/api/pay-result'
+import BeianFooter from '@/shared/components/BeianFooter.vue'
 import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
@@ -615,6 +616,9 @@ onUnmounted(() => {
         </div>
       </template>
     </div>
+
+    <!-- 平台备案信息(版权 + ICP + 公网安, 配置为空不渲染) -->
+    <BeianFooter class="pc-cashier__beian" />
   </div>
 
   <!-- Stripe PaymentIntent 卡支付面板(弹层, 动态加载 Stripe.js + Elements) -->
@@ -1100,6 +1104,15 @@ onUnmounted(() => {
   opacity: 0.55;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+/* 平台备案栏: 固定底部居中(与 PC 首页页脚同模式, 不挤占居中卡片) */
+.pc-cashier__beian {
+  position: fixed;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  opacity: 0.75;
 }
 
 @media (max-width: 768px) {

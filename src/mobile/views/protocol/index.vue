@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { findDefaultProtocol, resolveProtocolCode } from '@/shared/api/protocol'
+import BeianFooter from '@/shared/components/BeianFooter.vue'
 import { formatDate } from '@/shared/utils/datetime'
 
 defineOptions({ name: 'ProtocolPage' })
@@ -84,6 +85,9 @@ onMounted(load)
 
       <!-- 无内容 -->
       <van-empty v-else :description="t('protocol.noContent')" />
+
+      <!-- 平台备案信息(版权 + ICP + 公网安, 配置为空不渲染) -->
+      <BeianFooter class="protocol-beian" />
     </div>
   </div>
 </template>
@@ -118,6 +122,13 @@ onMounted(load)
   display: flex;
   justify-content: center;
   padding: 60px 0;
+}
+
+// 平台备案栏: 正文末尾弱化展示
+.protocol-beian {
+  margin-top: 24px;
+  padding-bottom: 8px;
+  opacity: 0.75;
 }
 
 .protocol-title {

@@ -193,6 +193,11 @@ export function hasWebsiteFooterContent() {
   )
 }
 
+/** 轻量备案栏(收银台/结果页/协议页)是否有可展示内容: 版权 + ICP + 公网安 */
+export function hasBeianFooterContent() {
+  return !!(getCopyright() || getIcpInfo() || getMpsInfo())
+}
+
 // ---------- cache / hash ----------
 
 function readCache(): WebsiteConfigCacheEnvelope | null {

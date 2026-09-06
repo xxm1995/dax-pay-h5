@@ -15,6 +15,7 @@ import {
   listCashierItems,
 } from '@/shared/api/gateway'
 import { getPayResult } from '@/shared/api/pay-result'
+import BeianFooter from '@/shared/components/BeianFooter.vue'
 import InitLoadingMask from '@/shared/components/pay/InitLoadingMask.vue'
 import PayMethodIcon from '@/shared/components/pay/PayMethodIcon.vue'
 import QrCodeDisplay from '@/shared/components/pay/QrCodeDisplay.vue'
@@ -714,6 +715,8 @@ onUnmounted(() => {
       <button v-else class="cashier__result-btn" @click="closeWebview">
         {{ t('cashier.closePage') }}
       </button>
+      <!-- 平台备案信息(版权 + ICP + 公网安, 配置为空不渲染) -->
+      <BeianFooter class="cashier__beian" />
     </div>
 
     <template v-else>
@@ -756,6 +759,8 @@ onUnmounted(() => {
             {{ t('cashier.qrcodeTip', { name: methodName(payMethods.find(i => i.id === selectId) || { id: '' }) }) }}
           </p>
         </div>
+        <!-- 平台备案信息 -->
+        <BeianFooter class="cashier__beian" />
       </div>
 
       <!-- 支付方式选择 -->
@@ -788,6 +793,8 @@ onUnmounted(() => {
             <div class="cashier__radio" :class="{ 'cashier__radio--checked': item.id === selectId }" />
           </div>
         </div>
+        <!-- 平台备案信息 -->
+        <BeianFooter class="cashier__beian" />
       </div>
 
       <!-- 底部支付按钮(paid 已由 resultState 卡片接管,此处不会进入 paid 态) -->
@@ -1152,6 +1159,13 @@ onUnmounted(() => {
     font-size: 13px;
     color: var(--h5-text-secondary);
     text-align: center;
+  }
+
+  // 平台备案栏(结果态/滚动区末尾), 视觉弱化不抢交易主流程
+  &__beian {
+    margin-top: 16px;
+    opacity: 0.75;
+    flex-shrink: 0;
   }
 
   // 文档流底栏，不再 fixed，天然不被列表遮挡

@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { findDefaultProtocol, resolveProtocolCode } from '@/shared/api/protocol'
+import BeianFooter from '@/shared/components/BeianFooter.vue'
 import { formatDate } from '@/shared/utils/datetime'
 
 defineOptions({ name: 'PcProtocolPage' })
@@ -84,6 +85,8 @@ onMounted(load)
           {{ t('protocol.noContent') }}
         </div>
       </div>
+      <!-- 平台备案信息(版权 + ICP + 公网安, 配置为空不渲染) -->
+      <BeianFooter class="pc-protocol__beian" />
     </main>
   </div>
 </template>
@@ -162,6 +165,12 @@ onMounted(load)
   color: var(--h5-text-secondary);
   padding: 80px 0;
   font-size: 14px;
+}
+
+/* 平台备案栏: 正文容器下方弱化展示 */
+.pc-protocol__beian {
+  margin-top: 16px;
+  opacity: 0.75;
 }
 
 .pc-protocol__title {

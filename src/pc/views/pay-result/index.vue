@@ -11,6 +11,7 @@
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import BeianFooter from '@/shared/components/BeianFooter.vue'
 import { usePayResult } from '@/shared/hooks/use-pay-result'
 
 const route = useRoute()
@@ -139,6 +140,8 @@ onMounted(() => {
         {{ t('payResult.closePage') }}
       </button>
     </div>
+    <!-- 平台备案信息(版权 + ICP + 公网安, 配置为空不渲染) -->
+    <BeianFooter class="pay-result__beian" />
   </div>
 </template>
 
@@ -270,5 +273,14 @@ onMounted(() => {
   background: #fff;
   color: #606266;
   border-color: #dcdfe6;
+}
+
+/* 平台备案栏: 固定底部居中(与 PC 首页页脚同模式, 不破坏卡片垂直居中) */
+.pay-result__beian {
+  position: fixed;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  opacity: 0.75;
 }
 </style>
