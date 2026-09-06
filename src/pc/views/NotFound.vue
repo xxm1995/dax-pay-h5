@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import notFoundImg from '@/shared/assets/icons/exception/404.svg'
 
 defineOptions({ name: 'PcNotFound' })
